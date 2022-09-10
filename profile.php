@@ -123,7 +123,7 @@ if(isset($_POST['post_message'])) {
         <?php  
         
 
-          echo "<h4>You and <a href='" . $username ."'>" . $profile_user_obj->getFirstAndLastName() . "</a></h4><hr><br>";
+          echo "<h4>You and <a href=./profile.php?profile_username=" . $username .">" . $profile_user_obj->getFirstAndLastName() . "</a></h4><hr><br>";
 
           echo "<div class='loaded_messages' id='scroll_messages'>";
             echo $message_obj->getMessages($username);

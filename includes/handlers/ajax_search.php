@@ -29,7 +29,7 @@ if($query != ""){
 			$mutual_friends = "";
 
 		echo "<div class='resultDisplay'>
-				<a href='" . $row['username'] . "' style='color: #1485BD'>
+				<a href=./profile.php?profile_username=" . $row['username'] . " style='color: #1485BD'>
 					<div class='liveSearchProfilePic'>
 						<img src='" . $row['profile_pic'] ."'>
 					</div>

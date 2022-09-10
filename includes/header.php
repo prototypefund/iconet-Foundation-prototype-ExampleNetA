@@ -19,7 +19,7 @@ else {
 
 <html>
 <head>
-	<title>Welcome to YCONNECT</title>
+	<title>Welcome to ExampleNetA</title>
 
 	<!-- Javascript -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -41,7 +41,7 @@ else {
 	<div class="top_bar"> 
 
 		<div class="logo">
-			<a href="index.php">YCONNECT</a>
+			<a href="index.php">ExampleNetA</a>
 		</div>
 
 
@@ -82,20 +82,20 @@ else {
 			?>
 
 
-			<a href="<?php echo $userLoggedIn; ?>">
+			<a href='./profile.php?profile_username=<?php echo $userLoggedIn; ?>'>
 				<?php echo $user['first_name']; ?>
 			</a>
 			<a href="index.php">
 				<i class="fa fa-home fa-lg"></i>
 			</a>
-			<a href="javascript:void(0);" onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'message')">
+			<a href=javascript:void(0); onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'message')">
 				<i class="fa fa-envelope fa-lg"></i>
 				<?php
 				if($num_messages > 0)
 				 echo '<span class="notification_badge" id="unread_message">' . $num_messages . '</span>';
 				?>
 			</a>
-			<a href="javascript:void(0);" onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'notification')">
+			<a href=javascript:void(0); onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'notification')">
 				<i class="fa fa-bell fa-lg"></i>
 				<?php
 				if($num_notifications > 0)
