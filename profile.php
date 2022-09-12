@@ -62,7 +62,7 @@ if(isset($_POST['post_message'])) {
  			<p><?php echo "Friends: " . $num_friends ?></p>
  		</div>
 
- 		<form action="<?php echo $username; ?>" method="POST">
+ 		<form action="profile.php?profile_username=<?php echo $username; ?>" method="POST">
  			<?php 
  			$profile_user_obj = new User($con, $username); 
  			if($profile_user_obj->isClosed()) {
