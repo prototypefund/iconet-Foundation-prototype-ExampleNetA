@@ -1,12 +1,26 @@
-## SOCIAL NETWORK USING PHP AND MYSQL [![](https://img.shields.io/github/license/sourcerer-io/hall-of-fame.svg?colorB=ff0000)](https://github.com/yaswanthpalaghat/Hand-Movement-Recognition-using-opencv/blob/master/LICENSE)  
-### Code Requirements
-PHP, Mysql, Javascript, Jquery and XAMPP server
+## Iconet integration into ExampleNetA
+Check Setup.md for Setup Instructions.
 
-### Description
+This repository is part of the iconet prototype development, where two networks are linked through the iconet mechanisms.
+This is very basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled demonstration, on how to integrate the iconet technology. 
+ExampleNetA is taken from: https://github.com/yaswanthpalaghat/Social-Network-using-php-and-mysql
+### A: Development Doku
+Here we document the development from ExampleNetA towards interconnectivtiy.
+#### Contactlist Feature
+Feature reasoning:
+In its initial featureset, Users of ExampleNetA have no ability to display or manage contacts/friends. So far the friends feature of ExampleNetA only enables adding and removing off friends, where beeing friends entails that posts are displayed within the friends feed.
+While iconet does not set any requirements on how contacts/friends are handled by a network, there needs to be some way for a user to add and manage external addresses and hold them in a contactlist, so they then can send messages towards them. 
+Feature added:
+Since ExampleNetA has no such feature, we add it from scratch.
+A user will be able to display all their friends, be able to remove them from this view and be able to add external addresses.
 
-
-
-This is a social network which resembles the functionality like Facebook in which users can register, login, post things, chat with friends, receive notifications, search for friends , friend requests etc..
-
-
+#### Iconet-Address generation Feature
+Feature reasoning:
+Each user, to be able to be addressed by users of external networks, needs some global address.
+This will be the local identifier of a user and the global address of the network, written like localID@globalURL
+Feature added:
+We will asume, ExampleNetA holds the global URL ExampleNetA.net
+Also, on User registration, a global Address is automaticly generated.
+This address will be displayed on the home site of the current loggid in user, aswell as in each users profile.
+Note: on this address generation all iconet infrastructure like global-inbox etc. will also be initiated for a user, but these will be added on adding those features.
 
