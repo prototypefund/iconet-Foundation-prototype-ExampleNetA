@@ -6,13 +6,21 @@ This is very basic network, with a low feature set and the code uses no framewor
 ExampleNetA is taken from: https://github.com/yaswanthpalaghat/Social-Network-using-php-and-mysql
 ### A: Development Doku
 Here we document the development from ExampleNetA towards interconnectivtiy.
+
+#### Infrastructure Feature
+Feature reasoning:
+Adding a separate database and infrastructure for all iconet related aspects.
+While networks might want the iconet features to be rather integrated, for showcasing this is ideal.
+Feature added:
+iconet database table generation, folders for iconet handlers.  
+
 #### Contactlist Feature
 Feature reasoning:
 In its initial featureset, Users of ExampleNetA have no ability to display or manage contacts/friends. So far the friends feature of ExampleNetA only enables adding and removing off friends, where beeing friends entails that posts are displayed within the friends feed.
 While iconet does not set any requirements on how contacts/friends are handled by a network, there needs to be some way for a user to add and manage external addresses and hold them in a contactlist, so they then can send messages towards them. 
 Feature added:
 Since ExampleNetA has no such feature, we add it. We change the requests.php to contacts.php, which previously only displayed pending friend requests.
-A user will be able to display all their friends, be able to remove them from this view and be able to add external addresses.
+A user will be able to display all their internal friends and friendsrequests, aswell as their external contacts.
 
 
 #### Iconet-Address generation Feature - open todo
