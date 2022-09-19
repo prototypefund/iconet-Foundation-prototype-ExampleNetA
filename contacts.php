@@ -7,7 +7,7 @@ include("includes/header.php"); //Header
     <h2>Your Contacts</h2>
     <?php
     // read friend array
-    $friend_query = mysqli_query($con, "SELECT friend_array FROM Users WHERE username='$userLoggedIn'");
+    $friend_query = mysqli_query($con, "SELECT friend_array FROM users WHERE username='$userLoggedIn'");
     $friendslist = $friend_query->fetch_array();
     // ExampleNetA holds users friendslist in a string in each users cell: ,usera,userb,userc,
     // explode the friend_array-string from the first (and only cell) of querry to an actual iterable array

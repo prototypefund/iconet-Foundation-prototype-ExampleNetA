@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2022 at 09:07 AM
+-- Generation Time: Sep 19, 2022 at 02:43 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -14,6 +14,56 @@ SET time_zone = "+00:00";
 --
 -- Database: `iconet`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contacts`
+--
+
+CREATE TABLE `contacts` (
+                            `username` varchar(100) NOT NULL,
+                            `friend_address` varchar(60) NOT NULL,
+                            `friend_pubkey` varchar(128) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `contacts`
+--
+
+INSERT INTO `contacts` (`username`, `friend_address`, `friend_pubkey`) VALUES
+                                                                           ('eeee_eeee', 'zzz', 'zzz123PK'),
+                                                                           ('eeee_eeee', 'uh', 'uh123PK'),
+                                                                           ('aaaa_aaaa', 'asdfadsf', 'asdfadsf123PK'),
+                                                                           ('aaaa_aaaa', 'vvv', 'vvv123PK'),
+                                                                           ('aaaa_aaaa', 'gsdfgds', 'gsdfgds123PK');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+                                 `id` int(11) NOT NULL,
+                                 `username` varchar(100) NOT NULL,
+                                 `sender` varchar(60) NOT NULL,
+                                 `secret` varchar(128) NOT NULL,
+                                 `link` varchar(60) NOT NULL,
+                                 `text` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `posts`
+--
+
+CREATE TABLE `posts` (
+                         `id` int(11) NOT NULL,
+                         `username` varchar(100) NOT NULL,
+                         `secret` varchar(60) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -32,8 +82,30 @@ CREATE TABLE `users` (
 --
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `posts`
+--
+ALTER TABLE `posts`
+    ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
     ADD PRIMARY KEY (`username`) USING BTREE;
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
