@@ -55,12 +55,12 @@ Return Pubkey on request.
     Incoming:
     {
     GET Pubkey:
-    useraddress = %address
+    useraddress: %address
     }
     Response:
     {
     SEND Pubkey:
-    useraddress = %address
-    pubkey = %pubkey
+    useraddress: %address
+    pubkey: %pubkey
     }
 
