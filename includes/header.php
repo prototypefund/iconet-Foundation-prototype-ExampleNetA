@@ -102,7 +102,7 @@ else {
 				 echo '<span class="notification_badge" id="unread_notification">' . $num_notifications . '</span>';
 				?>
 			</a>
-			<a href="requests.php">
+			<a href="contacts.php">
 				<i class="fa fa-users fa-lg"></i>
 				<?php
 				if($num_requests > 0)

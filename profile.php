@@ -23,7 +23,7 @@ if(isset($_POST['add_friend'])) {
 	$user->sendRequest($username);
 }
 if(isset($_POST['respond_request'])) {
-	header("Location: requests.php");
+	header("Location: contacts.php");
 }
 
 if(isset($_POST['post_message'])) {

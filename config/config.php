@@ -11,4 +11,10 @@ if(mysqli_connect_errno())
 	echo "Failed to connect: " . mysqli_connect_errno();
 }
 
+$icon = mysqli_connect("localhost", "root", "", "iconet"); //Connection variable
+if(mysqli_connect_errno())
+{
+    echo "Failed to connect: " . mysqli_connect_errno();
+}
+
 ?>

@@ -82,7 +82,7 @@ else {
 						header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 					}
 					else if($user_obj->didReceiveRequest($row['username'])) {
-						header("Location: requests.php");
+						header("Location: contacts.php");
 					}
 					else if($user_obj->didSendRequest($row['username'])) {
 
