@@ -4,8 +4,26 @@ Check Setup.md for Setup Instructions.
 This repository is part of the iconet prototype development, where two networks are linked through the iconet mechanisms.
 This is very basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled demonstration, on how to integrate the iconet technology. 
 ExampleNetA is taken from: https://github.com/yaswanthpalaghat/Social-Network-using-php-and-mysql
-### A: Development Doku
+## A: Development Doku
 Here we document the development from ExampleNetA towards interconnectivity.
+
+#### Files added:
+While not necessary, for demonstration purposes we intend to split the initial structure of ExampleNetA as much as possible from the required structure added for iconet.
+##### iconet/iconet.sql
+Fills the iconet database with the required tables. (execute only on setup)
+##### iconet/index.php
+Catches incoming requests, initiates required action.
+##### iconet/api_outwards
+HTTP helper to send packages to URLS. 
+##### iconet/db_handlers
+Getters and Setters for the iconet DB
+##### iconet/format_handlers
+Functions to check variables if their format adheres to iconet structures
+##### request_builder
+Translates internally required variables into iconet requests. (potentially merges later with api_outwards)
+
+### Features added:
+Internal process documentation for the incrementally added features.
 
 #### Feature: Separate Infrastructure
 Reason:
@@ -41,7 +59,7 @@ Assume, ExampleNetA holds the global URL ExampleNetA.net
 On User registration, a global Address is automatically generated.
 This address will be displayed on the home site of the current user, as well as in each user's profile.
 
-#### Feature: Basic S2S: Return PubKey of Users - Open ToDo
+#### Feature: Basic S2S: Request and Return PublicKey of Users.
 Reason:
 
 Required to provided external sources with pubkey of local users.
@@ -51,16 +69,16 @@ Feature added:
 Generate internal Server2Server handling structure. For now use trivial placeholders for external s2s communication.
 Return Pubkey on request.
     
-    Assume Packetstructure: 
-    Incoming:
+    For packages use JSON
+    Request:
     {
-    GET Pubkey:
-    useraddress: %address
+    "type": "Request PublicKey"
+    "address": %address
     }
     Response:
     {
-    SEND Pubkey:
-    useraddress: %address
-    pubkey: %pubkey
+    "type": "Response PublicKey"
+    "address": %address
+    "publickey": %pubkey
     }
 
