@@ -1,5 +1,7 @@
 <?php
-include("includes/header.php"); //Header 
+include("includes/header.php"); //Header
+include_once("iconet/format_handlers.php");
+include_once("iconet/request_builder.php");
 ?>
 
 <div class="main_column column" id="main_column">
@@ -91,7 +93,7 @@ include("includes/header.php"); //Header
 
             echo "<p>These are your external contacts. Your postings are also delivered to them via iconet.</p>";
             while ($row = mysqli_fetch_array($query)) {
-                echo $row['friend_address'];
+                echo $row['friend_address'] . " with the pubkey: " . $row['friend_pubkey'];
                 echo "   <button type='submit' name='delete_address' value =". $row['friend_address'] . ">X</button>";
                 echo "<br><br>";
                 }
@@ -126,15 +128,19 @@ include("includes/header.php"); //Header
         <?php
         if(isset($_GET['add_address'])) {
             $address = strip_tags($_GET['add_address']);
-            if ($address == "") exit; //more complex address logic can be inserted.
-            //request_pubkey.php takes the $address value, requests the pubkey of that address and stores it into $pubkey.
-            include ("includes/iconet/s2s_handlers/request_pubkey.php");
+
+            if (!check_address($address)){
+                echo "Invalid Address.";
+                exit;
+            }
+            $pubkey = request_pubkey($address);
+
             $query = mysqli_query($icon, "INSERT INTO contacts VALUES ('$userLoggedIn', '$address', '$pubkey')");
             if(mysqli_connect_errno())
             {
                 echo "Failed to add contact: " . mysqli_connect_errno();
             }
-            header("Location: contacts.php");
+           header("Location: contacts.php");
         }
         ?>
 
