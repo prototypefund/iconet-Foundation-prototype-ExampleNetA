@@ -31,15 +31,6 @@ CREATE TABLE `contacts` (
 -- Dumping data for table `contacts`
 --
 
-INSERT INTO `contacts` (`username`, `friend_address`, `friend_pubkey`) VALUES
-                                                                           ('eeee_eeee', 'zzz', 'zzz123PK'),
-                                                                           ('eeee_eeee', 'uh', 'uh123PK'),
-                                                                           ('aaaa_aaaa', 'asdfadsf', 'asdfadsf123PK'),
-                                                                           ('aaaa_aaaa', 'vvv', 'vvv123PK'),
-                                                                           ('aaaa_aaaa', 'gsdfgds', 'gsdfgds123PK');
-
--- --------------------------------------------------------
-
 --
 -- Table structure for table `notifications`
 --
@@ -74,7 +65,8 @@ CREATE TABLE `posts` (
 CREATE TABLE `users` (
                          `username` varchar(100) NOT NULL,
                          `address` varchar(60) NOT NULL,
-                         `pubkey` varchar(128) NOT NULL
+                         `publickey` varchar(128) NOT NULL,
+                         `privatekey` varchar(128) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
