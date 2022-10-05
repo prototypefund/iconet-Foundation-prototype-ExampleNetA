@@ -9,7 +9,6 @@ function request_pubkey($address) {
     $package['address'] = $address;
     //create a proper json request:
     $msg= Json_encode($package);
-    echo $msg;
     $response = Json_decode(send($url, $msg),true); //function of api_outwards
     return $response['publickey'];
 }

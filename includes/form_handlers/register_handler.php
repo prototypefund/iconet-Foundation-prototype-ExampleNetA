@@ -1,4 +1,5 @@
 <?php
+include_once "iconet/db_handlers.php";
 //Declaring variables to prevent errors
 $fname = ""; //First name
 $lname = ""; //Last name
@@ -109,6 +110,9 @@ if(isset($_POST['register_button'])){
 			$check_username_query = mysqli_query($con, "SELECT username FROM users WHERE username='$username'");
 		}
 
+        //Generate global address by concatenating username and global URL
+        $address = $username . "@" . $domain;
+
 		//Profile picture assignment
 		$rand = rand(1, 2); //Random number between 1 and 2
 
@@ -117,8 +121,9 @@ if(isset($_POST['register_button'])){
 		else if($rand == 2)
 			$profile_pic = "assets/images/profile_pics/defaults/head_emerald.png";
 
+        $query = mysqli_query($con, "INSERT INTO users VALUES (0, '$fname', '$lname', '$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
 
-		$query = mysqli_query($con, "INSERT INTO users VALUES (0, '$fname', '$lname', '$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
+        add_user($username, $address);
 
 		array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
 

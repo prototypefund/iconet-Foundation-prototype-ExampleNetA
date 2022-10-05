@@ -2,6 +2,7 @@
 include("includes/header.php"); //Header
 include_once("iconet/format_handlers.php");
 include_once("iconet/request_builder.php");
+include_once("iconet/db_handlers.php");
 ?>
 
 <div class="main_column column" id="main_column">
@@ -85,7 +86,7 @@ include_once("iconet/request_builder.php");
     <h3>External Contacts</h3>
     <div>
         <?php
-        $query = mysqli_query($icon, "SELECT * FROM contacts WHERE username='$userLoggedIn'");
+        $query = get_contacts($userLoggedIn);
         if(mysqli_num_rows($query) == 0)
         echo "<p>You have no external contacts stored at this time!</p>";
         else {
@@ -104,13 +105,9 @@ include_once("iconet/request_builder.php");
         <?php //handle deleted address
         if(isset($_GET['delete_address'])) {
             $address = strip_tags($_GET['delete_address']);
-            $delete_query = mysqli_query($icon, "DELETE FROM contacts WHERE username='$userLoggedIn' AND friend_address='$address'");
-            if(mysqli_connect_errno())
-            {
-                echo "Failed to add contact: " . mysqli_connect_errno();
-            }
-            echo "Deleted ". $address;
-            header("Location: contacts.php");
+            if (delete_contact($userLoggedIn, $address))
+                header("Location: contacts.php");
+            else echo "Error: Could not delete ". $address;
         }
         ?>
     </div>
@@ -135,12 +132,9 @@ include_once("iconet/request_builder.php");
             }
             $pubkey = request_pubkey($address);
 
-            $query = mysqli_query($icon, "INSERT INTO contacts VALUES ('$userLoggedIn', '$address', '$pubkey')");
-            if(mysqli_connect_errno())
-            {
-                echo "Failed to add contact: " . mysqli_connect_errno();
-            }
-           header("Location: contacts.php");
+            if (add_contact($userLoggedIn,$address,$pubkey))
+                header("Location: contacts.php");
+            else echo "Failed to add ".$address;
         }
         ?>
 
