@@ -1,5 +1,5 @@
 <?php
-include_once "iconet/db_handlers.php";
+include_once "iconet/database.php";
 //Declaring variables to prevent errors
 $fname = ""; //First name
 $lname = ""; //Last name

@@ -1,7 +1,7 @@
 <?php
 // i accept and handle incoming requests!
 
-include_once("iconet/db_handlers.php");
+include_once("iconet/database.php");
 
 //this function is part of the current server 2 server internal workarround. Will be replaced by https requests.
 function receive($msg){

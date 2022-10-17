@@ -1,7 +1,8 @@
 <?php
 ob_start(); //Turns on output buffering 
-session_start();
-
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 $timezone = date_default_timezone_set("Europe/London");
 
 $con = mysqli_connect("localhost", "root", "", "social"); //Connection variable

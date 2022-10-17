@@ -1,5 +1,5 @@
 <?php
-include_once 'config/config.php';
+require './config/config.php';
 
 function get_userpubkey_by_address($address){
     global $icon;

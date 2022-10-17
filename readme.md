@@ -15,12 +15,16 @@ Fills the iconet database with the required tables. (execute only on setup)
 Catches incoming requests, initiates required action.
 ##### iconet/api_outwards
 HTTP helper to send packages to URLS. 
-##### iconet/db_handlers
+##### iconet/database
 Getters and Setters for the iconet DB
-##### iconet/format_handlers
+##### iconet/formats
 Functions to check variables if their format adheres to iconet structures
-##### request_builder
+##### iconet/request_builder
 Translates internally required variables into iconet requests. (potentially merges later with api_outwards)
+##### iconet/cryptography
+Handles iconet encryption and decryption
+##### iconet/libs/AES
+AES class for symetric encryption
 
 ### Features added:
 Internal process documentation for the incrementally added features.
@@ -47,7 +51,7 @@ Since ExampleNetA has no such feature, we add it. We change the requests.php to 
 A user will be able to display all their internal friends and friends-requests, as well as their external contacts.
 
 
-#### Feature: Iconet-Address generation - open todo
+#### Feature: Iconet-Address generation
 Description:
 
 Each user, to be able to be addressed by users of external networks, needs some global address.
@@ -56,8 +60,8 @@ This will be the local identifier of a user and the global address of the networ
 Code added:
 
 Assume, ExampleNetA holds the global URL ExampleNetA.net
-On User registration, a global Address is automatically generated.
-This address will be displayed on the home site of the current user, as well as in each user's profile.
+On User registration, a global Address is automatically generated and added to the database.
+This address will be displayed on the profile of each user.
 
 #### Feature: Basic S2S: Request and Return PublicKey of Users.
 Description:
@@ -82,37 +86,25 @@ Return Pubkey on request.
     "publickey": %pubkey
     }
 
-#### Feature: Encryption Basics - open todo
+#### Feature : Encryption Basics - open todo
 Description:
 
-Notifications and content are encrypted via gnupg. We'll include the php lib, generate key pairs and store them for each users.
+Create cryptography interface, import AES and GPG. 
 
 Code added:
 
-Import https://github.com/singpolyma/openpgp-php
+Imported AES and GPG, created cryptography.php
+Implement and test hybrid encryption process.
 
-Create Keys on User Registration & Store in DB
-Create Key format in format_handler
-Use Checks of Format on Receiving Keys.
-#### Feature: Encryption Basics - open todo
+#### Feature: Encryption Adaption - open todo
 Description:
 
-Notifications and content are encrypted via openpgp. We'll include the php lib, generate key pairs and store them for each users.
+Notifications and content are encrypted via AES, the common Secret is shares Via GPG. We'll include the php lib, generate key pairs and store them for each users.
 
 Code added:
 
-Import https://github.com/singpolyma/openpgp-php
 Create Keys on User Registration & Store in DB
-Create KEy format in format_handler
+Create Key format in formats.php
 Use Checks of Format on Receiving Keys.
-#### Feature: Encryption Basics - open todo
-Description:
+Prepare: Encrypt Outgoing Packages, Decrypt Incoming Packages. (No such packages are beeing sent yet)
 
-Notifications and content are encrypted via openpgp. We'll include the php lib, generate key pairs and store them for each users.
-
-Code added:
-
-Import https://github.com/singpolyma/openpgp-php
-Create Keys on User Registration & Store in DB
-Create KEy format in format_handler
-Use Checks of Format on Receiving Keys.
