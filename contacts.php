@@ -86,16 +86,16 @@ include_once("iconet/database.php");
     <h3>External Contacts</h3>
     <div>
         <?php
-        $query = get_contacts($userLoggedIn);
-        if(mysqli_num_rows($query) == 0)
+        $contacts = get_contacts($userLoggedIn);
+        if($contacts == null)
         echo "<p>You have no external contacts stored at this time!</p>";
         else {
             echo "<form action='contacts.php' method='GET'>";
 
             echo "<p>These are your external contacts. Your postings are also delivered to them via iconet.</p>";
-            while ($row = mysqli_fetch_array($query)) {
-                echo $row['friend_address'] . " with the pubkey: " . $row['friend_pubkey'];
-                echo "   <button type='submit' name='delete_address' value =". $row['friend_address'] . ">X</button>";
+            foreach ($contacts as $c) {
+                echo $c['address'] . " with the pubkey: " . $c['pubkey'];
+                echo "   <button type='submit' name='delete_address' value =". $c['address'] . ">X</button>";
                 echo "<br><br>";
                 }
                 echo "</form>";

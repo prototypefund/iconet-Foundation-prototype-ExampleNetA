@@ -9,7 +9,7 @@ function receive($msg){
     $package = json_decode($msg, true);
     if ($package['type'] == "Request PublicKey")
     {
-        $pubkey = get_userpubkey_by_address($package['address']);
+        $pubkey = get_pubkey_by_address($package['address']);
         if($pubkey){
             $response['type'] = "Response PublicKey";
             $response['address'] = $package['address'];

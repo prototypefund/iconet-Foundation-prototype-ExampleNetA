@@ -13,7 +13,6 @@ function genKeyPair(){
 }
 
 function genSymKey(){
-    //simulated genSymKey
     $size = 128;
     $secret = openssl_random_pseudo_bytes($size);
     return $secret;
@@ -33,15 +32,19 @@ function decSym($encrypted,$key){
     return $AES ->decrypt();
 }
 
-function genAllTokens($userLoggedIn,$symKey){
+function genAllCiphers($userLoggedIn,$secret){
     $contacts = get_contacts($userLoggedIn);
 
-    $tokenlist = "aaaa";
+    $i = 0;
+    foreach ($contacts as $c){
+        $cipher['address'] = $c['address'];
+        $cipher['cipher'] = encAsym($secret, $c['pubkey'] );
+        $ciphers[$i] = $cipher;
+        $i++;
+    }
 
-    return $tokenlist;
+    return $ciphers;
 }
-
-
 
 function encAsym($data,$pubKey){
 
@@ -54,8 +57,9 @@ function decAsym($encrypted,$privKey){
     return $data;
 }
 
-function openToken($token){
-    return "token";
+function openCipher($cipher){
+    $privkey = get_privkey_by_address($cipher['address']);
+    return decAsym($cipher['cipher'], $privkey);
 }
 
 ?>
