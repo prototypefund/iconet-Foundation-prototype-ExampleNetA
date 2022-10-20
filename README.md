@@ -1,5 +1,5 @@
 ## Iconet integration into ExampleNetA
-Check Setup.md for Setup Instructions.
+Check [setup.me](setup.md) for Setup Instructions.
 
 This repository is part of the iconet prototype development, where two networks are linked through the iconet mechanisms.
 This is very basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled demonstration, on how to integrate the iconet technology. 

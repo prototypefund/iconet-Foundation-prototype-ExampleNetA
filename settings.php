@@ -1,13 +1,13 @@
 <?php 
-include("includes/header.php");
-include("includes/form_handlers/settings_handler.php");
+require_once("includes/header.php");
+require_once("includes/form_handlers/settings_handler.php");
 ?>
 
 <div class="main_column column">
 
 	<h4>Account Settings</h4>
 	<?php
-	echo "<img src='" . $user['profile_pic'] ."' class='small_profile_pic'>";
+	echo "<img src='$user->profilePicture' class='small_profile_pic'>";
 	?>
 	<br>
 	<a href="upload.php">Upload new profile picture</a> <br><br><br>
@@ -24,11 +24,11 @@ include("includes/form_handlers/settings_handler.php");
 	?>
 
 	<form action="settings.php" method="POST">
-		First Name: <input type="text" name="first_name" value="<?php echo $first_name; ?>" id="settings_input"><br>
-		Last Name: <input type="text" name="last_name" value="<?php echo $last_name; ?>" id="settings_input"><br>
-		Email: <input type="text" name="email" value="<?php echo $email; ?>" id="settings_input"><br>
+		First Name: <input type="text" name="first_name" value="<?= $first_name ?>" id="settings_input"><br>
+		Last Name: <input type="text" name="last_name" value="<?= $last_name ?>" id="settings_input"><br>
+		Email: <input type="text" name="email" value="<?= $email ?>" id="settings_input"><br>
 
-		<?php echo $message; ?>
+		<?= $message ?>
 
 		<input type="submit" name="update_details" id="save_details" value="Update Details" class="info settings_submit"><br>
 	</form>
@@ -39,7 +39,7 @@ include("includes/form_handlers/settings_handler.php");
 		New Password: <input type="password" name="new_password_1" id="settings_input"><br>
 		New Password Again: <input type="password" name="new_password_2" id="settings_input"><br>
 
-		<?php echo $password_message; ?>
+		<?= $password_message ?>
 
 		<input type="submit" name="update_password" id="save_details" value="Update Password" class="info settings_submit"><br>
 	</form>

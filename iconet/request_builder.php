@@ -1,6 +1,6 @@
 <?php
-include_once 'format_handlers.php';
-include_once 'api_outwards.php';
+require_once 'format_handlers.php';
+require_once 'api_outwards.php';
 // provides public key from $address by requesting it from external server
 function request_pubkey($address) {
     if(!check_address($address)) return false;

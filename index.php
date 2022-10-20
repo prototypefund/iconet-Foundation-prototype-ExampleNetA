@@ -1,6 +1,6 @@
 <?php 
-include("includes/header.php");
-
+require_once("includes/header.php");
+global $user;
 
 if(isset($_POST['post'])){
 
@@ -8,7 +8,9 @@ if(isset($_POST['post'])){
 	$imageName = $_FILES['fileToUpload']['name'];
 	$errorMessage = "";
 
-	if($imageName != "") {
+    if ($imageName=="") $imageName=null;
+
+	if($imageName) {
 		$targetDir = "assets/images/posts/";
 		$imageName = $targetDir . uniqid() . basename($imageName);
 		$imageFileType = pathinfo($imageName, PATHINFO_EXTENSION);
@@ -24,11 +26,8 @@ if(isset($_POST['post'])){
 		}
 
 		if($uploadOk) {
-			if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $imageName)) {
-				//image uploaded okay
-			}
-			else {
-				//image did not upload
+			if(! move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $imageName)) {
+                $errorMessage = "Saving the upload failed";
 				$uploadOk = 0;
 			}
 		}
@@ -37,7 +36,7 @@ if(isset($_POST['post'])){
 
 	if($uploadOk) {
 		$post = new Post($con, $userLoggedIn);
-		$post->submitPost($_POST['post_text'], 'none', $imageName);
+		$post->submitPost($_POST['post_text'], null, $imageName);
 	}
 	else {
 		echo "<div style='text-align:center;' class='alert alert-danger'>
@@ -50,20 +49,17 @@ if(isset($_POST['post'])){
 
  ?>
 	<div class="user_details column">
-		<a href=./profile.php?profile_username=<?php echo $userLoggedIn; ?>>  <img src="<?php echo $user['profile_pic']; ?>"> </a>
+		<a href=./profile.php?profile_username=<?= $user->username?>>
+            <img src="<?=$user->profilePicture?>">
+        </a>
 
 		<div class="user_details_left_right">
-			<a href=./profile.php?profile_username=<?php echo $userLoggedIn; ?>>
-			<?php 
-			echo $user['first_name'] . " " . $user['last_name'];
-
-			 ?>
+			<a href=./profile.php?profile_username=<?=$user->username?>>
+			    <?=$user->firstname?> <?=$user->lastname?>
 			</a>
 			<br>
-			<?php echo "Posts: " . $user['num_posts']. "<br>"; 
-			echo "Likes: " . $user['num_likes'];
-
-			?>
+            Posts: <?=$user->postsCount?> <br>
+            Likes: <?=$user->likesCount?>
 		</div>
 
 	</div>
@@ -89,35 +85,17 @@ if(isset($_POST['post'])){
 		<h4>Popular</h4>
 
 		<div class="trends">
-			<?php 
-			$query = mysqli_query($con, "SELECT * FROM trends ORDER BY hits DESC LIMIT 9");
 
-			foreach ($query as $row) {
-				
-				$word = $row['title'];
-				$word_dot = strlen($word) >= 14 ? "..." : "";
-
-				$trimmed_word = str_split($word, 14);
-				$trimmed_word = $trimmed_word[0];
-
-				echo "<div style'padding: 1px'>";
-				echo $trimmed_word . $word_dot;
-				echo "<br></div><br>";
-
-
-			}
-
-			?>
 		</div>
 
 
 	</div>
 
-
+    <div id="test" style="background-color: red; position: absolute; left:0; top:0;"></div>
 
 
 	<script>
-	var userLoggedIn = '<?php echo $userLoggedIn; ?>';
+	var userLoggedIn = '<?=$userLoggedIn; ?>';
 
 	$(document).ready(function() {
 
@@ -126,8 +104,6 @@ if(isset($_POST['post'])){
 		//Original ajax request for loading first posts 
 		$.ajax({
 			url: "includes/handlers/ajax_load_posts.php",
-			type: "POST",
-			data: "page=1&userLoggedIn=" + userLoggedIn,
 			cache:false,
 
 			success: function(data) {
@@ -137,40 +113,32 @@ if(isset($_POST['post'])){
 		});
 
 		$(window).scroll(function() {
-		//$('#load_more').on("click", function() {
+			var last = $('.posts_area').find('.last').val();
+			var more = $('.posts_area').find('.more').val();
 
-			var height = $('.posts_area').height(); //Div containing posts
-			var scroll_top = $(this).scrollTop();
-			var page = $('.posts_area').find('.nextPage').val();
-			var noMorePosts = $('.posts_area').find('.noMorePosts').val();
-
-			if ((document.body.scrollHeight == document.body.scrollTop + window.innerHeight) && noMorePosts == 'false') {
-			//if (noMorePosts == 'false') {
+			if (((window.innerHeight + window.scrollY) >= document.documentElement.offsetHeight)
+                && more && $('#loading').is(":hidden")
+            ) {
 				$('#loading').show();
 
 				var ajaxReq = $.ajax({
 					url: "includes/handlers/ajax_load_posts.php",
-					type: "POST",
-					data: "page=" + page + "&userLoggedIn=" + userLoggedIn,
+					data: "startAfter=" + last,
 					cache:false,
 
 					success: function(response) {
-						$('.posts_area').find('.nextPage').remove(); //Removes current .nextpage 
-						$('.posts_area').find('.noMorePosts').remove(); //Removes current .nextpage 
-						$('.posts_area').find('.noMorePostsText').remove(); //Removes current .nextpage 
+						$('.posts_area').find('.last').remove();
+						$('.posts_area').find('.more').remove();
+						$('.posts_area').find('.noMorePostsText').remove();
 
 						$('#loading').hide();
 						$('.posts_area').append(response);
 					}
 				});
-
 			} //End if 
 
 			return false;
-
 		}); //End (window).scroll(function())
-
-
 	});
 
 	</script>

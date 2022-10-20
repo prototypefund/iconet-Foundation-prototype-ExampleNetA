@@ -1,76 +1,95 @@
 <?php
-class User {
-	private $user;
-	private $con;
+class User
+{
+    private $friends;
+    private $con;
+    private string $usernameReference;
 
-	public function __construct($con, $user){
-		$this->con = $con;
-		$user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$user'");
-		$this->user = mysqli_fetch_array($user_details_query);
-	}
+    public string $firstname;
+    public string $lastname;
+    public string $username;
+    public string $email;
+    public string $profilePicture;
+    public int $likesCount;
+    public int $postsCount;
+    public bool $isClosed;
 
-	public function getUsername() {
-		return $this->user['username'];
-	}
+    public function __construct($con, $username)
+    {
+        $user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$username'");
+        $userData = mysqli_fetch_array($user_details_query);
+        $friends_query = mysqli_query($con, "SELECT friend FROM is_friend WHERE user='$userData[username]'");
 
-	public function getNumberOfFriendRequests() {
-		$username = $this->user['username'];
-		$query = mysqli_query($this->con, "SELECT * FROM friend_requests WHERE user_to='$username'");
-		return mysqli_num_rows($query);
-	}
+        $this->con = $con;
+        $this->init($userData);
+        $f = $friends_query->fetch_all(MYSQLI_ASSOC);
+        $this->friends = array_column($f,'friend') ?? [];
+    }
 
-	public function getNumPosts() {
-		$username = $this->user['username'];
-		$query = mysqli_query($this->con, "SELECT num_posts FROM users WHERE username='$username'");
-		$row = mysqli_fetch_array($query);
-		return $row['num_posts'];
-	}
+    private function init($userData)
+    {
+        $this->firstname = $userData['first_name'];
+        $this->lastname = $userData['last_name'];
+        $this->username = $userData['username'];
+        $this->email = $userData['email'];
+        $this->profilePicture = $userData['profile_pic'];
+        $this->likesCount = $userData['num_likes'];
+        $this->postsCount = $userData['num_posts'];
+        $this->isClosed = $userData['user_closed'];
+
+        $this->usernameReference = $this->username;
+    }
+
+    public function store(){
+                Database::singleton()->updateUser($this);
+    }
+
+    public function __toString(): string
+    {
+        return $this->username;
+    }
+
 
 	public function getFirstAndLastName() {
-		$username = $this->user['username'];
-		$query = mysqli_query($this->con, "SELECT first_name, last_name FROM users WHERE username='$username'");
-		$row = mysqli_fetch_array($query);
-		return $row['first_name'] . " " . $row['last_name'];
+		return $this->firstname . " " . $this->lastname;
 	}
 
-	public function getProfilePic() {
-		$username = $this->user['username'];
-		$query = mysqli_query($this->con, "SELECT profile_pic FROM users WHERE username='$username'");
-		$row = mysqli_fetch_array($query);
-		return $row['profile_pic'];
+    /**
+     * @return array Usernames of the friends
+     */
+	public function getFriends() {
+		return $this->friends;
 	}
 
-	public function getFriendArray() {
-		$username = $this->user['username'];
-		$query = mysqli_query($this->con, "SELECT friend_array FROM users WHERE username='$username'");
-		$row = mysqli_fetch_array($query);
-		return $row['friend_array'];
-	}
+    /**
+     * @return string Username wich references the user in the database, can be different to the current username.
+     */
+    public function getUsernameReference() : string
+    {
+        return $this->usernameReference;
+    }
 
-	public function isClosed() {
-		$username = $this->user['username'];
-		$query = mysqli_query($this->con, "SELECT user_closed FROM users WHERE username='$username'");
-		$row = mysqli_fetch_array($query);
+    public function getNumberOfFriendRequests() {
+        $username = $this->username;
+        $query = mysqli_query($this->con, "SELECT * FROM friend_requests WHERE user_to='$username'");
+        return mysqli_num_rows($query);
+    }
 
-		if($row['user_closed'] == 'yes')
-			return true;
-		else 
-			return false;
-	}
+    /**
+     * @param User $candidate
+     * @return bool True for the user themselves and their friends
+     */
+    public function isFriend(User $candidate) {
+        return $this->isFriendByUsername($candidate->username);
+    }
 
-	public function isFriend($username_to_check) {
-		$usernameComma = "," . $username_to_check . ",";
-
-		if((strstr($this->user['friend_array'], $usernameComma) || $username_to_check == $this->user['username'])) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    public function isFriendByUsername(string $username) {
+        if($this->username == $username) return true;
+        return in_array($username, $this->friends);
+    }
 
 	public function didReceiveRequest($user_from) {
-		$user_to = $this->user['username'];
+		$user_to = $this->username;
 		$check_request_query = mysqli_query($this->con, "SELECT * FROM friend_requests WHERE user_to='$user_to' AND user_from='$user_from'");
 		if(mysqli_num_rows($check_request_query) > 0) {
 			return true;
@@ -81,7 +100,7 @@ class User {
 	}
 
 	public function didSendRequest($user_to) {
-		$user_from = $this->user['username'];
+		$user_from = $this->username;
 		$check_request_query = mysqli_query($this->con, "SELECT * FROM friend_requests WHERE user_to='$user_to' AND user_from='$user_from'");
 		if(mysqli_num_rows($check_request_query) > 0) {
 			return true;
@@ -91,49 +110,24 @@ class User {
 		}
 	}
 
-	public function removeFriend($user_to_remove) {
-		$logged_in_user = $this->user['username'];
+	public function removeFriend($friend) {
+        $username = $this->username;
 
-		$query = mysqli_query($this->con, "SELECT friend_array FROM users WHERE username='$user_to_remove'");
-		$row = mysqli_fetch_array($query);
-		$friend_array_username = $row['friend_array'];
-
-		$new_friend_array = str_replace($user_to_remove . ",", "", $this->user['friend_array']);
-		$remove_friend = mysqli_query($this->con, "UPDATE users SET friend_array='$new_friend_array' WHERE username='$logged_in_user'");
-
-		$new_friend_array = str_replace($this->user['username'] . ",", "", $friend_array_username);
-		$remove_friend = mysqli_query($this->con, "UPDATE users SET friend_array='$new_friend_array' WHERE username='$user_to_remove'");
+		mysqli_query($this->con, "DELETE  FROM is_friend WHERE (user='$username' AND friend='$friend' OR user='$friend' AND friend='$username')");
 	}
 
 	public function sendRequest($user_to) {
-		$user_from = $this->user['username'];
+		$user_from = $this->username;
 		$query = mysqli_query($this->con, "INSERT INTO friend_requests VALUES(0, '$user_to', '$user_from')");
 	}
 
-	public function getMutualFriends($user_to_check) {
-		$mutualFriends = 0;
-		$user_array = $this->user['friend_array'];
-		$user_array_explode = explode(",", $user_array);
-
-		$query = mysqli_query($this->con, "SELECT friend_array FROM users WHERE username='$user_to_check'");
-		$row = mysqli_fetch_array($query);
-		$user_to_check_array = $row['friend_array'];
-		$user_to_check_array_explode = explode(",", $user_to_check_array);
-
-		foreach($user_array_explode as $i) {
-
-			foreach($user_to_check_array_explode as $j) {
-
-				if($i == $j && $i != "") {
-					$mutualFriends++;
-				}
-			}
-		}
-		return $mutualFriends;
-
+	public function getMutualFriendsCount(User $user) {
+		return count(array_intersect($this->friends, $user->friends));
 	}
 
-
+    public static function exists(string $username) : bool{
+                return Database::singleton()->existsUser($username);
+    }
 
 
 }

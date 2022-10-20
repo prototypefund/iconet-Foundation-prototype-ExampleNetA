@@ -1,5 +1,6 @@
 <?php 
-include("includes/header.php");
+require_once("includes/header.php");
+global $user;
 
 $message_obj = new Message($con, $userLoggedIn);
 
@@ -27,27 +28,22 @@ if(isset($_POST['post_message'])) {
  ?>
 
  <div class="user_details column">
-		<a href="<?php echo $userLoggedIn; ?>">  <img src="<?php echo $user['profile_pic']; ?>"> </a>
+		<a href="<?=$userLoggedIn?>">  <img src="<?= $user->profilePicture ?>"> </a>
 
 		<div class="user_details_left_right">
-			<a href="<?php echo $userLoggedIn; ?>">
-			<?php 
-			echo $user['first_name'] . " " . $user['last_name'];
-
-			 ?>
+			<a href="<?= $userLoggedIn ?>">
+			<?= $user->getFirstAndLastname(); ?>
 			</a>
 			<br>
-			<?php echo "Posts: " . $user['num_posts']. "<br>"; 
-			echo "Likes: " . $user['num_likes'];
-
-			?>
+            Posts: <?= $user->postsCount ?>
+            Likes: <?= $user->likesCount ?>
 		</div>
 	</div>
 
 	<div class="main_column column" id="main_column">
 		<?php  
 		if($user_to != "new"){
-			echo "<h4>You and <a href='$user_to'>" . $user_to_obj->getFirstAndLastName() . "</a></h4><hr><br>";
+			echo "<h4>You and <a href='/profile.php?profile_username=$user_to'>" . $user_to_obj->getFirstAndLastName() . "</a></h4><hr><br>";
 
 			echo "<div class='loaded_messages' id='scroll_messages'>";
 				echo $message_obj->getMessages($user_to);
@@ -66,7 +62,7 @@ if(isset($_POST['post_message'])) {
 				if($user_to == "new") {
 					echo "Select the friend you would like to message <br><br>";
 					?> 
-					To: <input type='text' onkeyup='getUsers(this.value, "<?php echo $userLoggedIn; ?>")' name='q' placeholder='Name' autocomplete='off' id='seach_text_input'>
+					To: <input type='text' onkeyup='getUsers(this.value, "<?= $userLoggedIn ?>")' name='q' placeholder='Name' autocomplete='off' id='seach_text_input'>
 
 					<?php
 					echo "<div class='results'></div>";
@@ -92,7 +88,7 @@ if(isset($_POST['post_message'])) {
 			<h4>Conversations</h4>
 
 			<div class="loaded_conversations">
-				<?php echo $message_obj->getConvos(); ?>
+				<?= $message_obj->getConvos() ?>
 			</div>
 			<br>
 			<a href="messages.php?u=new">New Message</a>

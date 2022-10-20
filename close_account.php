@@ -1,12 +1,12 @@
 <?php
-include("includes/header.php");
+require_once("includes/header.php");
 
 if(isset($_POST['cancel'])) {
 	header("Location: settings.php");
 }
 
 if(isset($_POST['close_account'])) {
-	$close_query = mysqli_query($con, "UPDATE users SET user_closed='yes' WHERE username='$userLoggedIn'");
+	$close_query = mysqli_query($con, "UPDATE users SET user_closed=true WHERE username='$userLoggedIn'");
 	session_destroy();
 	header("Location: register.php");
 }

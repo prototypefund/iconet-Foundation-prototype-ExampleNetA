@@ -67,7 +67,7 @@ a {
 	margin-top: 0;
 	margin-bottom: 0;
 	color: #2C6C96;
-	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	text-shadow: #73B6E2 1px 1px 0;
 	font-size: 350%;
 }
 
@@ -78,7 +78,7 @@ input[type="submit"] {
 	margin: 5px 0 10px 0;
 	padding: 5px 10px 5px 10px;
 	color: #2C6C96;
-	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	text-shadow: #73B6E2 1px 1px 0;
 	font-family: 'Bellota-BoldItalic', sans-serif;
 	font-size: 100%;
 }

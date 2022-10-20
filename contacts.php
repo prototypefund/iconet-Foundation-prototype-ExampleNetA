@@ -1,8 +1,8 @@
 <?php
-include("includes/header.php"); //Header
-include_once("iconet/format_handlers.php");
-include_once("iconet/request_builder.php");
-include_once("iconet/db_handlers.php");
+require_once("includes/header.php");
+require_once("iconet/format_handlers.php");
+require_once("iconet/request_builder.php");
+require_once("iconet/db_handlers.php");
 ?>
 
 <div class="main_column column" id="main_column">
@@ -10,34 +10,29 @@ include_once("iconet/db_handlers.php");
     <h2>Your Contacts</h2>
     <?php
     // read friend array
-    $friend_query = mysqli_query($con, "SELECT friend_array FROM users WHERE username='$userLoggedIn'");
-    $friendslist = $friend_query->fetch_array();
-    // ExampleNetA holds users friendslist in a string in each users cell: ,usera,userb,userc,
-    // explode the friend_array-string from the first (and only cell) of querry to an actual iterable array
-    $friend_array = explode(',',$friendslist[0]);
-    $nofriends = "<p> You currently have no friends in this network.";
-    foreach ($friend_array as $friend)  {
-        $user_querry = mysqli_query($con, "SELECT * FROM users WHERE username = '$friend' AND user_closed='no'");
-        //display a resultDisplay div for each friend with the given name (0 or 1 expected.)
-        while($row = mysqli_fetch_array($user_querry)) {
-            $nofriends = ""; // if there are friends, do not warn about no friends.
-            echo "<div class='resultDisplay'>
-					<a href='./profile.php?profile_username=" . $row['username'] . "' style='color: #000'>
+    $friends = mysqli_query($con, "SELECT * FROM is_friend JOIN users u on u.username = is_friend.friend where user='$userLoggedIn' AND NOT user_closed");
+
+    $result = "<p> You currently have no friends in this network.";
+    while ($friend = mysqli_fetch_array($friends))  {
+
+        $result .= "<div class='resultDisplay'>
+					<a href='./profile.php?profile_username=$friend[username]' style='color: #000'>
 						<div class='liveSearchProfilePic'>
-							<img src='". $row['profile_pic'] . "'>
+							<img src='$friend[profile_pic]'>
 						</div>
 
 						<div class='liveSearchText'>
-							".$row['first_name'] . " " . $row['last_name']. "
-							<p style='margin: 0;'>". $row['username'] . "</p>
+						    $friend[first_name] $friend[last_name]
+							<p style='margin: 0;'>$friend[username]</p>
 						</div>
 					</a>
 				</div>";
         }
 
-    }
-    echo $nofriends;
+    echo $result;
     ?>
+
+
 
     <h4>Pending friend requests</h4>
 
@@ -53,14 +48,11 @@ include_once("iconet/db_handlers.php");
 
 			echo $user_from_obj->getFirstAndLastName() . " sent you a friend request!";
 
-			$user_from_friend_array = $user_from_obj->getFriendArray();
+			$user_from_friend_array = $user_from_obj->getFriends();
 
 			if(isset($_POST['accept_request' . $user_from ])) {
-				$add_friend_query = mysqli_query($con, "UPDATE users SET friend_array=CONCAT(friend_array, '$user_from,') WHERE username='$userLoggedIn'");
-				$add_friend_query = mysqli_query($con, "UPDATE users SET friend_array=CONCAT(friend_array, '$userLoggedIn,') WHERE username='$user_from'");
-
-				$delete_query = mysqli_query($con, "DELETE FROM friend_requests WHERE user_to='$userLoggedIn' AND user_from='$user_from'");
-				echo "You are now friends!";
+                Database::singleton()->acceptFriendRequest($user, $user_from_obj);
+                echo "You are now friends!";
 				header("Location: contacts.php");
 			}
 
@@ -72,8 +64,8 @@ include_once("iconet/db_handlers.php");
 
 			?>
 			<form action="contacts.php" method="POST">
-				<input type="submit" name="accept_request<?php echo $user_from; ?>" id="accept_button" value="Accept">
-				<input type="submit" name="ignore_request<?php echo $user_from; ?>" id="ignore_button" value="Ignore">
+				<input type="submit" name="accept_request<?= $user_from ?>" id="accept_button" value="Accept">
+				<input type="submit" name="ignore_request<?= $user_from ?>" id="ignore_button" value="Ignore">
 			</form>
 			<?php
 

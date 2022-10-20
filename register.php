@@ -1,15 +1,15 @@
 <?php  
-require 'config/config.php';
-require 'includes/form_handlers/register_handler.php';
-require 'includes/form_handlers/login_handler.php';
+require_once 'config/config.php';
+require_once 'includes/form_handlers/register_handler.php';
+require_once 'includes/form_handlers/login_handler.php';
 ?>
 
-
+<!doctype html>
 <html>
 <head>
 	<title>Welcome to ExampleNetA</title>
 	<link rel="stylesheet" type="text/css" href="assets/css/register_style.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/register.js"></script>
 </head>
 <body>
@@ -56,7 +56,7 @@ require 'includes/form_handlers/login_handler.php';
 					<?php if(in_array("Email or password was incorrect<br>", $error_array)) echo  "Email or password was incorrect<br>"; ?>
 					<input type="submit" name="login_button" value="Login">
 					<br>
-					<a href="#" id="signup" class="signup">Need user? Register here!</a>
+					<a href="#" id="signup" class="signup">New user? Register here!</a>
 
 				</form>
 

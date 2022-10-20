@@ -34,7 +34,7 @@ a {
 	font-size: 30;
 	position: relative;
 	top: 9px;
-	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	text-shadow: #73B6E2 1px 1px 0;
 	color: #1086BA;
 }
 
@@ -94,7 +94,7 @@ nav a:hover {
 
 .user_details_left_right {
 	width: 120px;
-	display: inline-table;
+	display: inline;
 	position: absolute;
 }
 
@@ -131,7 +131,7 @@ textarea:focus {
 	background-color: #3498db;
 	font-family: 'Bellota-BoldItalic', sans-serif;
 	color: #1E75CA;
-	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	text-shadow: #73B6E2 1px 1px 0;
 	font-size: 90%;
 	position: absolute;
 	outline: 0;
@@ -145,7 +145,7 @@ textarea:focus {
 .status_post {
 	width: 96%;
 	font-size: 15px;
-	padding: 0px 5px;
+	padding: 0 5px;
 	min-height: 75px;
 	cursor:pointer;
 }
@@ -193,18 +193,18 @@ textarea:focus {
 	margin-top: 3px;
 	position: absolute;
 	font-family: 'Bellota-BoldItalic', sans-serif;
-	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	text-shadow: #73B6E2 1px 1px 0;
 }
 
 .newsfeedPostOptions {
-	padding: 0px;
+	padding: 0;
 	text-decoration: none;
 	color:#20AAE5;
 	border:none;
 }
 
 .newsfeedPostOptions iframe {
-	border: 0px;
+	border: 0;
 	height: 17px;
 	width: 120px;
 }
@@ -346,7 +346,7 @@ textarea:focus {
 	color: #156588;
 	border-radius: 5px;
 	font-family: 'Bellota-BoldItalic', sans-serif;
-	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	text-shadow: #73B6E2 1px 1px 0;
 }
 .message {
 	border: 1px solid #000;
@@ -379,7 +379,7 @@ textarea:focus {
 
 .loaded_conversations {
 	max-height: 216px;
-	overflow: scroll;
+	overflow-y: auto;
 }
 
 .user_found_messages {
@@ -395,8 +395,14 @@ textarea:focus {
 	height: 35px;
 	float: left;
 }
+.dropdown_data_window .user_found_messages p,
+#conversations .user_found_messages p {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
-#grey {
+.grey {
 	color: #8C8C8C;
 }
 
@@ -470,7 +476,7 @@ textarea:focus {
 .resultDisplayNotification img {
     height: 40px;
     border-radius: 5px;
-    margin: 1px 12px 0px 2px;
+    margin: 1px 12px 0 2px;
     float: left;
 }
 
@@ -489,10 +495,7 @@ textarea:focus {
   	height: 23px;
   	outline: 0;
   	width: 100px;
-  	border-top-right-radius: 0;
-  	border-bottom-right-radius: 0;
-  	border-top-left-radius: 3px;
-  	border-bottom-left-radius: 3px;
+	border-radius: 3px 0 0 3px;
 }
 
 .button_holder {
@@ -521,7 +524,7 @@ textarea:focus {
 }
 
 .search_results_footer{
-	padding: 7px 4px 0px 4px;
+	padding: 7px 4px 0 4px;
     height: 30px;
     border: 1px solid #DADADA;
     border-top: none;
@@ -555,7 +558,7 @@ textarea:focus {
 }
 
 #search_hr {
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 
 .small_profile_pic {
@@ -582,10 +585,14 @@ textarea:focus {
 }
 
 
+.message:hover .deleteButton {
+	display: initial;
+}
+
 .message .deleteButton {
-   color: #fff;
-   margin: 0 5px 5px 0;
-   cursor: pointer;
+	margin: 0 1em 1em 0;
+	cursor: pointer;
+	display: none;
 }
 
 .postedImage img {

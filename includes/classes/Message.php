@@ -9,7 +9,7 @@ class Message {
 	}
 
 	public function getMostRecentUser() {
-		$userLoggedIn = $this->user_obj->getUsername();
+		$userLoggedIn = $this->user_obj->username;
 
 		$query = mysqli_query($this->con, "SELECT user_to, user_from FROM messages WHERE user_to='$userLoggedIn' OR user_from='$userLoggedIn' ORDER BY id DESC LIMIT 1");
 
@@ -30,13 +30,13 @@ class Message {
 	public function sendMessage($user_to, $body, $date) {
 
 		if($body != "") {
-			$userLoggedIn = $this->user_obj->getUsername();
+			$userLoggedIn = $this->user_obj->username;
 			$query = mysqli_query($this->con, "INSERT INTO messages VALUES(0, '$user_to', '$userLoggedIn', '$body', '$date', 'no', 'no', 'no')");
 		}
 	}
 
 	public function getMessages($otherUser) {
-		$userLoggedIn = $this->user_obj->getUsername();
+		$userLoggedIn = $this->user_obj->username;
 		$data = "";
 
 		$query = mysqli_query($this->con, "UPDATE messages SET opened='yes' WHERE user_to='$userLoggedIn' AND user_from='$otherUser'");
@@ -50,7 +50,7 @@ class Message {
 			$id = $row['id'];
 
 			$div_top = ($user_to == $userLoggedIn) ? "<div class='message' id='green'>" : "<div class='message' id='blue'>";
-			$button = "<span class='deleteButton' onclick='deleteMessage($id, this)'>X</span>";
+			$button = "<i class='deleteButton fa fa-trash' onclick='deleteMessage($id, this)'></i>";
 			$data = $data . $div_top . $button . $body . "</div><br><br>";
 		}
 		return $data;
@@ -64,69 +64,7 @@ class Message {
 		$row = mysqli_fetch_array($query);
 		$sent_by = ($row['user_to'] == $userLoggedIn) ? "They said: " : "You said: ";
 
-		//Timeframe
-		$date_time_now = date("Y-m-d H:i:s");
-		$start_date = new DateTime($row['date']); //Time of post
-		$end_date = new DateTime($date_time_now); //Current time
-		$interval = $start_date->diff($end_date); //Difference between dates 
-		if($interval->y >= 1) {
-			if($interval->y == 1)
-				$time_message = $interval->y . " year ago"; //1 year ago
-			else 
-				$time_message = $interval->y . " years ago"; //1+ year ago
-		}
-		else if ($interval->m >= 1) {
-			if($interval->d == 0) {
-				$days = " ago";
-			}
-			else if($interval->d == 1) {
-				$days = $interval->d . " day ago";
-			}
-			else {
-				$days = $interval->d . " days ago";
-			}
-
-
-			if($interval->m == 1) {
-				$time_message = $interval->m . " month". $days;
-			}
-			else {
-				$time_message = $interval->m . " months". $days;
-			}
-
-		}
-		else if($interval->d >= 1) {
-			if($interval->d == 1) {
-				$time_message = "Yesterday";
-			}
-			else {
-				$time_message = $interval->d . " days ago";
-			}
-		}
-		else if($interval->h >= 1) {
-			if($interval->h == 1) {
-				$time_message = $interval->h . " hour ago";
-			}
-			else {
-				$time_message = $interval->h . " hours ago";
-			}
-		}
-		else if($interval->i >= 1) {
-			if($interval->i == 1) {
-				$time_message = $interval->i . " minute ago";
-			}
-			else {
-				$time_message = $interval->i . " minutes ago";
-			}
-		}
-		else {
-			if($interval->s < 30) {
-				$time_message = "Just now";
-			}
-			else {
-				$time_message = $interval->s . " seconds ago";
-			}
-		}
+        $time_message = date("Y-m-d H:i:s");
 
 		array_push($details_array, $sent_by);
 		array_push($details_array, $row['body']);
@@ -136,7 +74,7 @@ class Message {
 	}
 
 	public function getConvos() {
-		$userLoggedIn = $this->user_obj->getUsername();
+		$userLoggedIn = $this->user_obj->username;
 		$return_string = "";
 		$convos = array();
 
@@ -154,15 +92,13 @@ class Message {
 			$user_found_obj = new User($this->con, $username);
 			$latest_message_details = $this->getLatestMessage($userLoggedIn, $username);
 
-			$dots = (strlen($latest_message_details[1]) >= 12) ? "..." : "";
-			$split = str_split($latest_message_details[1], 12);
-			$split = $split[0] . $dots; 
+            $split = substr($latest_message_details[1], 0,50);
 
 			$return_string .= "<a href='messages.php?u=$username'> <div class='user_found_messages'>
-								<img src='" . $user_found_obj->getProfilePic() . "' style='border-radius: 5px; margin-right: 5px;'>
+								<img src='" . $user_found_obj->profilePicture . "' style='border-radius: 5px; margin-right: 5px;'>
 								" . $user_found_obj->getFirstAndLastName() . "
-								<span class='timestamp_smaller' id='grey'> " . $latest_message_details[2] . "</span>
-								<p id='grey' style='margin: 0;'>" . $latest_message_details[0] . $split . " </p>
+								<span class='timestamp_smaller' class='grey'> " . $latest_message_details[2] . "</span>
+								<p class='grey' style='margin: 0;'>" . $latest_message_details[0] . $split . " </p>
 								</div>
 								</a>";
 		}
@@ -174,7 +110,7 @@ class Message {
 	public function getConvosDropdown($data, $limit) {
 
 		$page = $data['page'];
-		$userLoggedIn = $this->user_obj->getUsername();
+		$userLoggedIn = $this->user_obj->username;
 		$return_string = "";
 		$convos = array();
 
@@ -217,16 +153,14 @@ class Message {
 			$user_found_obj = new User($this->con, $username);
 			$latest_message_details = $this->getLatestMessage($userLoggedIn, $username);
 
-			$dots = (strlen($latest_message_details[1]) >= 12) ? "..." : "";
-			$split = str_split($latest_message_details[1], 12);
-			$split = $split[0] . $dots; 
+			$split = substr($latest_message_details[1], 0,50);
 
 			$return_string .= "<a href='messages.php?u=$username'> 
 								<div class='user_found_messages' style='" . $style . "'>
-								<img src='" . $user_found_obj->getProfilePic() . "' style='border-radius: 5px; margin-right: 5px;'>
+								<img src='" . $user_found_obj->profilePicture  . "' style='border-radius: 5px; margin-right: 5px;'>
 								" . $user_found_obj->getFirstAndLastName() . "
-								<span class='timestamp_smaller' id='grey'> " . $latest_message_details[2] . "</span>
-								<p id='grey' style='margin: 0;'>" . $latest_message_details[0] . $split . " </p>
+								<span class='timestamp_smaller' class='grey'> " . $latest_message_details[2] . "</span>
+								<p class='grey' style='margin: 0;'>" . $latest_message_details[0] . $split . " </p>
 								</div>
 								</a>";
 		}
@@ -242,7 +176,7 @@ class Message {
 	}
 
 	public function getUnreadNumber() {
-		$userLoggedIn = $this->user_obj->getUsername();
+		$userLoggedIn = $this->user_obj->username;
 		$query = mysqli_query($this->con, "SELECT * FROM messages WHERE viewed='no' AND user_to='$userLoggedIn'");
 		return mysqli_num_rows($query);
 	}

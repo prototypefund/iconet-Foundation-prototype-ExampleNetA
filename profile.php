@@ -1,15 +1,19 @@
 <?php 
-include("includes/header.php");
-include_once "iconet/db_handlers.php";
+require_once("includes/header.php");
+require_once "iconet/db_handlers.php";
 
 $message_obj = new Message($con, $userLoggedIn);
 
 if(isset($_GET['profile_username'])) {
 	$username = $_GET['profile_username'];
-	$user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$username'");
-	$user_array = mysqli_fetch_array($user_details_query);
 
-	$num_friends = (substr_count($user_array['friend_array'], ",")) - 1;
+    if (!User::exists($username)){
+        echo "<p>Account does not exist</p>";
+        exit();
+    }
+
+    $profileUser = new User($con, $username);
+    $num_friends = mysqli_query($con, "SELECT COUNT(*) FROM is_friend WHERE user='$username'")->num_rows;
 }
 
 
@@ -48,26 +52,26 @@ if(isset($_POST['post_message'])) {
 
  	<style type="text/css">
 	 	.wrapper {
-	 		margin-left: 0px;
-			padding-left: 0px;
+	 		margin-left: 0;
+			padding-left: 0;
 	 	}
 
  	</style>
 
 <div class="profile_left">
- 		<img src="<?php echo $user_array['profile_pic']; ?>">
+ 		<img src="<?= $profileUser->profilePicture ?>">
  		<div class="profile_info">
-            <p><?php $address = get_globaladdress($username); ?></p>
-            <p><?php echo "Address: " . $address; ?></p>
-            <p><?php echo "Posts: " . $user_array['num_posts']; ?></p>
- 			<p><?php echo "Likes: " . $user_array['num_likes']; ?></p>
- 			<p><?php echo "Friends: " . $num_friends ?></p>
+            <?php $address = get_globaladdress($username); ?>
+            <p>Address: <?=$address?></p>
+            <p>Posts: <?=$profileUser->postsCount?></p>
+ 			<p>Likes: <?=$profileUser->likesCount?></p>
+ 			<p>Friends: <?=$num_friends?></p>
  		</div>
 
- 		<form action="profile.php?profile_username=<?php echo $username; ?>" method="POST">
+ 		<form action="profile.php?profile_username=<?= $username ?>" method="POST">
  			<?php 
  			$profile_user_obj = new User($con, $username); 
- 			if($profile_user_obj->isClosed()) {
+ 			if($profile_user_obj->isClosed) {
  				header("Location: user_closed.php");
  			}
 
@@ -75,7 +79,7 @@ if(isset($_POST['post_message'])) {
 
  			if($userLoggedIn != $username) {
 
- 				if($logged_in_user_obj->isFriend($username)) {
+ 				if($logged_in_user_obj->isFriend($profile_user_obj)) {
  					echo '<input type="submit" name="remove_friend" class="danger" value="Remove Friend"><br>';
  				}
  				else if ($logged_in_user_obj->didReceiveRequest($username)) {
@@ -96,7 +100,7 @@ if(isset($_POST['post_message'])) {
     <?php  
     if($userLoggedIn != $username) {
       echo '<div class="profile_info_bottom">';
-        echo $logged_in_user_obj->getMutualFriends($username) . " Mutual friends";
+        echo $logged_in_user_obj->getMutualFriendsCount($profile_user_obj) . " Mutual friends";
       echo '</div>';
     }
 
@@ -125,7 +129,7 @@ if(isset($_POST['post_message'])) {
         <?php  
         
 
-          echo "<h4>You and <a href=./profile.php?profile_username=" . $username .">" . $profile_user_obj->getFirstAndLastName() . "</a></h4><hr><br>";
+          echo "<h4>You and <a href='/profile.php?profile_username=$username'>" . $profile_user_obj->getFirstAndLastName() . "</a></h4><hr><br>";
 
           echo "<div class='loaded_messages' id='scroll_messages'>";
             echo $message_obj->getMessages($username);
@@ -172,8 +176,8 @@ if(isset($_POST['post_message'])) {
       	<form class="profile_post" action="" method="POST">
       		<div class="form-group">
       			<textarea class="form-control" name="post_body"></textarea>
-      			<input type="hidden" name="user_from" value="<?php echo $userLoggedIn; ?>">
-      			<input type="hidden" name="user_to" value="<?php echo $username; ?>">
+      			<input type="hidden" name="user_from" value="<?= $userLoggedIn ?>">
+      			<input type="hidden" name="user_to" value="<?= $username ?>">
       		</div>
       	</form>
       </div>
@@ -189,62 +193,55 @@ if(isset($_POST['post_message'])) {
 
 
 <script>
-  var userLoggedIn = '<?php echo $userLoggedIn; ?>';
-  var profileUsername = '<?php echo $username; ?>';
+  var userLoggedIn = '<?= $userLoggedIn ?>';
+  var profileUsername = '<?= $username ?>';
 
   $(document).ready(function() {
 
-    $('#loading').show();
+      $('#loading').show();
 
-    //Original ajax request for loading first posts 
-    $.ajax({
-      url: "includes/handlers/ajax_load_profile_posts.php",
-      type: "POST",
-      data: "page=1&userLoggedIn=" + userLoggedIn + "&profileUsername=" + profileUsername,
-      cache:false,
-
-      success: function(data) {
-        $('#loading').hide();
-        $('.posts_area').html(data);
-      }
-    });
-
-    $(window).scroll(function() {
-      var height = $('.posts_area').height(); //Div containing posts
-      var scroll_top = $(this).scrollTop();
-      var page = $('.posts_area').find('.nextPage').val();
-      var noMorePosts = $('.posts_area').find('.noMorePosts').val();
-
-      if ((document.body.scrollHeight == document.body.scrollTop + window.innerHeight) && noMorePosts == 'false') {
-        $('#loading').show();
-
-        var ajaxReq = $.ajax({
+      //Original ajax request for loading first posts
+      $.ajax({
           url: "includes/handlers/ajax_load_profile_posts.php",
-          type: "POST",
-          data: "page=" + page + "&userLoggedIn=" + userLoggedIn + "&profileUsername=" + profileUsername,
+          data: `profile=${profileUsername}`,
           cache:false,
 
-          success: function(response) {
-            $('.posts_area').find('.nextPage').remove(); //Removes current .nextpage 
-            $('.posts_area').find('.noMorePosts').remove(); //Removes current .nextpage 
-            $('.posts_area').find('.noMorePostsText').remove(); //Removes current .nextpage 
-
-            $('#loading').hide();
-            $('.posts_area').append(response);
-              
+          success: function(data) {
+              $('#loading').hide();
+              $('.posts_area').html(data);
           }
-        });
+      });
 
-      } //End if 
+      $(window).scroll(function() {
+          var last = $('.posts_area').find('.last').val();
+          var more = $('.posts_area').find('.more').val();
 
-      return false;
+          if (((window.innerHeight + window.scrollY) >= document.documentElement.offsetHeight)
+              && more && $('#loading').is(":hidden")
+          ) {
+              $('#loading').show();
 
-    }); //End (window).scroll(function())
+              var ajaxReq = $.ajax({
+                  url: "includes/handlers/ajax_load_profile_posts.php",
+                  data: `profile=${profileUsername}&startAfter=${last}`,
+                  cache:false,
 
+                  success: function(response) {
+                      $('.posts_area').find('.last').remove();
+                      $('.posts_area').find('.more').remove();
+                      $('.posts_area').find('.noMorePostsText').remove();
 
+                      $('#loading').hide();
+                      $('.posts_area').append(response);
+                  }
+              });
+          } //End if
+
+          return false;
+      }); //End (window).scroll(function())
   });
 
-  </script>
+</script>
 
 
 

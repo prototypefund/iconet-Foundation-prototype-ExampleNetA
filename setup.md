@@ -76,8 +76,10 @@ in mysql:
 
 Run following steps in mysql not with root but with admin
 
-11. Run mysql: 
-        sudo service mysql start
+11. Start the mysql server with `sudo systemctl start mysql`
+12. Run `netA.sql`
+
+
 ## IDE specific:
 - Connect phpstorm to your AMP and Mysql: [Follow this tutorial](https://www.jetbrains.com/help/phpstorm/installing-an-amp-package.html)
 
@@ -88,4 +90,3 @@ Run following steps in mysql not with root but with admin
 
 - Link IDE Database social@localhost
 
-- Run social.sql on linked database. 

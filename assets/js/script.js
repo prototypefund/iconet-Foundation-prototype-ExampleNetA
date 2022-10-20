@@ -124,7 +124,25 @@ function getLiveSearchUsers(value, user) {
 
 }
 
+function toggleComment(id) {
+	var target = $(event.target);
+	if (!target.is("a")) {
+		var element = document.getElementById(`toggleComment${id}`);
 
+		if(element.style.display == "block") {
+			element.style.display = "none";
+		}else {
+			element.style.display = "block";
+		}
+	}
+}
+
+function deletePost(id) {
+	bootbox.confirm("Are you sure you want to delete this post?", function(result) {
+		$.post("includes/form_handlers/delete_post.php?post_id=<?= $id ?>", {result:result});
+		if(result) location.reload()
+	})
+}
 
 
 

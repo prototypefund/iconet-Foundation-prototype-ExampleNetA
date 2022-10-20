@@ -1,10 +1,10 @@
 <?php
-include_once "iconet/db_handlers.php";
+require_once "iconet/db_handlers.php";
 //Declaring variables to prevent errors
 $fname = ""; //First name
 $lname = ""; //Last name
-$em = ""; //email
-$em2 = ""; //email 2
+$email = ""; //email
+$email2 = ""; //email 2
 $password = ""; //password
 $password2 = ""; //password 2
 $date = ""; //Sign up date 
@@ -27,16 +27,16 @@ if(isset($_POST['register_button'])){
 	$_SESSION['reg_lname'] = $lname; //Stores last name into session variable
 
 	//email
-	$em = strip_tags($_POST['reg_email']); //Remove html tags
-	$em = str_replace(' ', '', $em); //remove spaces
-	$em = ucfirst(strtolower($em)); //Uppercase first letter
-	$_SESSION['reg_email'] = $em; //Stores email into session variable
+	$email = strip_tags($_POST['reg_email']); //Remove html tags
+	$email = str_replace(' ', '', $email); //remove spaces
+	$email = ucfirst(strtolower($email)); //Uppercase first letter
+	$_SESSION['reg_email'] = $email; //Stores email into session variable
 
 	//email 2
-	$em2 = strip_tags($_POST['reg_email2']); //Remove html tags
-	$em2 = str_replace(' ', '', $em2); //remove spaces
-	$em2 = ucfirst(strtolower($em2)); //Uppercase first letter
-	$_SESSION['reg_email2'] = $em2; //Stores email2 into session variable
+	$email2 = strip_tags($_POST['reg_email2']); //Remove html tags
+	$email2 = str_replace(' ', '', $email2); //remove spaces
+	$email2 = ucfirst(strtolower($email2)); //Uppercase first letter
+	$_SESSION['reg_email2'] = $email2; //Stores email2 into session variable
 
 	//Password
 	$password = strip_tags($_POST['reg_password']); //Remove html tags
@@ -44,14 +44,14 @@ if(isset($_POST['register_button'])){
 
 	$date = date("Y-m-d"); //Current date
 
-	if($em == $em2) {
+	if($email == $email2) {
 		//Check if email is in valid format 
-		if(filter_var($em, FILTER_VALIDATE_EMAIL)) {
+		if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
-			$em = filter_var($em, FILTER_VALIDATE_EMAIL);
+			$email = filter_var($email, FILTER_VALIDATE_EMAIL);
 
 			//Check if email already exists 
-			$e_check = mysqli_query($con, "SELECT email FROM users WHERE email='$em'");
+			$e_check = mysqli_query($con, "SELECT email FROM users WHERE email='$email'");
 
 			//Count the number of rows returned
 			$num_rows = mysqli_num_rows($e_check);
@@ -111,17 +111,15 @@ if(isset($_POST['register_button'])){
 		}
 
         //Generate global address by concatenating username and global URL
-        $address = $username . "@" . $domain;
+        $address = $username . "@" . $config['domain'];
 
 		//Profile picture assignment
 		$rand = rand(1, 2); //Random number between 1 and 2
-
-		if($rand == 1)
-			$profile_pic = "assets/images/profile_pics/defaults/head_deep_blue.png";
-		else if($rand == 2)
+        $profile_pic = "assets/images/profile_pics/defaults/head_deep_blue.png";
+        if($rand == 2)
 			$profile_pic = "assets/images/profile_pics/defaults/head_emerald.png";
 
-        $query = mysqli_query($con, "INSERT INTO users VALUES (0, '$fname', '$lname', '$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
+                Database::singleton()->registerUser($fname, $lname, $username, $email, $password, $date, $profile_pic);
 
         add_user($username, $address);
 

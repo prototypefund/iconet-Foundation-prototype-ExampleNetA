@@ -1,15 +1,10 @@
 <?php  
-require 'config/config.php';
-include("includes/classes/User.php");
-include("includes/classes/Post.php");
-include("includes/classes/Message.php");
-include("includes/classes/Notification.php");
+require_once 'config/config.php';
 
 
 if (isset($_SESSION['username'])) {
 	$userLoggedIn = $_SESSION['username'];
-	$user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$userLoggedIn'");
-	$user = mysqli_fetch_array($user_details_query);
+    $user = new User($con, $userLoggedIn);
 }
 else {
 	header("Location: register.php");
@@ -17,21 +12,26 @@ else {
 
 ?>
 
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Welcome to ExampleNetA</title>
 
 	<!-- Javascript -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/bootstrap.js"></script>
 	<script src="assets/js/bootbox.min.js"></script>
-	<script src="assets/js/demo.js"></script>
+	<script src="assets/js/script.js"></script>
 	<script src="assets/js/jquery.jcrop.js"></script>
 	<script src="assets/js/jcrop_bits.js"></script>
 
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 	<link rel="stylesheet" href="assets/css/jquery.Jcrop.css" type="text/css" />
@@ -48,7 +48,7 @@ else {
 		<div class="search">
 
 			<form action="search.php" method="GET" name="search_form">
-				<input type="text" onkeyup="getLiveSearchUsers(this.value, '<?php echo $userLoggedIn; ?>')" name="q" placeholder="Search..." autocomplete="off" id="search_text_input">
+				<input type="text" onkeyup="getLiveSearchUsers(this.value, '<?= $userLoggedIn ?>')" name="q" placeholder="Search..." autocomplete="off" id="search_text_input">
 
 				<div class="button_holder">
 					<img src="assets/images/icons/magnifying_glass.png">
@@ -82,20 +82,20 @@ else {
 			?>
 
 
-			<a href='./profile.php?profile_username=<?php echo $userLoggedIn; ?>'>
-				<?php echo $user['first_name']; ?>
+			<a href='./profile.php?profile_username=<?= $userLoggedIn ?>'>
+				<?= $user->firstname ?>
 			</a>
 			<a href="index.php">
 				<i class="fa fa-home fa-lg"></i>
 			</a>
-			<a href=javascript:void(0); onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'message')">
+			<a href=javascript:void(0); onclick="getDropdownData('<?= $userLoggedIn ?>', 'message')">
 				<i class="fa fa-envelope fa-lg"></i>
 				<?php
 				if($num_messages > 0)
 				 echo '<span class="notification_badge" id="unread_message">' . $num_messages . '</span>';
 				?>
 			</a>
-			<a href=javascript:void(0); onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'notification')">
+			<a href=javascript:void(0); onclick="getDropdownData('<?= $userLoggedIn ?>', 'notification')">
 				<i class="fa fa-bell fa-lg"></i>
 				<?php
 				if($num_notifications > 0)
@@ -118,7 +118,7 @@ else {
 
 		</nav>
 
-		<div class="dropdown_data_window" style="height:0px; border:none;"></div>
+		<div class="dropdown_data_window" style="height:0; border:none;"></div>
 		<input type="hidden" id="dropdown_data_type" value="">
 
 
@@ -126,7 +126,7 @@ else {
 
 
 	<script>
-	var userLoggedIn = '<?php echo $userLoggedIn; ?>';
+	var userLoggedIn = '<?= $userLoggedIn ?>';
 
 	$(document).ready(function() {
 
