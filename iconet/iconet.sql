@@ -21,11 +21,13 @@ SET time_zone = "+00:00";
 -- Table structure for table `contacts`
 --
 
-CREATE TABLE `contacts` (
-                            `username` varchar(100) NOT NULL,
-                            `friend_address` varchar(60) NOT NULL,
-                            `friend_pubkey` varchar(128) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `contacts`
+(
+    `username`       varchar(100) NOT NULL,
+    `friend_address` varchar(60)  NOT NULL,
+    `friend_pubkey`  varchar(128) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 --
 -- Dumping data for table `contacts`
@@ -35,14 +37,16 @@ CREATE TABLE `contacts` (
 -- Table structure for table `notifications`
 --
 
-CREATE TABLE `notifications` (
-                                 `id` int(11) NOT NULL,
-                                 `username` varchar(100) NOT NULL,
-                                 `sender` varchar(60) NOT NULL,
-                                 `secret` varchar(128) NOT NULL,
-                                 `link` varchar(60) NOT NULL,
-                                 `text` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `notifications`
+(
+    `id`       int(11)      NOT NULL,
+    `username` varchar(100) NOT NULL,
+    `sender`   varchar(60)  NOT NULL,
+    `secret`   varchar(128) NOT NULL,
+    `link`     varchar(60)  NOT NULL,
+    `text`     text         NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -50,11 +54,13 @@ CREATE TABLE `notifications` (
 -- Table structure for table `posts`
 --
 
-CREATE TABLE `posts` (
-                         `id` int(11) NOT NULL,
-                         `username` varchar(100) NOT NULL,
-                         `secret` varchar(60) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `posts`
+(
+    `id`       int(11)      NOT NULL,
+    `username` varchar(100) NOT NULL,
+    `secret`   varchar(60)  NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -62,12 +68,14 @@ CREATE TABLE `posts` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
-                         `username` varchar(100) NOT NULL,
-                         `address` varchar(60) NOT NULL,
-                         `publickey` varchar(128) NOT NULL,
-                         `privatekey` varchar(128) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `users`
+(
+    `username`   varchar(100) NOT NULL,
+    `address`    varchar(60)  NOT NULL,
+    `publickey`  varchar(128) NOT NULL,
+    `privatekey` varchar(128) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 --
 -- Indexes for dumped tables

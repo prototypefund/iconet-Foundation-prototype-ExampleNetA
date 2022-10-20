@@ -1,4 +1,5 @@
 <?php
+
 require_once("../../config/config.php");
 
 $limit = 7; //Number of messages to load

@@ -12,9 +12,9 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
 --
@@ -27,15 +27,17 @@ SET time_zone = "+00:00";
 -- Table structure for table `comments`
 --
 
-CREATE TABLE `comments` (
-  `id` int NOT NULL,
-  `post_body` text NOT NULL,
-  `posted_by` varchar(60) NOT NULL,
-  `posted_to` varchar(60) NOT NULL,
-  `date_added` datetime NOT NULL,
-  `removed` tinyint(1) NOT NULL,
-  `post_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `comments`
+(
+    `id`         int         NOT NULL,
+    `post_body`  text        NOT NULL,
+    `posted_by`  varchar(60) NOT NULL,
+    `posted_to`  varchar(60) NOT NULL,
+    `date_added` datetime    NOT NULL,
+    `removed`    tinyint(1)  NOT NULL,
+    `post_id`    int         NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -43,11 +45,13 @@ CREATE TABLE `comments` (
 -- Table structure for table `friend_requests`
 --
 
-CREATE TABLE `friend_requests` (
-  `id` int NOT NULL,
-  `user_to` varchar(50) NOT NULL,
-  `user_from` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `friend_requests`
+(
+    `id`        int         NOT NULL,
+    `user_to`   varchar(50) NOT NULL,
+    `user_from` varchar(50) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -55,10 +59,12 @@ CREATE TABLE `friend_requests` (
 -- Table structure for table `is_friend`
 --
 
-CREATE TABLE `is_friend` (
-  `user` varchar(100) NOT NULL,
-  `friend` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `is_friend`
+(
+    `user`   varchar(100) NOT NULL,
+    `friend` varchar(100) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -66,11 +72,13 @@ CREATE TABLE `is_friend` (
 -- Table structure for table `likes`
 --
 
-CREATE TABLE `likes` (
-  `id` int NOT NULL,
-  `username` varchar(60) NOT NULL,
-  `post_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `likes`
+(
+    `id`       int         NOT NULL,
+    `username` varchar(60) NOT NULL,
+    `post_id`  int         NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -78,16 +86,18 @@ CREATE TABLE `likes` (
 -- Table structure for table `messages`
 --
 
-CREATE TABLE `messages` (
-  `id` int NOT NULL,
-  `user_to` varchar(50) NOT NULL,
-  `user_from` varchar(50) NOT NULL,
-  `body` text NOT NULL,
-  `date` datetime NOT NULL,
-  `opened` varchar(3) NOT NULL,
-  `viewed` varchar(3) NOT NULL,
-  `deleted` varchar(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `messages`
+(
+    `id`        int         NOT NULL,
+    `user_to`   varchar(50) NOT NULL,
+    `user_from` varchar(50) NOT NULL,
+    `body`      text        NOT NULL,
+    `date`      datetime    NOT NULL,
+    `opened`    varchar(3)  NOT NULL,
+    `viewed`    varchar(3)  NOT NULL,
+    `deleted`   varchar(3)  NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -95,16 +105,18 @@ CREATE TABLE `messages` (
 -- Table structure for table `notifications`
 --
 
-CREATE TABLE `notifications` (
-  `id` int NOT NULL,
-  `user_to` varchar(50) NOT NULL,
-  `user_from` varchar(50) NOT NULL,
-  `message` text NOT NULL,
-  `link` varchar(100) NOT NULL,
-  `datetime` datetime NOT NULL,
-  `opened` varchar(3) NOT NULL,
-  `viewed` varchar(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `notifications`
+(
+    `id`        int          NOT NULL,
+    `user_to`   varchar(50)  NOT NULL,
+    `user_from` varchar(50)  NOT NULL,
+    `message`   text         NOT NULL,
+    `link`      varchar(100) NOT NULL,
+    `datetime`  datetime     NOT NULL,
+    `opened`    varchar(3)   NOT NULL,
+    `viewed`    varchar(3)   NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -112,35 +124,39 @@ CREATE TABLE `notifications` (
 -- Table structure for table `posts`
 --
 
-CREATE TABLE `posts` (
-  `id` int NOT NULL,
-  `body` text NOT NULL,
-  `added_by` varchar(100) NOT NULL,
-  `user_to` varchar(100),
-  `date_added` datetime NOT NULL,
-  `user_closed` tinyint(1) NOT NULL,
-  `deleted` tinyint(1) NOT NULL,
-  `likes` int NOT NULL,
-  `image` varchar(60)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `posts`
+(
+    `id`          int          NOT NULL,
+    `body`        text         NOT NULL,
+    `added_by`    varchar(100) NOT NULL,
+    `user_to`     varchar(100),
+    `date_added`  datetime     NOT NULL,
+    `user_closed` tinyint(1)   NOT NULL,
+    `deleted`     tinyint(1)   NOT NULL,
+    `likes`       int          NOT NULL,
+    `image`       varchar(60)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 --
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
-  `first_name` varchar(25) NOT NULL,
-  `last_name` varchar(25) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `signup_date` date NOT NULL,
-  `profile_pic` varchar(255) NOT NULL,
-  `num_posts` int NOT NULL,
-  `num_likes` int NOT NULL,
-  `user_closed` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `users`
+(
+    `first_name`  varchar(25)  NOT NULL,
+    `last_name`   varchar(25)  NOT NULL,
+    `username`    varchar(100) NOT NULL,
+    `email`       varchar(100) NOT NULL,
+    `password`    varchar(255) NOT NULL,
+    `signup_date` date         NOT NULL,
+    `profile_pic` varchar(255) NOT NULL,
+    `num_posts`   int          NOT NULL,
+    `num_likes`   int          NOT NULL,
+    `user_closed` tinyint(1)   NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 --
 -- Indexes for dumped tables
@@ -150,7 +166,7 @@ CREATE TABLE `users` (
 -- Indexes for table `is_friend`
 --
 ALTER TABLE `is_friend`
-  ADD PRIMARY KEY (`user`,`friend`);
+    ADD PRIMARY KEY (`user`, `friend`);
 
 --
 -- Indexes for table `users`
@@ -192,6 +208,6 @@ ALTER TABLE `posts`
     ADD CONSTRAINT `posts_friend_ibfk_2` FOREIGN KEY (`user_to`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE RESTRICT;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;

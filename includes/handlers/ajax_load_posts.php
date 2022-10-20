@@ -1,4 +1,5 @@
-<?php  
+<?php
+
 require_once("../../config/config.php");
 
 $limit = 10; //Number of posts to be loaded per call

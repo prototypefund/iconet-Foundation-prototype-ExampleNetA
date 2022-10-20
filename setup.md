@@ -1,22 +1,26 @@
 # Project setup
+
 ## Clone the repository
+
 ### Via HTTPS:
 
     git clone https://codeberg.org/iconet-Foundation/prototype-ExampleNetA.git
 
 ### Or Via SSH:
+
 Upload your public key in Codeberg under `Settings->Security`. Follow the instructions if you dont already have one.
 Download the repository with:
 
     git clone git@codeberg.org:iconet-Foundation/prototype-ExampleNetA.git
 
-
 ## On Ubuntu
+
 1. php-7.4 is already installed, install apache2, install mysql
 
         sudo apt install apache2 mysql-server
 
-2. Make apache2 host your local folder: Create a new file called netA.conf under `/etc/apache2/sites-available/` You need sudo rights:
+2. Make apache2 host your local folder: Create a new file called netA.conf under `/etc/apache2/sites-available/` You
+   need sudo rights:
 
         sudoedit /etc/apache2/sites-available/netA.conf
 
@@ -66,22 +70,24 @@ Download the repository with:
 
 
 9. If apache is not running run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
-If mysql not running run `sudo service mysql start`
+   If mysql not running run `sudo service mysql start`
 
 
-10. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights and no pw.
-in mysql:
-        `CREATE USER 'admin'@'localhost' IDENTIFIED BY '';`
-        `GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;`
+10. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights and no
+    pw.
+    in mysql:
+    `CREATE USER 'admin'@'localhost' IDENTIFIED BY '';`
+    `GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;`
 
 Run following steps in mysql not with root but with admin
 
 11. Start the mysql server with `sudo systemctl start mysql`
 12. Run `netA.sql`
 
-
 ## IDE specific:
-- Connect phpstorm to your AMP and Mysql: [Follow this tutorial](https://www.jetbrains.com/help/phpstorm/installing-an-amp-package.html)
+
+- Connect phpstorm to your AMP and
+  Mysql: [Follow this tutorial](https://www.jetbrains.com/help/phpstorm/installing-an-amp-package.html)
 
 - Create Database "social":
 

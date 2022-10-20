@@ -1,11 +1,11 @@
 <?php
+
 require_once("includes/header.php");
 
 if(isset($_GET['id'])) {
-	$id = $_GET['id'];
-}
-else {
-	$id = 0;
+    $id = $_GET['id'];
+} else {
+    $id = 0;
 }
 $post = new Post($con, $userLoggedIn);
 $content = $post->getSinglePost($id);
