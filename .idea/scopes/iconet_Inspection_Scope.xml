@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="iconet Inspection Scope" pattern="file[prototype-ExampleNetA]:iconet//*" />
+</component>
