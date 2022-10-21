@@ -10,6 +10,41 @@ include_once "./iconet/database.php";
 
 test_encryption();
 
+
+
+
+/*//generate key pair
+$privKey = openssl_pkey_new();
+$pubKey_pem = openssl_pkey_get_details($privKey)['key'];
+echo "pubKey as string:<br>" . $pubKey_pem . "<br>";
+$pubKey = openssl_pkey_get_public($pubKey_pem);
+echo "pubKey:<br>";
+var_dump($pubKey);
+echo "<br>privKey:<br>";
+var_dump($privKey);
+echo "<br>";
+
+//generate symKey
+$symKey = "pups123+#?";
+echo "symKey:<br>" . $symKey . "<br>";
+
+//sign message
+openssl_sign($symKey, $signature, $privKey, OPENSSL_ALGO_SHA1);
+echo "Signature:<br>" . $signature . "<br>";
+
+//encrypts
+openssl_public_encrypt($symKey, $encSymKey, $pubKey, OPENSSL_PKCS1_PADDING);
+//OPENSSL_PKCS1_PADDING is the default but setting explicitly because that's what we expect on the server
+echo "Encrypted content:<br>" . $encSymKey . "<br>";
+
+//decrypts
+openssl_private_decrypt($encSymKey, $decSymKey, $privKey, OPENSSL_PKCS1_PADDING);
+echo "Decrypted content:<br>" . $decSymKey . "<br>";*/
+
+
+
+
+
 h("Done Testing.");
 
 function test_encryption()
@@ -26,38 +61,43 @@ function test_encryption()
 
     $aliceKeyPair = genKeyPair();
     $bobKeyPair = genKeyPair();
-    $symkey = genSymKey();
+    $symKey = genSymKey();
+    $signature = verSignature($message,$aliceKeyPair[1]);
 
     p("Alice Keypair:");
     var_dump($aliceKeyPair);
     p("Bob Keypair:");
     var_dump($bobKeyPair);
-    p("Symetric Secret:");
-    var_dump($symkey);
+    p("Symmetric Secret:");
+    var_dump($symKey);
+    p("Signature:");
+    var_dump($signature);
+
 
     h("Start Encryption:");
 
-    $encrypted_content = encSym($message, $symkey);
+    $encrypted_content = encSym($message, $symKey);
 
-    p("encrypted_content");
+    p("Encrypted content:");
     var_dump($encrypted_content);
 
-    $encrypted_secret = encAsym($symkey, $bobKeyPair[0]);
+    $encrypted_secret = encAsym($symKey, $bobKeyPair[0]);
 
-    p("encrypted_secret");
+    p("Encrypted secret:");
     var_dump($encrypted_secret);
 
     $decrypted_secret = decAsym($encrypted_secret, $bobKeyPair[1]);
 
-    p("decrypted_secret");
+    p("Decrypted secret:");
     var_dump($decrypted_secret);
 
     $decrypted_content = decSym($encrypted_content, $decrypted_secret);
-    p("decrypted_content");
+
+    p("Decrypted content:");
     var_dump($decrypted_content);
 
 
-    p("Test symetric en- and decryption with multiple keys");
+    p("Test symmetric en- and decryption with multiple keys");
 
     $raw = array('person', 'woman', 'man', 'camera', 'tv');
     $secret = array(genSymKey(), genSymKey(), genSymKey(), genSymKey(), genSymKey());
@@ -97,7 +137,7 @@ function test_encryption()
         p("Error");
     }
 
-// create testusers alice, bob & claire
+// create test users alice, bob & claire
     clear_tables();
     if (!get_globaladdress("alice_tester")) {
         p("Create new test entries");
