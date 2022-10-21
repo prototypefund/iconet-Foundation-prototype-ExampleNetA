@@ -17,7 +17,6 @@ class Database
             $db_user, $db_pass
         );
 
-        $this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 

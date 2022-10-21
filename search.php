@@ -90,19 +90,16 @@ if(isset($_GET['type'])) {
 
                 //Button forms
                 if(isset($_POST[$row['username']])) {
+                    $other = new User($row['username']);
                     if($user_obj->isFriendByUsername($row['username'])) {
-                        $user_obj->removeFriend($row['username']);
+                        $user_obj->removeFriend($other);
                         header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-                    } else {
-                        if($user_obj->didReceiveRequest($row['username'])) {
-                            header("Location: contacts.php");
-                        } else {
-                            if($user_obj->didSendFriendRequest($row['username'])) {
-                            } else {
-                                $user_obj->sendFriendRequest($row['username']);
-                                header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-                            }
-                        }
+                    } elseif($user_obj->didReceiveRequest($row['username'])) {
+                        header("Location: contacts.php");
+                        exit();
+                    } elseif(!$user_obj->didSendFriendRequest($row['username'])) {
+                        $user_obj->sendFriendRequest($row['username']);
+                        header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
                     }
                 }
             }

@@ -96,22 +96,23 @@ class User
         return Database::singleton()->hasSentFriendRequestTo($this->username, $userTo);
     }
 
-    public function removeFriend(string $friend)
+    public function removeFriend(User $friend)
     {
-        Database::singleton()->removeFriend($this->username, $friend);
+        Database::singleton()->removeFriend($this->username, $friend->username);
+        $this->friends = array_diff($this->friends, [$friend->username]);
+        $friend->friends = array_diff($friend->friends, [$this->username]);
     }
 
     public function sendFriendRequest(string $userTo)
     {
         Database::singleton()->createFriendRequest($this->username, $userTo);
-
     }
 
     public function acceptFriendRequest(User $userFrom)
     {
         Database::singleton()->acceptFriendRequest($this, $userFrom);
-        $this->friends = Database::singleton()->getFriends($this->username);
-        $userFrom->friends = Database::singleton()->getFriends($userFrom->username);
+        $this->friends[] = $userFrom->username;
+        $userFrom->friends[] = $this->username;
     }
 
     public function getMutualFriendsCount(User $user)

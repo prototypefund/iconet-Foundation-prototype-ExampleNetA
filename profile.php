@@ -20,7 +20,7 @@ if(isset($_GET['profile_username'])) {
 
 if(isset($_POST['remove_friend'])) {
     $user = new User($userLoggedIn);
-    $user->removeFriend($username);
+    $user->removeFriend($profileUser);
 }
 
 if(isset($_POST['add_friend'])) {

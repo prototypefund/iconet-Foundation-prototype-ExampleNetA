@@ -117,4 +117,19 @@ class UserTest extends TestCase
         self::assertEquals([$this->alice->username], $bob->getFriends());
     }
 
+    public function testRemoveFriend()
+    {
+        $alice = $this->alice;
+        $bob = $this->bob;
+
+        $this->testIsFriend();
+
+        $this->alice->removeFriend($bob);
+
+        self::assertEmpty($alice->getFriends());
+        self::assertEmpty($bob->getFriends());
+        self::assertFalse($bob->isFriend($alice));
+        self::assertFalse($alice->isFriend($bob));
+    }
+
 }
