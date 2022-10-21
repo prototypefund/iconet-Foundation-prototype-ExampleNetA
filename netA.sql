@@ -47,7 +47,6 @@ CREATE TABLE `comments`
 
 CREATE TABLE `friend_requests`
 (
-    `id`        int         NOT NULL,
     `user_to`   varchar(50) NOT NULL,
     `user_from` varchar(50) NOT NULL
 ) ENGINE = InnoDB
@@ -162,15 +161,12 @@ CREATE TABLE `users`
 -- Indexes for dumped tables
 --
 
---
--- Indexes for table `is_friend`
---
 ALTER TABLE `is_friend`
     ADD PRIMARY KEY (`user`, `friend`);
 
---
--- Indexes for table `users`
---
+ALTER TABLE `friend_requests`
+    ADD PRIMARY KEY (`user_from`, `user_to`);
+
 ALTER TABLE `users`
     ADD PRIMARY KEY (`username`);
 
@@ -180,10 +176,11 @@ ALTER TABLE `posts`
 ALTER TABLE `comments`
     ADD PRIMARY KEY (`id`);
 
+
+
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
 
 ALTER TABLE `posts`
     MODIFY `id` int NOT NULL AUTO_INCREMENT;

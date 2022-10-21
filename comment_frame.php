@@ -92,7 +92,7 @@ if($count != 0) {
 
         $time_message = date("Y-m-d H:i:s");
 
-        $user_obj = new User($con, $posted_by);
+        $user_obj = new User($posted_by);
 
 
         ?>

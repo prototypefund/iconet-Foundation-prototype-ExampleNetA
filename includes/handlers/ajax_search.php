@@ -31,11 +31,11 @@ else {
 
 
 if($query != "") {
-    $user = new User($con, $userLoggedIn);
+    $user = new User($userLoggedIn);
 
     while($row = mysqli_fetch_array($usersReturnedQuery)) {
         if($row['username'] != $userLoggedIn) {
-            $other = new User($con, $row['username']);
+            $other = new User($row['username']);
             $mutual_friends = $user->getMutualFriendsCount($other) . " friends in common";
         } else {
             $mutual_friends = "";

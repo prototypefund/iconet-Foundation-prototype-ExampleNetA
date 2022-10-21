@@ -2,8 +2,7 @@
 
 class User
 {
-    private $friends;
-    private $con;
+    private array $friends;
     private string $usernameReference;
 
     public string $firstname;
@@ -15,20 +14,12 @@ class User
     public int $postsCount;
     public bool $isClosed;
 
-    public function __construct($con, $username)
+    public function __construct($username)
     {
-        $user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$username'");
-        $userData = mysqli_fetch_array($user_details_query);
-        $friends_query = mysqli_query($con, "SELECT friend FROM is_friend WHERE user='$userData[username]'");
+        $userData = Database::singleton()->getUser($username);
+        $friends = Database::singleton()->getFriends($username);
 
-        $this->con = $con;
-        $this->init($userData);
-        $f = $friends_query->fetch_all(MYSQLI_ASSOC);
-        $this->friends = array_column($f, 'friend') ?? [];
-    }
-
-    private function init($userData)
-    {
+        $this->friends = $friends;
         $this->firstname = $userData['first_name'];
         $this->lastname = $userData['last_name'];
         $this->username = $userData['username'];
@@ -75,9 +66,7 @@ class User
 
     public function getNumberOfFriendRequests()
     {
-        $username = $this->username;
-        $query = mysqli_query($this->con, "SELECT * FROM friend_requests WHERE user_to='$username'");
-        return mysqli_num_rows($query);
+        return Database::singleton()->friendRequestsCount($this->username);
     }
 
     /**
@@ -97,48 +86,32 @@ class User
         return in_array($username, $this->friends);
     }
 
-    public function didReceiveRequest($user_from)
+    public function didReceiveRequest(string $userFrom) : bool
     {
-        $user_to = $this->username;
-        $check_request_query = mysqli_query(
-            $this->con,
-            "SELECT * FROM friend_requests WHERE user_to='$user_to' AND user_from='$user_from'"
-        );
-        if(mysqli_num_rows($check_request_query) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return Database::singleton()->hasFriendRequestFrom($this->username, $userFrom);
     }
 
-    public function didSendRequest($user_to)
+    public function didSendFriendRequest(string $userTo) : bool
     {
-        $user_from = $this->username;
-        $check_request_query = mysqli_query(
-            $this->con,
-            "SELECT * FROM friend_requests WHERE user_to='$user_to' AND user_from='$user_from'"
-        );
-        if(mysqli_num_rows($check_request_query) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return Database::singleton()->hasSentFriendRequestTo($this->username, $userTo);
     }
 
-    public function removeFriend($friend)
+    public function removeFriend(string $friend)
     {
-        $username = $this->username;
-
-        mysqli_query(
-            $this->con,
-            "DELETE  FROM is_friend WHERE (user='$username' AND friend='$friend' OR user='$friend' AND friend='$username')"
-        );
+        Database::singleton()->removeFriend($this->username, $friend);
     }
 
-    public function sendRequest($user_to)
+    public function sendFriendRequest(string $userTo)
     {
-        $user_from = $this->username;
-        $query = mysqli_query($this->con, "INSERT INTO friend_requests VALUES(0, '$user_to', '$user_from')");
+        Database::singleton()->createFriendRequest($this->username, $userTo);
+
+    }
+
+    public function acceptFriendRequest(User $userFrom)
+    {
+        Database::singleton()->acceptFriendRequest($this, $userFrom);
+        $this->friends = Database::singleton()->getFriends($this->username);
+        $userFrom->friends = Database::singleton()->getFriends($userFrom->username);
     }
 
     public function getMutualFriendsCount(User $user)

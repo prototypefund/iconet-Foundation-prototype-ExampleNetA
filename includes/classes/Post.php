@@ -9,7 +9,7 @@ class Post
     public function __construct($con, $user)
     {
         $this->con = $con;
-        $this->user_obj = new User($con, $user);
+        $this->user_obj = new User($user);
     }
 
     /**

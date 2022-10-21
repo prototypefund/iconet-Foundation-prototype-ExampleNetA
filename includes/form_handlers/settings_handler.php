@@ -59,6 +59,7 @@ if(isset($_POST['update_password'])) {
 
 
 if(isset($_POST['close_account'])) {
+    //TODO does this do anything?
     header("Location: close_account.php");
 }
 

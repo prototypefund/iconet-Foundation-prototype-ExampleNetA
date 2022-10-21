@@ -27,10 +27,10 @@ if(strpos($query, "_") !== false) {
 }
 if($query != "") {
     while($row = mysqli_fetch_array($usersReturned)) {
-        $user = new User($con, $userLoggedIn);
+        $user = new User($userLoggedIn);
 
         if($row['username'] != $userLoggedIn) {
-            $other = new User($con, $row['username']);
+            $other = new User($row['username']);
             $mutual_friends = $user->getMutualFriendsCount($other) . " friends in common";
         } else {
             $mutual_friends = "";

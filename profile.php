@@ -13,19 +13,19 @@ if(isset($_GET['profile_username'])) {
         exit();
     }
 
-    $profileUser = new User($con, $username);
+    $profileUser = new User($username);
     $num_friends = mysqli_query($con, "SELECT COUNT(*) FROM is_friend WHERE user='$username'")->num_rows;
 }
 
 
 if(isset($_POST['remove_friend'])) {
-    $user = new User($con, $userLoggedIn);
+    $user = new User($userLoggedIn);
     $user->removeFriend($username);
 }
 
 if(isset($_POST['add_friend'])) {
-    $user = new User($con, $userLoggedIn);
-    $user->sendRequest($username);
+    $user = new User($userLoggedIn);
+    $user->sendFriendRequest($username);
 }
 if(isset($_POST['respond_request'])) {
     header("Location: contacts.php");
@@ -69,12 +69,12 @@ if(isset($_POST['post_message'])) {
 
     <form action="profile.php?profile_username=<?= $username ?>" method="POST">
         <?php
-        $profile_user_obj = new User($con, $username);
+        $profile_user_obj = new User($username);
         if($profile_user_obj->isClosed) {
             header("Location: user_closed.php");
         }
 
-        $logged_in_user_obj = new User($con, $userLoggedIn);
+        $logged_in_user_obj = new User($userLoggedIn);
 
         if($userLoggedIn != $username) {
             if($logged_in_user_obj->isFriend($profile_user_obj)) {
@@ -83,7 +83,7 @@ if(isset($_POST['post_message'])) {
                 if($logged_in_user_obj->didReceiveRequest($username)) {
                     echo '<input type="submit" name="respond_request" class="warning" value="Respond to Request"><br>';
                 } else {
-                    if($logged_in_user_obj->didSendRequest($username)) {
+                    if($logged_in_user_obj->didSendFriendRequest($username)) {
                         echo '<input type="submit" name="" class="default" value="Request Sent"><br>';
                     } else {
                         echo '<input type="submit" name="add_friend" class="success" value="Add Friend"><br>';

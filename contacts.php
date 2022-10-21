@@ -46,14 +46,14 @@ require_once("iconet/db_handlers.php");
     } else {
         while($row = mysqli_fetch_array($query)) {
             $user_from = $row['user_from'];
-            $user_from_obj = new User($con, $user_from);
+            $user_from_obj = new User($user_from);
 
             echo $user_from_obj->getFirstAndLastName() . " sent you a friend request!";
 
             $user_from_friend_array = $user_from_obj->getFriends();
 
             if(isset($_POST['accept_request' . $user_from])) {
-                Database::singleton()->acceptFriendRequest($user, $user_from_obj);
+                $user->acceptFriendRequest($user_from_obj);
                 echo "You are now friends!";
                 header("Location: contacts.php");
             }

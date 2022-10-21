@@ -31,18 +31,32 @@ class Database
         return self::$singleton;
     }
 
+    public function getUser(string $username)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE username=:username");
+        $stmt->execute(compact('username',));
+        return $stmt->fetch();
+    }
+
+    public function getFriends($username)
+    {
+        $stmt = $this->db->prepare("SELECT friend FROM is_friend WHERE user=:username");
+        $stmt->execute(compact('username',));
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
+
     public function acceptFriendRequest(User $user, User $friend): void
     {
-        $username = $user->username;
+        $userName = $user->username;
         $friendName = $friend->username;
 
         $stmt = $this->db->prepare("INSERT INTO is_friend (user, friend) VALUES (:userName, :friendName)");
-        $stmt->execute(compact('username', 'friendName'));
+        $stmt->execute(compact('userName', 'friendName'));
         $stmt = $this->db->prepare("INSERT INTO is_friend (user, friend) VALUES (:friendName, :userName)");
-        $stmt->execute(compact('username', 'friendName'));
+        $stmt->execute(compact('userName', 'friendName'));
 
         $stmt = $this->db->prepare("DELETE FROM friend_requests WHERE user_to=:userName AND user_from=:friendName");
-        $stmt->execute(compact('username', 'friendName'));
+        $stmt->execute(compact('userName', 'friendName'));
     }
 
     public function createPost(
@@ -116,4 +130,55 @@ class Database
 
         return $this->db->lastInsertId();
     }
+
+    public function friendRequestsCount(string $username)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM friend_requests WHERE user_to=:username");
+        $stmt->execute(compact('username'));
+        return $stmt->fetch()['count'];
+    }
+
+    public function hasFriendRequestFrom(string $username, string $usernameFrom): bool
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM friend_requests WHERE user_to=:username AND user_from=:usernameFrom"
+        );
+        $stmt->execute(compact('username', 'usernameFrom'));
+        return $stmt->rowCount() > 0;
+    }
+
+    public function hasSentFriendRequestTo(string $username, string $usernameTo): bool
+    {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM friend_requests WHERE user_to=:usernameTo AND user_from=:username"
+        );
+        $stmt->execute(compact('username', 'usernameTo'));
+        return $stmt->rowCount() > 0;
+    }
+
+    public function removeFriend(string $username, string $friend)
+    {
+        $stmt = $this->db->prepare(
+            "DELETE FROM is_friend WHERE (user=:username AND friend=:friend 
+                                  OR user=:friend AND friend=:username)"
+        );
+        $stmt->execute(compact('username', 'friend'));
+    }
+
+    public function createFriendRequest(string $username, string $userTo)
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO friend_requests (user_from, user_to) VALUES (:username, :userTo)"
+        );
+        $stmt->execute(compact('username', 'userTo'));
+    }
+
+    public function deleteUser(string $username)
+    {
+        $stmt = $this->db->prepare(
+            "DELETE FROM users WHERE username=:username"
+        );
+        $stmt->execute(compact('username', ));
+    }
+
 }

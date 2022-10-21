@@ -5,9 +5,10 @@ require_once 'config/config.php';
 
 if(isset($_SESSION['username'])) {
     $userLoggedIn = $_SESSION['username'];
-    $user = new User($con, $userLoggedIn);
+    $user = new User($userLoggedIn);
 } else {
     header("Location: register.php");
+    exit();
 }
 
 ?>
@@ -77,7 +78,7 @@ if(isset($_SESSION['username'])) {
         $num_notifications = $notifications->getUnreadNumber();
 
         //Unread notifications
-        $user_obj = new User($con, $userLoggedIn);
+        $user_obj = new User($userLoggedIn);
         $num_requests = $user_obj->getNumberOfFriendRequests();
         ?>
 
