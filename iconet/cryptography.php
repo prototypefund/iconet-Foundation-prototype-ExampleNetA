@@ -1,6 +1,6 @@
 <?php
 include_once './iconet/libs/AES.php';
-include_once './iconet/libs/RSA.php';
+
 
 //symmetric encryption:
 
