@@ -1,15 +1,23 @@
 <?php
 include_once './iconet/libs/AES.php';
+include_once './iconet/libs/RSA.php';
 
-//symetric encrytion:
+//symmetric encryption:
+
 $AES = null;
 $blockSize = 256;
 
 function genKeyPair(){
-    // simulated genKey
-    $pubKey='pubKey';
-    $privKey='priKey';
+    $privKey = openssl_pkey_new();
+    $pubKey_pem = openssl_pkey_get_details($privKey)['key'];
+    echo "pubKey as string:<br>" . $pubKey_pem . "<br>";
+    $pubKey = openssl_pkey_get_public($pubKey_pem);
     return [$pubKey,$privKey];
+}
+
+function verSignature($message,$privKey){
+    openssl_sign($message, $signature, $privKey, OPENSSL_ALGO_SHA1);
+    return $signature;
 }
 
 function genSymKey(){
@@ -45,23 +53,21 @@ function genAllCiphers($userLoggedIn,$secret){
     return $ciphers;
 }
 
-function encAsym($data,$pubKey){
-
-    return $data.$pubKey;
+function encAsym($symKey,$pubKey){
+    openssl_public_encrypt($symKey, $encSymKey, $pubKey, OPENSSL_PKCS1_PADDING);
+    //OPENSSL_PKCS1_PADDING is the default but setting explicitly because that's what we expect on the server
+    return $encSymKey;
 }
 
-function decAsym($encrypted,$privKey){
-    $len = strlen($privKey);
-    $data=substr($encrypted,0,-$len);
-    return $data;
+function decAsym($encSecret,$privKey){
+    openssl_private_decrypt($encSecret, $decSecret, $privKey, OPENSSL_PKCS1_PADDING);
+    return $decSecret;
 }
 
 function openCipher($cipher){
-    $privkey = get_privkey_by_address($cipher['address']);
-    return decAsym($cipher['cipher'], $privkey);
+    $privKey = get_privkey_by_address($cipher['address']);
+    return decAsym($cipher['cipher'], $privKey);
 }
 
 ?>
-
-
 
