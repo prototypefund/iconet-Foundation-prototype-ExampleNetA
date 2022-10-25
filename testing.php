@@ -7,27 +7,14 @@ p("Includes:");
 include_once "./iconet/cryptography.php";
 include_once "./config/config.php";
 include_once "./iconet/database.php";
+include_once "./iconet/index.php";
 
-init_testdata();
-test_encryption();
-//test_processing();
+//init_testdata();
+
+test_processing();
 // test_encryption();
 
-
-
-
-$privKey = openssl_pkey_new();
-var_dump($privKey);
-$pubKey_pem = openssl_pkey_get_details($privKey)['key'];
-echo "pubKey as string:<br>" . $pubKey_pem . "<br>";
-$pubKey = openssl_pkey_get_public($pubKey_pem);
-echo "pubKey:<br>";
-var_dump($pubKey);
-echo "<br>privKey:<br>";
-var_dump($privKey);
-echo "<br>";
-
-clean_test_data();
+//clean_test_data();
 
 h("Done Testing.");
 
@@ -51,9 +38,12 @@ function init_testdata(){
 }
 
 function test_processing(){
-    h("Test Processing:");#
-    p("Post String: 'Test Posting!'");
-    var_dump( create_iconet_post("Test Posting!"));
+    h("Test Processing:");
+    p("Receive Package: Request content");
+    $package['type'] = "Request content";
+    $package['ID'] = "SDfadsfa";
+    $response = receive(json_encode($package));
+    var_dump($response);
 }
 
 
