@@ -23,6 +23,34 @@ function get_privkey_by_address($address){
     }
 }
 
+function add_post($id, $username, $secret){
+    global $icon;
+    echo $id;
+    $query = mysqli_query($icon, "INSERT INTO posts VALUES ('$id', '$username', '$secret')");
+}
+
+function get_user_by_name($name){
+    global $icon;
+    $query = mysqli_query($icon, "SELECT * FROM users WHERE username='$name'");
+    if (mysqli_num_rows($query) > 0){
+        $user = mysqli_fetch_array($query);
+        return $user;
+    } else {
+        return false;
+    }
+}
+
+function get_post_by_id($ID){
+    global $icon;
+    $query = mysqli_query($icon, "SELECT * FROM posts WHERE id='$ID'");
+    if (mysqli_num_rows($query) > 0){
+        $row = mysqli_fetch_array($query);
+        return $row;
+    } else {
+        return false;
+    }
+}
+
 
 function add_user($username, $address){
     global $icon;

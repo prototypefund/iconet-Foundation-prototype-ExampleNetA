@@ -8,9 +8,39 @@ include_once "./iconet/cryptography.php";
 include_once "./config/config.php";
 include_once "./iconet/database.php";
 
+init_testdata();
 test_encryption();
+//test_processing();
+
+clean_test_data();
 
 h("Done Testing.");
+
+function clean_test_data(){
+    session_unset();
+}
+
+function init_testdata(){
+    global $userLoggedIn;
+    $userLoggedIn = "alice_tester";
+
+    // create testusers alice, bob & claire
+    clear_tables();
+        add_user("alice_tester", "alice@alicenet.net");
+        add_user("bob_tester", "bob@bobnet.org");
+        add_user("claire_tester", "claire@clairenet.de");
+        $bobKey = genKeyPair();
+        $claireKey = genkeyPair();
+        add_contact("alice_tester", "bob@bobnet.org", $bobKey[0]);
+        add_contact("alice_tester", "claire@clairenet.de", $claireKey[0]);
+}
+
+function test_processing(){
+    h("Test Processing:");#
+    p("Post String: 'Test Posting!'");
+    var_dump( create_iconet_post("Test Posting!"));
+}
+
 
 function test_encryption()
 {

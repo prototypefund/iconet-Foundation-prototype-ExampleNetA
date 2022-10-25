@@ -34,7 +34,7 @@ function decSym($encrypted,$key){
 
 function genAllCiphers($userLoggedIn,$secret){
     $contacts = get_contacts($userLoggedIn);
-
+    if ($contacts == null) return null; //you need contacts generate something for them
     $i = 0;
     foreach ($contacts as $c){
         $cipher['address'] = $c['address'];
@@ -42,7 +42,6 @@ function genAllCiphers($userLoggedIn,$secret){
         $ciphers[$i] = $cipher;
         $i++;
     }
-
     return $ciphers;
 }
 

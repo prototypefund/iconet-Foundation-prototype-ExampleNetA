@@ -51,7 +51,7 @@ CREATE TABLE `notifications` (
 --
 
 CREATE TABLE `posts` (
-                         `id` int(11) NOT NULL,
+                         `id` varchar(60) NOT NULL,
                          `username` varchar(100) NOT NULL,
                          `secret` varchar(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
