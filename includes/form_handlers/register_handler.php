@@ -1,5 +1,7 @@
 <?php
 include_once "iconet/database.php";
+
+
 //Declaring variables to prevent errors
 $fname = ""; //First name
 $lname = ""; //Last name
@@ -123,7 +125,8 @@ if(isset($_POST['register_button'])){
 
         $query = mysqli_query($con, "INSERT INTO users VALUES (0, '$fname', '$lname', '$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
 
-        add_user($username, $address);
+        $keyPair = genkeyPair();
+        add_user($username, $address, $keyPair[0], $keyPair[1]);
 
 		array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
 

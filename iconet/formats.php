@@ -20,8 +20,7 @@
                         echo "Error - Faulty address in publicKey request <br>" . $package['address'] . "<br>";
                         return "Error - Faulty address in publicKey request";
                     }
-                }
-                else {
+                } else {
                     echo "Error - Missing address in publicKey request <br>";
                     return "Error - Missing address in publicKey request";
                 }
@@ -29,17 +28,16 @@
 
             case "Send notification":
                 //check if non-optional variables are set.
-                if (isset($package["sender"]) and isset($package["notification"])){
+                if (isset($package["sender"]) and isset($package["predata"]) and isset($package['cipher'])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
                     if (check_address($package["sender"])) {
                         //all conditions for type send notification are met.
                         return "Send notification";
-                    }else{
+                    } else{
                         echo "Error - Faulty sender address <br>";
                         return "Error - Faulty sender address";
                     }
-                }
-                else{
+                } else{
                     echo "Error - Missing field in send notification ('sender'/'notification') <br>";
                     return "Error - Missing field in send notification ('sender'/'notification')";
                 }
@@ -52,12 +50,11 @@
                     if ($package["format"] == "post-comments") {
                         //all conditions for type request format are met.
                         return "Request format";
-                    }else{
+                    } else{
                         echo "Error - Faulty format, can only provide 'post-comments' <br>";
                         return "Error - Faulty format, can only provide 'post-comments'";
                     }
-                }
-                else{
+                } else{
                     echo "Error - Missing field 'format' in request format <br>";
                     return "Error - Missing field 'format' in request format ";
                 }
@@ -70,13 +67,11 @@
                     if (check_address($package['sender'])) {
                         //all conditions for type send interaction are met.
                         return "Send Interaction";
-                    }
-                    else{
+                    } else{
                         echo "Error - Faulty sender address' <br>";
                         return "Error - Faulty sender address'";
                     }
-                }
-                else{
+                } else{
                     echo "Error - Missing non-optional field in send interaction (ID/sender/interaction)<br>";
                     return "Error - Missing non-optional field in send interaction (ID/sender/interaction)";
                 }
@@ -86,8 +81,7 @@
                 //check if non-optional variables are set.
                 if (isset($package["ID"])){
                     return "Request content";
-                }
-                else{
+                } else{
                     echo "Error - Missing field 'ID' in request content <br>";
                     return "Error - Missing field 'ID' in request content ";
                 }

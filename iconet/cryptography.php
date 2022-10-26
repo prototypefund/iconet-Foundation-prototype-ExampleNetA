@@ -10,7 +10,6 @@ $blockSize = 256;
 function genKeyPair(){
     $privKey = openssl_pkey_new();
     $pubKey_pem = openssl_pkey_get_details($privKey)['key'];
-    echo "pubKey as string:<br>" . $pubKey_pem . "<br>";
     $pubKey = openssl_pkey_get_public($pubKey_pem);
     return [$pubKey,$privKey];
 }
@@ -59,8 +58,8 @@ function encAsym($symKey,$pubKey){
     return $encSymKey;
 }
 
-function decAsym($encSecret,$privKey){
-    openssl_private_decrypt($encSecret, $decSecret, $privKey, OPENSSL_PKCS1_PADDING);
+function decAsym($cipher,$privKey){
+    openssl_private_decrypt($cipher, $decSecret, $privKey, OPENSSL_PKCS1_PADDING);
     return $decSecret;
 }
 

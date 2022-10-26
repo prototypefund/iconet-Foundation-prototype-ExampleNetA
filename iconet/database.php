@@ -52,9 +52,9 @@ function get_post_by_id($ID){
 }
 
 
-function add_user($username, $address){
+function add_user($username, $address, $pubkey, $privkey){
     global $icon;
-    $query = mysqli_query($icon, "INSERT INTO users VALUES ('$username', '$address', 'pub123', 'priv123')");
+    $query = mysqli_query($icon, "INSERT INTO users VALUES ('$username', '$address', '$pubkey', '$privkey')");
 }
 
 function get_globaladdress($username){
@@ -104,6 +104,11 @@ function add_contact($user, $address, $pubkey){
         return false;
     }
     return true;
+}
+
+function add_notification($id, $username, $sender, $secret, $link, $text){
+    global $icon;
+    $query = mysqli_query($icon, "INSERT INTO notifications VALUES ('$id', '$username', '$sender', '$secret', '$link', '$text')");
 }
 
 function clear_tables(){
