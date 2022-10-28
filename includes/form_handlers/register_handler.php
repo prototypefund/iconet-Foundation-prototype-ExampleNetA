@@ -1,5 +1,6 @@
 <?php
 include_once "iconet/database.php";
+include_once  "iconet/cryptography.php";
 
 
 //Declaring variables to prevent errors

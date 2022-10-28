@@ -86,25 +86,35 @@ Return Pubkey on request.
     "publickey": %pubkey
     }
 
-#### Feature : Encryption Basics - open todo
+#### Feature : Encryption Basics
 Description:
 
-Create cryptography interface, import AES and GPG. 
+Create cryptography interface, import AES and openSSL. 
 
 Code added:
 
-Imported AES and GPG, created cryptography.php
+Imported AES and openSSL, created cryptography.php
 Implement and test hybrid encryption process.
 
-#### Feature: Encryption Adaption - open todo
+#### Feature: Encryption Adaption
 Description:
 
-Notifications and content are encrypted via AES, the common Secret is shares Via GPG. We'll include the php lib, generate key pairs and store them for each users.
+Notifications and content are encrypted via AES, the common Secret is encrypted via GPG with an in openSSL generated public key. A private key for decryption is generated simultaneously.
 
 Code added:
 
-Create Keys on User Registration & Store in DB
-Create Key format in formats.php
+Created Keys on User Registration & Store in DB
+Created Key format in formats.php
 Use Checks of Format on Receiving Keys.
-Prepare: Encrypt Outgoing Packages, Decrypt Incoming Packages. (No such packages are beeing sent yet)
+Prepare: Encrypt Outgoing Packages, Decrypt Incoming Packages. (No such packages are being sent yet)
 
+#### Feature : Processing Basics - wip
+Description:
+
+Create processing interface.
+
+Code added:
+
+Created api_outwards.php, formats.php, index.php, processing.php, request_builder.php.
+Added folder posts for saving content via ID.
+Implement and test processing.
