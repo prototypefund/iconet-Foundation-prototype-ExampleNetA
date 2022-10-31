@@ -15,9 +15,9 @@ Download the repository with:
 
 ## On Ubuntu
 
-1. php-7.4 is already installed, install apache2, install mysql
+1. php-7.4 is already installed, install apache2, install mysql, install composer
 
-        sudo apt install apache2 mysql-server
+        sudo apt install apache2 mysql-server composer
 
 2. Make apache2 host your local folder: Create a new file called netA.conf under `/etc/apache2/sites-available/` You
    need sudo rights:
@@ -56,24 +56,26 @@ Download the repository with:
 
         127.0.0.1       netA
 
+6. Install composer (`sudo apt install composer`) and run `composer install` in the project folder.
 
-6. In your browser visit the site `netA/`
 
-7. Not working? Check apache2's status for errors with
+7. In your browser visit the site `netA/`
+
+8. Not working? Check apache2's status for errors with
 
         apachectl -S
 
 
-8. Maybe you need to create the file `/etc/apache2/conf-available/fqdn.conf`. With `sudoedit` paste
+9. Maybe you need to create the file `/etc/apache2/conf-available/fqdn.conf`. With `sudoedit` paste the following line and activate it with `sudo a2enconf /etc/apache2/conf-available/fqdn.conf`
 
         ServerName localhost
 
 
-9. If apache is not running run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
+10. If apache is not running run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
    If mysql not running run `sudo service mysql start`
 
 
-10. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights and no
+11. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights and no
     pw.
     in mysql:
     `CREATE USER 'admin'@'localhost' IDENTIFIED BY '';`
@@ -81,8 +83,8 @@ Download the repository with:
 
 Run following steps in mysql not with root but with admin
 
-11. Start the mysql server with `sudo systemctl start mysql`
-12. Run `netA.sql`
+12. Start the mysql server with `sudo systemctl start mysql`
+13. Run `netA.sql`
 
 ## IDE specific:
 
