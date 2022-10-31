@@ -1,6 +1,6 @@
 <?php
 $sim_post = true;
-include_once 'index.php';
+include_once './iconet/index.php';
 class post_office
 {
 

@@ -74,12 +74,6 @@ CREATE TABLE `users` (
 --
 
 --
--- Indexes for table `notifications`
---
-ALTER TABLE `notifications`
-    ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `posts`
 --
 ALTER TABLE `posts`

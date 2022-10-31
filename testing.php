@@ -4,15 +4,13 @@ h("Start Testing");
 
 p("Includes:");
 
-require_once "iconet/database.php";
-require_once "iconet/cryptograph.php";
-require_once "iconet/processor.php";
-require_once "iconet/package_builder.php";
-require_once "iconet/post_office.php";
-
+require_once "./iconet/database.php";
+require_once "./iconet/cryptograph.php";
+require_once "./iconet/processor.php";
+require_once "./iconet/package_builder.php";
+require_once "./iconet/post_office.php";
 
 $testy = new tester();
-
 
 //$testy->test_encryption();
 
@@ -20,14 +18,13 @@ $testy->init_testdata();
 
 $testy->test_processing();
 
-
-//clean_test_data();
+//$testy->clean_test_data();
 
 h("Done Testing.");
 
 
 class tester{
-protected database $db;
+protected $db;
 protected $cryp;
 protected $po;
 protected $pb;
@@ -82,7 +79,7 @@ protected $proc;
 
         h("Request Format");
         p("Request post-comment");
-        $response = $this->proc->get_format("post-comment");
+        $response = $this->proc->get_format("post-comments");
 
         h("Send Interaction");
     }

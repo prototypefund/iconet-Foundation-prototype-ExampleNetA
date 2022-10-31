@@ -57,7 +57,7 @@ class processor
         $enc_cont = $this->cryp->encSym($content,$secret);
 
         //save content
-        $file = fopen("./iconet/posts/". $ID.".txt", "w") or die("Cannot open file.");
+        $file = fopen(".\iconet\posts". $ID.".txt", "w") or die("Cannot open file.");
         // Write data to the file
         fwrite($file, $enc_cont);
         // Close the file

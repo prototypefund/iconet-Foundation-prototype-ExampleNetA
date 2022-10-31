@@ -37,8 +37,9 @@ class cryptograph
         return [$pubKey_pem,$privkey_pem];
     }
 
-    function verSignature($message,$privKey){
-        openssl_sign($message, $signature, $privKey, OPENSSL_ALGO_SHA1);
+    function verSignature($message,$privkey)
+    {
+        openssl_sign($message, $signature, $privkey, OPENSSL_ALGO_SHA1);
         return $signature;
     }
 

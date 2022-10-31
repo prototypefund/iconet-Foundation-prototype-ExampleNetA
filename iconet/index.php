@@ -41,10 +41,8 @@ function receive($msg){
 
         case "Request Format":
             //TODO provide requested format
-            $response['type'] = "Response Format";
-            $response['msg'] = "Your request is great, but sadly I can't process it yet.";
-            return json_encode($response);
-        break;
+            return $pb->send_format('blala', $package['format']);
+            break;
 
         case "Send Interaction":
             //TODO decode content, verify signature, append to content
