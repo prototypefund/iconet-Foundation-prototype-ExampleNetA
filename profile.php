@@ -1,6 +1,6 @@
 <?php 
 include("includes/header.php");
-include_once "iconet/database.php";
+include_once "iconet/database_old.php";
 
 $message_obj = new Message($con, $userLoggedIn);
 

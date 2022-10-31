@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `contacts` (
                             `username` varchar(100) NOT NULL,
                             `friend_address` varchar(60) NOT NULL,
-                            `friend_pubkey` varchar(128) NOT NULL
+                            `friend_pubkey` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -36,10 +36,10 @@ CREATE TABLE `contacts` (
 --
 
 CREATE TABLE `notifications` (
-                                 `id` int(11) NOT NULL,
+                                 `id` varchar(60) NOT NULL,
                                  `username` varchar(100) NOT NULL,
                                  `sender` varchar(60) NOT NULL,
-                                 `secret` varchar(128) NOT NULL,
+                                 `secret` varchar(200) NOT NULL,
                                  `link` varchar(60) NOT NULL,
                                  `text` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -53,7 +53,7 @@ CREATE TABLE `notifications` (
 CREATE TABLE `posts` (
                          `id` varchar(60) NOT NULL,
                          `username` varchar(100) NOT NULL,
-                         `secret` varchar(60) NOT NULL
+                         `secret` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -65,8 +65,8 @@ CREATE TABLE `posts` (
 CREATE TABLE `users` (
                          `username` varchar(100) NOT NULL,
                          `address` varchar(60) NOT NULL,
-                         `publickey` varchar(128) NOT NULL,
-                         `privatekey` varchar(128) NOT NULL
+                         `publickey` varchar(500) NOT NULL,
+                         `privatekey` varchar(2000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -91,13 +91,4 @@ ALTER TABLE `posts`
 ALTER TABLE `users`
     ADD PRIMARY KEY (`username`) USING BTREE;
 
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `notifications`
---
-ALTER TABLE `notifications`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;

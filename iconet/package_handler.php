@@ -1,21 +1,23 @@
 <?php
-    //string is a valid address, if part behind the last @ symbol is a valid url.
 
-    //receives an incoming iconet package, checks if all conditions are met
-    function check_package($package){
+class package_handler
+{
+    function check_package($package): string
+    {
+
         if (!isset($package['type'])) {
             echo "Error - Must set field 'type' <br>";
             return "Error - Must set field 'type' ";
         }
 
         switch ($package['type']){
-            case "Request publicKey":
+            case "Request Publickey":
                 //check if non-optional variables are set.
                 if (isset($package['address'])){
                     //check if non-optional variables are proper
-                    if (check_address($package['address'])){
+                    if ($this->check_address($package['address'])){
                         //all conditions for publicKey request are met.
-                        return "Request publicKey";
+                        return "Request Publickey";
                     } else {
                         echo "Error - Faulty address in publicKey request <br>" . $package['address'] . "<br>";
                         return "Error - Faulty address in publicKey request";
@@ -26,13 +28,13 @@
                 }
                 break;
 
-            case "Send notification":
+            case "Send Notification":
                 //check if non-optional variables are set.
-                if (isset($package["sender"]) and isset($package["predata"]) and isset($package['cipher'])){
+                if (isset($package["sender"]) and isset($package["predata"]) and isset($package['cipher']) and isset($package['to'])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if (check_address($package["sender"])) {
+                    if ($this->check_address($package["sender"]) and $this->check_address($package['to'])) {
                         //all conditions for type send notification are met.
-                        return "Send notification";
+                        return "Send Notification";
                     } else{
                         echo "Error - Faulty sender address <br>";
                         return "Error - Faulty sender address";
@@ -43,13 +45,13 @@
                 }
                 break;
 
-            case "Request format":
+            case "Request Format":
                 //check if non-optional variables are set.
                 if (isset($package["format"])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
                     if ($package["format"] == "post-comments") {
                         //all conditions for type request format are met.
-                        return "Request format";
+                        return "Request Format";
                     } else{
                         echo "Error - Faulty format, can only provide 'post-comments' <br>";
                         return "Error - Faulty format, can only provide 'post-comments'";
@@ -60,11 +62,11 @@
                 }
                 break;
 
-            case "Send interaction":
+            case "Send Interaction":
                 //check if non-optional variables are set.
-                if (isset($package["ID"]) and isset($package["sender"]) and isset($package["interaction"])){
+                if (isset($package["id"]) and isset($package["sender"]) and isset($package["interaction"])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if (check_address($package['sender'])) {
+                    if ($this->check_address($package['sender'])) {
                         //all conditions for type send interaction are met.
                         return "Send Interaction";
                     } else{
@@ -77,10 +79,10 @@
                 }
                 break;
 
-            case "Request content":
+            case "Request Content":
                 //check if non-optional variables are set.
-                if (isset($package["ID"])){
-                    return "Request content";
+                if (isset($package["id"])){
+                    return "Request Content";
                 } else{
                     echo "Error - Missing field 'ID' in request content <br>";
                     return "Error - Missing field 'ID' in request content ";
@@ -92,11 +94,12 @@
                 return "Error - Unknwon Package Type " . $package['type'];
 
         }
-        echo "This section should never be reached. <br>";
-        return false;
+
+
     }
 
-    function check_address($address){
+    function check_address($address): bool
+    {
         $string_array = explode("@",$address);
         if (count($string_array) < 2) return false;
         $url = $string_array[count($string_array)-1];
@@ -108,11 +111,4 @@
     }
 
 
-    function get_url($address){
-        if (!check_address($address)) return false;
-        $string_array = explode("@",$address);
-        $url = $string_array[count($string_array)-1];
-        return $url;
-    }
-
-?>
+}
