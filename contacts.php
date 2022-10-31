@@ -2,7 +2,7 @@
 include("includes/header.php"); //Header
 include_once("iconet/formats.php");
 include_once("iconet/request_builder.php");
-include_once("iconet/database.php");
+include_once("iconet/database_old.php");
 ?>
 
 <div class="main_column column" id="main_column">

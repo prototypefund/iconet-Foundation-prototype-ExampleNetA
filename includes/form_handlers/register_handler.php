@@ -1,5 +1,5 @@
 <?php
-include_once "iconet/database.php";
+include_once "iconet/database_old.php";
 
 
 //Declaring variables to prevent errors

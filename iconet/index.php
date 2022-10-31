@@ -1,58 +1,61 @@
 <?php
 // i accept and handle incoming requests!
 
-include_once("database.php");
-include_once("formats.php");
+
+
+if (isset($sim_post)){
+    // handle post requests
+    include_once "./iconet/package_handler.php";
+    include_once "./iconet/package_builder.php";
+    include_once "./iconet/database.php";
+    include_once "./iconet/processor.php";
+
+} else {
+    // present personal inbox
+    echo "<h3>Your open Inbox!</h3>";
+}
 
 //TODO this function is part of the current server 2 server internal workaround. Will be replaced by https requests.
 function receive($msg){
     // I know how to get things done!
-    echo "Received:".$msg;
     $package = json_decode($msg, true);
-    $type = check_package($package);
-
+    $ph = new package_handler();
+    $type = $ph->check_package($package);
+    $db = new database();
+    $pb = new package_builder();
     switch ($type){
-        case "Request publicKey":
-            $pubKey = get_pubkey_by_address($package['address']);
-            if($pubKey){
-                $response['type'] = "Response publicKey";
-                $response['address'] = $package['address'];
-                $response['publicKey'] = $pubKey;
-                return json_encode($response);
+        case "Request Publickey":
 
-            } else {
-                //TODO provide Error Code on HTTP level.
-                $response['type'] = "Response publicKey";
-                $response['address'] = $package['address'];
-                $response['publicKey'] = "Unknown";
-                return json_encode($response);
-            }
+            $pubKey = $db->get_pubkey_by_address($package['address']);
+            return $pb->send_publickey($package['address'], $pubKey);
             break;
 
-        case "Send notification":
+        case "Send Notification":
+            $user = $db->get_user_by_address($package['to']);
+            $proc = new processor($user['username']);
             // TODO decode notification, verify signature, save in db
-            $response['type'] = "Response notification";
-            $response['msg'] = "Your request is great, but sadly I can't process it yet.";
+            $proc->save_notification($package);
+            $response['type'] = "ACK Notification";
             return json_encode($response);
         break;
 
-        case "Request format":
+        case "Request Format":
             //TODO provide requested format
-            $response['type'] = "Response format";
+            $response['type'] = "Response Format";
             $response['msg'] = "Your request is great, but sadly I can't process it yet.";
             return json_encode($response);
         break;
 
-        case "Send interaction":
+        case "Send Interaction":
             //TODO decode content, verify signature, append to content
-            $response['type'] = "Response interaction";
+            $response['type'] = "Response Interaction";
             $response['msg'] = "Your request is great, but sadly I can't process it yet.";
             return json_encode($response);
         break;
 
-        case "Request content":
+        case "Request Content":
             //TODO decode content, verify signature, append to content
-            $response['type'] = "Request content";
+            $response['type'] = "Request Content";
             $response['msg'] = "Your request is great, but sadly I can't process it yet.";
             return json_encode($response);
             break;
