@@ -40,8 +40,8 @@ function receive($msg){
         break;
 
         case "Request Format":
-            $name = file_get_contents("./iconet/formats/post-comments.fmfibs");
-            return $pb->send_format($name, $package['format']);
+            $format = file_get_contents("./iconet/formats/post-comments.fmfibs");
+            return $pb->send_format($package['name'], $format);
             break;
 
         case "Send Interaction":

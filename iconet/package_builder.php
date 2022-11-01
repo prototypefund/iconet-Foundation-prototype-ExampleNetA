@@ -40,10 +40,10 @@ class package_builder
         return Json_encode($package);
     }
 
-    function request_format($format): bool|string
+    function request_format($name): bool|string
     {
         $package['type'] = "Request Format";
-        $package['format'] = $format;
+        $package['name'] = $name;
 
         return Json_encode($package);
     }

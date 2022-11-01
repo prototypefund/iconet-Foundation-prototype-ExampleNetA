@@ -47,9 +47,9 @@ class package_handler
 
             case "Request Format":
                 //check if non-optional variables are set.
-                if (isset($package["format"])){
+                if (isset($package["name"])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($package["format"] == "post-comments") {
+                    if ($package["name"] == "post-comments") {
                         //all conditions for type request format are met.
                         return "Request Format";
                     } else{
