@@ -113,7 +113,7 @@ class processor
     function get_format($format){
          $msg = $this->pb->request_format($format);
          $response = $this->po->send("url", $msg);
-         if ($this->ph->check_package($response)=="Send Format")
+         if ($this->ph->check_package(Json_decode($response,true))=="Send Format")
              return $response['format'];
          else return false;
     }
