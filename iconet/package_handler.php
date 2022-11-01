@@ -81,11 +81,27 @@ class package_handler
 
             case "Request Content":
                 //check if non-optional variables are set.
-                if (isset($package["id"])){
+                if (isset($package["id"]) and isset($package["address"])){
                     return "Request Content";
                 } else{
-                    echo "Error - Missing field 'ID' in request content <br>";
-                    return "Error - Missing field 'ID' in request content ";
+                    echo "Error - Missing field 'ID', 'address' in request content <br>";
+                    return "Error - Missing field 'ID', 'address' in request content ";
+                }
+                break;
+
+            case "Send Content":
+                //check if non-optional variables are set.
+                if (isset($package["sender"]) and $package["format"] and $package["content"]){
+                    if ($this->check_address($package['sender'])) {
+                        //all conditions for type send interaction are met.
+                        return "Send Content";
+                    } else{
+                        echo "Error - Faulty sender address' <br>";
+                        return "Error - Faulty sender address'";
+                    }
+                } else{
+                    echo "Error - Missing field 'sender', 'format' or 'content' in send content <br>";
+                    return "Error - Missing field 'sender', 'format' or 'content' in send content ";
                 }
                 break;
 

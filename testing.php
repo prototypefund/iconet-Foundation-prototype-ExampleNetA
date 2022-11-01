@@ -76,11 +76,14 @@ protected $proc;
         }
 
         h("Request Content");
+        $notif = $notifs[0];
 
+        $content_pack = $this->proc->display_content($notif['id'], $notif['sender']);
+        p($this->cryp->decSym($content_pack['content'], $notif['secret']));
         h("Request Format");
-        p("Request post-comment");
+        p("Request post-comments");
         $response = $this->proc->get_format("post-comments");
-
+        var_dump($response);
         h("Send Interaction");
     }
 

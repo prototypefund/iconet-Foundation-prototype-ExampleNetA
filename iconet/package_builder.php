@@ -88,6 +88,16 @@ class package_builder
         return Json_encode($package);
     }
 
+    function send_content($content, $format, $sender){
+
+        $package['type'] = "Send Content";
+        $package['sender'] = $sender;
+        $package['format'] = $format;
+        $package['content'] = $content;
+
+        return Json_encode($package);
+    }
+
 
 
 
