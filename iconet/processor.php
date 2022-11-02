@@ -37,6 +37,12 @@ class processor
     function get_external_pubkey($address){
         $msg = $this->pb->request_pubkey($address);
         $response = $this->po->send("url", $msg);
+        $package = Json_decode($response, true);
+        if (0 == strcmp($this->ph->check_package($package), "Send Publickey")){
+            return $package['publickey'];
+        } else {
+            return false;
+        }
     }
 
     function create_iconet_post($content){
@@ -113,12 +119,15 @@ class processor
         $this->db->add_notification($id, $username, $sender, $secret, $link, $text);
     }
 
-    function get_format($format){
-         $msg = $this->pb->request_format($format);
+    function get_format($name){
+         $msg = $this->pb->request_format($name);
          $response = $this->po->send("url", $msg);
-         if ($this->ph->check_package(Json_decode($response,true))=="Send Format")
-             return $response['format'];
-         else return false;
+         $package = Json_decode($response, true);
+         if (0 == strcmp($this->ph->check_package($package), "Send Format")){
+             return $package['format'];
+         } else {
+             return false;
+         }
     }
 
     function read_content($id)

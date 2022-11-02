@@ -63,7 +63,8 @@ protected $proc;
         h("Test Processing:");
 
         h("Request Pubkey of Bob");
-        $this->proc->get_external_pubkey("bob@bobnet.org");
+        $response = $this->proc->get_external_pubkey("bob@bobnet.org");
+        echo "<br>" . $response;
 
         h("Create Content Hello World");
         $this->proc->create_iconet_post("Hello World");
@@ -80,10 +81,12 @@ protected $proc;
 
         $content_pack = $this->proc->display_content($notif['id'], $notif['sender']);
         p($this->cryp->decSym($content_pack['content'], $notif['secret']));
+
         h("Request Format");
         p("Request post-comments");
         $response = $this->proc->get_format("post-comments");
-        var_dump($response);
+        echo "<br>" . htmlspecialchars($response);
+
         h("Send Interaction");
     }
 

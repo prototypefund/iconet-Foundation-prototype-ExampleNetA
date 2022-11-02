@@ -24,8 +24,8 @@ function receive($msg){
     $db = new database();
     $pb = new package_builder();
     switch ($type){
-        case "Request Publickey":
 
+        case "Request Publickey":
             $pubKey = $db->get_pubkey_by_address($package['address']);
             return $pb->send_publickey($package['address'], $pubKey);
             break;
