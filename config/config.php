@@ -7,14 +7,14 @@ session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $config = [
-    'db_user' => 'root',
+    'db_user' => 'admin',
     'db_password' => '',
     'db_database' => 'netA',
-    'db_host' => 'localhost',
-    'db_ionet_user' => 'netA',
+    'db_host' => '127.0.0.1',
+    'db_ionet_user' => 'admin',
     'db_iconet_password' => '',
     'db_iconet_database' => 'netAiconet',
-    'db_iconet_host' => 'localhost',
+    'db_iconet_host' => '127.0.0.1',
     'domain' => "exampleneta.net",
     'timezone' => date_default_timezone_set("Europe/Berlin")
 ];
