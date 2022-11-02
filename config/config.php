@@ -7,7 +7,7 @@ session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $config = [
-    'db_user' => 'netA',
+    'db_user' => 'root',
     'db_password' => '',
     'db_database' => 'netA',
     'db_host' => 'localhost',
@@ -31,7 +31,7 @@ $con = mysqli_connect(
 if(mysqli_connect_errno()) {
     echo "Failed to connect: " . mysqli_connect_errno();
 }
-
+/*
 $icon = mysqli_connect(
     $config['db_iconet_host'],
     $config['db_ionet_user'],
@@ -41,5 +41,6 @@ $icon = mysqli_connect(
 if(mysqli_connect_errno()) {
     echo "Failed to connect: " . mysqli_connect_errno();
 }
+*/
 
 ?>

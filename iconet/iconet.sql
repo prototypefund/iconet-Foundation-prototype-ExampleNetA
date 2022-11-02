@@ -21,13 +21,11 @@ SET time_zone = "+00:00";
 -- Table structure for table `contacts`
 --
 
-CREATE TABLE `contacts`
-(
-    `username`       varchar(100) NOT NULL,
-    `friend_address` varchar(60)  NOT NULL,
-    `friend_pubkey`  varchar(128) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+CREATE TABLE `contacts` (
+                            `username` varchar(100) NOT NULL,
+                            `friend_address` varchar(60) NOT NULL,
+                            `friend_pubkey` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `contacts`
@@ -37,16 +35,15 @@ CREATE TABLE `contacts`
 -- Table structure for table `notifications`
 --
 
-CREATE TABLE `notifications`
-(
-    `id`       int(11)      NOT NULL,
-    `username` varchar(100) NOT NULL,
-    `sender`   varchar(60)  NOT NULL,
-    `secret`   varchar(128) NOT NULL,
-    `link`     varchar(60)  NOT NULL,
-    `text`     text         NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+CREATE TABLE `notifications` (
+                                 `id` int NOT NULL primary key auto_increment,
+                                 `content_id` varchar(60) NOT NULL,
+                                 `username` varchar(100) NOT NULL,
+                                 `sender` varchar(60) NOT NULL,
+                                 `secret` varchar(200) NOT NULL,
+                                 `link` varchar(60) NOT NULL,
+                                 `text` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -54,13 +51,11 @@ CREATE TABLE `notifications`
 -- Table structure for table `posts`
 --
 
-CREATE TABLE `posts`
-(
-    `id`       int(11)      NOT NULL,
-    `username` varchar(100) NOT NULL,
-    `secret`   varchar(60)  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+CREATE TABLE `posts` (
+                         `id` varchar(60) NOT NULL,
+                         `username` varchar(100) NOT NULL,
+                         `secret` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -68,24 +63,29 @@ CREATE TABLE `posts`
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users`
-(
-    `username`   varchar(100) NOT NULL,
-    `address`    varchar(60)  NOT NULL,
-    `publickey`  varchar(128) NOT NULL,
-    `privatekey` varchar(128) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+CREATE TABLE `users` (
+                         `username` varchar(100) NOT NULL,
+                         `address` varchar(60) NOT NULL,
+                         `publickey` varchar(500) NOT NULL,
+                         `privatekey` varchar(2000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Table structure for table `interactions`
+--
+
+CREATE TABLE `interactions` (
+                        `id` int NOT NULL primary key auto_increment,
+                         `content_id` varchar(100) NOT NULL,
+                         `username` varchar(60) NOT NULL,
+                         `sender` varchar(100) NOT NULL,
+                         `type` varchar(60) NOT NULL,
+                         `enc_int` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `notifications`
---
-ALTER TABLE `notifications`
-    ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `posts`
@@ -99,13 +99,4 @@ ALTER TABLE `posts`
 ALTER TABLE `users`
     ADD PRIMARY KEY (`username`) USING BTREE;
 
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `notifications`
---
-ALTER TABLE `notifications`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;

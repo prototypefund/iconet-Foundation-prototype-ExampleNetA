@@ -4,7 +4,7 @@ Check [setup.me](setup.md) for Setup Instructions.
 
 This repository is part of the iconet prototype development, where two networks are linked through the iconet
 mechanisms.
-This is very basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled
+This is a basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled
 demonstration, on how to integrate the iconet technology.
 ExampleNetA is taken from: https://github.com/yaswanthpalaghat/Social-Network-using-php-and-mysql
 
@@ -26,20 +26,17 @@ Fills the iconet database with the required tables. (execute only on setup)
 Catches incoming requests, initiates required action.
 
 ##### iconet/api_outwards
-
-HTTP helper to send packages to URLS.
-
-##### iconet/db_handlers
-
+HTTP helper to send packages to URLS. 
+##### iconet/database
 Getters and Setters for the iconet DB
-
-##### iconet/format_handlers
-
+##### iconet/formats
 Functions to check variables if their format adheres to iconet structures
-
-##### request_builder
-
+##### iconet/request_builder
 Translates internally required variables into iconet requests. (potentially merges later with api_outwards)
+##### iconet/cryptography
+Handles iconet encryption and decryption
+##### iconet/libs/AES
+AES class for symetric encryption
 
 ### Features added:
 
@@ -73,8 +70,8 @@ Since ExampleNetA has no such feature, we add it. We change the requests.php to 
 displayed pending friend requests.
 A user will be able to display all their internal friends and friends-requests, as well as their external contacts.
 
-#### Feature: Iconet-Address generation - open todo
 
+#### Feature: Iconet-Address generation
 Description:
 
 Each user, to be able to be addressed by users of external networks, needs some global address.
@@ -83,8 +80,8 @@ This will be the local identifier of a user and the global address of the networ
 Code added:
 
 Assume, ExampleNetA holds the global URL ExampleNetA.net
-On User registration, a global Address is automatically generated.
-This address will be displayed on the home site of the current user, as well as in each user's profile.
+On User registration, a global Address is automatically generated and added to the database.
+This address will be displayed on the profile of each user.
 
 #### Feature: Basic S2S: Request and Return PublicKey of Users.
 
@@ -110,45 +107,61 @@ Return Pubkey on request.
     "publickey": %pubkey
     }
 
-#### Feature: Encryption Basics - open todo
-
+#### Feature : Encryption Basics
 Description:
 
-Notifications and content are encrypted via gnupg. We'll include the php lib, generate key pairs and store them for each
-users.
+Create cryptography interface, import AES and openSSL. 
 
 Code added:
 
-Import https://github.com/singpolyma/openpgp-php
+Imported AES and openSSL, created cryptography.php
+Implement and test hybrid encryption process.
 
-Create Keys on User Registration & Store in DB
-Create Key format in format_handler
-Use Checks of Format on Receiving Keys.
-
-#### Feature: Encryption Basics - open todo
-
+#### Feature: Encryption Adaption
 Description:
 
-Notifications and content are encrypted via openpgp. We'll include the php lib, generate key pairs and store them for
-each users.
+Notifications and content are encrypted via AES, the common Secret is encrypted via GPG with an in openSSL generated public key. A private key for decryption is generated simultaneously.
 
 Code added:
 
-Import https://github.com/singpolyma/openpgp-php
-Create Keys on User Registration & Store in DB
-Create KEy format in format_handler
+Created Keys on User Registration & Store in DB
+Created Key format in formats.php
 Use Checks of Format on Receiving Keys.
+Prepare: Encrypt Outgoing Packages, Decrypt Incoming Packages. (No such packages are being sent yet)
 
-#### Feature: Encryption Basics - open todo
-
+#### Feature : Processing
 Description:
 
-Notifications and content are encrypted via openpgp. We'll include the php lib, generate key pairs and store them for
-each users.
+Create processing interface with iconet API. Define non-optional elements of processed packages. The packages MUST all contain the element "type" and respectively:
+    "Request Publickey": 
+        "address" - address of requested public key's owner
+"Send Notification":
+        "sender" - address of sender
+        "predata" - encrypted preview data of content
+        "cipher" - with public key encrypted secret
+        "to" - address of the notification's receiver
+    "Request Content":
+        "id" - identification number of notification
+        "address" - address of sender
+    "Request Format":
+        "name" - name of requested format: "post-comments"
+    "Send Interaction":
+        "id" - identification number of notification
+        "sender" - address of sender
+        "interaction" - content of interaction
+    "Send Publickey":
+        "address" - address of requested public key's owner
+        "publickey" - requested public key
+    "Send Content":
+        "sender" - address of sender
+        "format" - name of requested format: "post-comments"
+        "content" - sent content
+    "Send Format":
+        "name" - name of requested format: "post-comments"
+        "format" - defined format for "post-comments"
 
 Code added:
 
-Import https://github.com/singpolyma/openpgp-php
-Create Keys on User Registration & Store in DB
-Create KEy format in format_handler
-Use Checks of Format on Receiving Keys.
+Created package_builder.php, package_handler.php, index.php, post_office.php, processor.php.
+Added folder posts for saving content via ID.
+Implement and test processing.
