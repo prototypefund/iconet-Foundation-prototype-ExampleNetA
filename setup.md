@@ -86,6 +86,18 @@ Run following steps in mysql not with root but with admin
 12. Start the mysql server with `sudo systemctl start mysql`
 13. Run `netA.sql`
 
+## Using Docker
+
+Alternatively, you can create a docker instance which will host a mysql and apache server.
+The docker container will serve the local development directory, so external changes are immediately made available.
+
+```bash
+docker build .
+docker run -p 80:80 -ti -u=root -v "$(pwd)":/var/www/prototype-ExampleNetA <docker image id>
+```
+
+The server is running on port 80 and a console is made available. Apache logs are located at `/var/log/apache2/`.
+
 ## IDE specific:
 
 - Connect phpstorm to your AMP and
