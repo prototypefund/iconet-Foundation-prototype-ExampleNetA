@@ -108,13 +108,39 @@ Created Key format in formats.php
 Use Checks of Format on Receiving Keys.
 Prepare: Encrypt Outgoing Packages, Decrypt Incoming Packages. (No such packages are being sent yet)
 
-#### Feature : Processing Basics - wip
+#### Feature : Processing
 Description:
 
-Create processing interface.
+Create processing interface with iconet API. Define non-optional elements of processed packages. The packages MUST all contain the element "type" and respectively:
+    "Request Publickey": 
+        "address" - address of the owner of the requested public key
+    "Send Notification":
+        "sender" - address of the sender
+        "predata" - encrypted preview data of the content
+        "cipher" - with public key encrypted secret
+        "to" - address of the notification's receiver
+    "Request Content":
+        "id" - identification number of notification
+        "address" - address of the sender
+    "Request Format":
+        "name" - name of the requested format: "post-comments"
+    "Send Interaction":
+        "id" - identification number of notification
+        "sender" - address of the sender
+        "interaction" - content of interaction
+    "Send Publickey":
+        "address" - address of the owner of the requested public key
+        "publickey" - requested public key
+    "Send Content":
+        "sender" - address of the sender
+        "format" - name of the requested format: "post-comments"
+        "content" - sent content
+    "Send Format":
+        "name" - name of the requested format: "post-comments"
+        "format" - defined format for "post-comments"
 
 Code added:
 
-Created api_outwards.php, formats.php, index.php, processing.php, request_builder.php.
+Created package_builder.php, package_handler.php, index.php, post_office.php, processor.php.
 Added folder posts for saving content via ID.
 Implement and test processing.
