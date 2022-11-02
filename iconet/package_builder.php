@@ -4,7 +4,6 @@ class package_builder
 {
 
     //active packages
-
     function request_pubkey($address): bool|string
     {
         $package['type'] = "Request Publickey";
@@ -51,32 +50,21 @@ class package_builder
     function send_interaction($sender, $to, $id, $int_type, $enc_int ): bool|string
     {
         $package['type'] = "Send Interaction";
-        $package['$sender'] = $sender;
-        $package['$to'] = $to;
-        $package['$id'] = $id;
+        $package['sender'] = $sender;
+        $package['to'] = $to;
+        $package['id'] = $id;
         $package['int_type'] = $int_type;
-        $package['enc_int'] = $enc_int;
+        $package['interaction'] = $enc_int;
 
         return Json_encode($package);
     }
 
     // response packages
-
     function send_publickey($address, $pubkey): bool|string
     {
         $package['type'] = "Send Publickey";
         $package['address'] = $address;
         $package['publickey'] = $pubkey;
-
-        return Json_encode($package);
-    }
-
-    function send_content($content, $format, $sender){
-
-        $package['type'] = "Send Content";
-        $package['sender'] = $sender;
-        $package['format'] = $format;
-        $package['content'] = $content;
 
         return Json_encode($package);
     }
@@ -97,5 +85,22 @@ class package_builder
 
         return Json_encode($package);
     }
+
+    function send_content($content, $format, $sender): bool|string
+    {
+        $package['type'] = "Send Content";
+        $package['sender'] = $sender;
+        $package['format'] = $format;
+        $package['content'] = $content;
+
+        return Json_encode($package);
+    }
+
+    public function ack()
+    {
+        $response['type'] = "ACK";
+        return json_encode($response);
+    }
+
 
 }

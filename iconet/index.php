@@ -24,8 +24,8 @@ function receive($msg){
     $db = new database();
     $pb = new package_builder();
     switch ($type){
-
         case "Request Publickey":
+
             $pubKey = $db->get_pubkey_by_address($package['address']);
             return $pb->send_publickey($package['address'], $pubKey);
             break;
@@ -33,9 +33,10 @@ function receive($msg){
         case "Send Notification":
             $user = $db->get_user_by_address($package['to']);
             $proc = new processor($user['username']);
-            $proc->save_notification($package);
-            $response['type'] = "ACK Notification";
-            return json_encode($response);
+            $error = $proc->save_notification($package);
+            if ($error) return $pb->send_error($error);
+            else return $pb->ack();
+
         break;
 
         case "Request Format":
@@ -44,14 +45,14 @@ function receive($msg){
             break;
 
         case "Send Interaction":
-            //TODO decode content, verify signature, append to content
-            $response['type'] = "Response Interaction";
-            $response['msg'] = "Your request is great, but sadly I can't process it yet.";
-            return json_encode($response);
+            $user = $db->get_user_by_address($package['to']);
+            $proc = new processor($user['username']);
+            $error = $proc->process_interaction($package);
+            if ($error) return $pb->send_error($error);
+            else return $pb->ack();
         break;
 
         case "Request Content":
-            //TODO decode content, verify signature, append to content
             $username = $db->get_user_by_address($package["address"])['username'];
             $proc = new processor($username);
             $content = $proc->read_content($package["id"]);

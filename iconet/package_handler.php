@@ -11,9 +11,6 @@ class package_handler
         }
 
         switch ($package['type']){
-
-            //active packages
-
             case "Request Publickey":
                 //check if non-optional variables are set.
                 if (isset($package['address'])){
@@ -48,16 +45,6 @@ class package_handler
                 }
                 break;
 
-            case "Request Content":
-                //check if non-optional variables are set.
-                if (isset($package["id"]) and isset($package["address"])){
-                    return "Request Content";
-                } else{
-                    echo "Error - Missing field 'ID', 'address' in request content <br>";
-                    return "Error - Missing field 'ID', 'address' in request content ";
-                }
-                break;
-
             case "Request Format":
                 //check if non-optional variables are set.
                 if (isset($package["name"])){
@@ -66,12 +53,12 @@ class package_handler
                         //all conditions for type request format are met.
                         return "Request Format";
                     } else{
-                        echo "Error - Faulty format name, can only provide 'post-comments' <br>";
-                        return "Error - Faulty format name, can only provide 'post-comments'";
+                        echo "Error - Faulty format, can only provide 'post-comments' <br>";
+                        return "Error - Faulty format, can only provide 'post-comments'";
                     }
                 } else{
-                    echo "Error - Missing field 'name' in request format <br>";
-                    return "Error - Missing field 'name' in request format ";
+                    echo "Error - Missing field 'format' in request format <br>";
+                    return "Error - Missing field 'format' in request format ";
                 }
                 break;
 
@@ -92,27 +79,13 @@ class package_handler
                 }
                 break;
 
-            // response packages
-
-            case "Send Publickey":
+            case "Request Content":
                 //check if non-optional variables are set.
-                if (isset($package["address"]) and $package["publickey"]){
-                    //check if non-optional variables are proper
-                    if ($this->check_address($package['address'])){
-                        if (gettype($package["publickey"]) == "string") {
-                            //all conditions for publicKey request are met.
-                            return "Send Publickey";
-                        } else {
-                            echo "Error - Faulty publickey in send publickey <br>";
-                            return "Error - Faulty publickey in send publickey";
-                        }
-                    } else {
-                        echo "Error - Faulty address in send publickey <br>" . $package['address'] . "<br>";
-                        return "Error - Faulty address in send publickey";
-                    }
+                if (isset($package["id"]) and isset($package["address"])){
+                    return "Request Content";
                 } else{
-                    echo "Error - Missing field 'address' or 'publickey' in send publickey <br>";
-                    return "Error - Missing field 'address' or 'publickey' in send publickey ";
+                    echo "Error - Missing field 'ID', 'address' in request content <br>";
+                    return "Error - Missing field 'ID', 'address' in request content ";
                 }
                 break;
 
@@ -131,9 +104,7 @@ class package_handler
                     return "Error - Missing field 'sender', 'format' or 'content' in send content ";
                 }
                 break;
-
             case "Send Format":
-                //TODO define iconet format
                 //check if non-optional variables are set.
                 if (isset($package["name"]) and $package["format"]){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
@@ -149,11 +120,12 @@ class package_handler
                     return "Error - Missing field 'name' or 'format'  in send format ";
                 }
                 break;
-
             default:
                 echo "Unknown Package Type: <br>" . $package['type'] . "<br>";
                 return "Error - Unknwon Package Type " . $package['type'];
+
         }
+
 
     }
 
@@ -168,5 +140,6 @@ class package_handler
             return false;
         }
     }
+
 
 }

@@ -34,7 +34,8 @@ class database
         }
     }
 
-    function add_post($id, $username, $secret){
+    function add_post($id, $username, $secret): bool
+    {
         $query = mysqli_query($this->icon, "INSERT INTO posts VALUES ('$id', '$username', '$secret')");
         if(mysqli_connect_errno())
         {
@@ -64,18 +65,19 @@ class database
         }
     }
 
-    function get_post_by_id($ID){
+    function get_post_by_id($ID)
+    {
         $query = mysqli_query($this->icon, "SELECT * FROM posts WHERE id='$ID'");
         if (mysqli_num_rows($query) > 0){
-            $row = mysqli_fetch_array($query);
-            return $row;
+            return mysqli_fetch_array($query);
         } else {
-            return false;
+            return null;
         }
     }
 
 
-    function add_user($username, $address, $pubkey, $privkey){
+    function add_user($username, $address, $pubkey, $privkey): bool
+    {
         $query = mysqli_query($this->icon, "INSERT INTO users VALUES ('$username', '$address', '$pubkey', '$privkey')");
         if(mysqli_connect_errno())
         {
@@ -95,7 +97,8 @@ class database
         }
     }
 
-    function get_contacts($user){
+    function get_contacts($user): ?array
+    {
         $result = mysqli_query($this->icon, "SELECT * FROM contacts WHERE username='$user'") or trigger_error(mysqli_error());
         if(mysqli_num_rows($result) == 0)
             return null;
@@ -111,7 +114,8 @@ class database
         }
     }
 
-    function delete_contact($user, $address){
+    function delete_contact($user, $address): bool
+    {
         $delete_query = mysqli_query($this->icon, "DELETE FROM contacts WHERE username='$user' AND friend_address='$address'");
         if(mysqli_connect_errno())
         {
@@ -120,7 +124,8 @@ class database
         } else return true;
     }
 
-    function add_contact($user, $address, $pubkey){
+    function add_contact($user, $address, $pubkey): bool
+    {
         $query = mysqli_query($this->icon, "INSERT INTO contacts VALUES ('$user', '$address', '$pubkey')");
         if(mysqli_connect_errno())
         {
@@ -130,8 +135,9 @@ class database
         return true;
     }
 
-    function add_notification($id, $username, $sender, $secret, $link, $text){
-        $query = mysqli_query($this->icon, "INSERT INTO notifications VALUES ('$id', '$username', '$sender', '$secret', '$link', '$text')");
+    function add_notification($content_id, $username, $sender, $secret, $link, $text): bool
+    {
+        $query = mysqli_query($this->icon, "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$link', '$text')");
         var_dump($query);
         if(mysqli_connect_errno())
         {
@@ -141,17 +147,46 @@ class database
         return true;
     }
 
-    function clear_tables(){
+    function add_interaction($content_id, $username, $sender, $type, $enc_int): bool
+    {
+        $query = mysqli_query($this->icon, "INSERT INTO interactions VALUES (null,'$content_id', '$username', '$sender', '$type', '$enc_int')");
+        var_dump($query);
+        if(mysqli_connect_errno())
+        {
+            echo "Failed to add interaction: " . mysqli_connect_errno();
+            return false;
+        }
+        return true;
+    }
+
+    function clear_tables(): void
+    {
         mysqli_query($this->icon, "DELETE FROM users");
         mysqli_query($this->icon, "DELETE FROM contacts");
         mysqli_query($this->icon, "DELETE FROM notifications");
         mysqli_query($this->icon, "DELETE FROM posts");
+        mysqli_query($this->icon, "DELETE FROM interactions");
 
     }
 
-    public function get_notifications($username)
+    public function get_notifications($username): ?array
     {
         $query = mysqli_query($this->icon, "SELECT * FROM notifications WHERE username='$username'");
+        if(mysqli_num_rows($query) == 0)
+            return null;
+        else {
+            $i = 0;
+            while ($row = mysqli_fetch_array($query)) {
+                $rows[$i]  = $row;
+                $i++;
+            }
+            return $rows;
+        }
+    }
+
+    function get_interactions_by_contentid($content_id)
+    {
+        $query = mysqli_query($this->icon, "SELECT * FROM interactions WHERE content_id='$content_id'");
         if(mysqli_num_rows($query) == 0)
             return null;
         else {

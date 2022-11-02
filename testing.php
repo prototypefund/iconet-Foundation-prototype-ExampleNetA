@@ -63,8 +63,7 @@ protected $proc;
         h("Test Processing:");
 
         h("Request Pubkey of Bob");
-        $response = $this->proc->get_external_pubkey("bob@bobnet.org");
-        echo "<br>" . $response;
+        $this->proc->get_external_pubkey("bob@bobnet.org");
 
         h("Create Content Hello World");
         $this->proc->create_iconet_post("Hello World");
@@ -77,17 +76,25 @@ protected $proc;
         }
 
         h("Request Content");
-        $notif = $notifs[0];
+        $notif = $notifs[0]; // use bobs notif
 
-        $content_pack = $this->proc->display_content($notif['id'], $notif['sender']);
-        p($this->cryp->decSym($content_pack['content'], $notif['secret']));
-
+        p($this->proc->display_content($notif['content_id'], $notif['sender'], $notif['secret']));
         h("Request Format");
         p("Request post-comments");
         $response = $this->proc->get_format("post-comments");
-        echo "<br>" . htmlspecialchars($response);
-
+        p("Received Format:");
+        echo htmlspecialchars($response);
         h("Send Interaction");
+        p("Make Comment as Bob: Yeey");
+
+        $response = $this->proc->post_interaction("Yeey!", $notif['content_id'], "bob@bobnet.net", $notif['sender'], "comment", $notif['secret'] );
+        p("Response:");
+        var_dump($response);
+
+        h("Request Content, including interactions");
+        p($this->proc->display_content($notif['content_id'], $notif['sender'], $notif['secret']));
+
+
     }
 
 

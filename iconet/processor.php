@@ -24,7 +24,6 @@ class processor
 
         $user = $this->db->get_user_by_name($userLoggedIn);
         $this->setUser($user);
-
     }
 
 
@@ -37,12 +36,6 @@ class processor
     function get_external_pubkey($address){
         $msg = $this->pb->request_pubkey($address);
         $response = $this->po->send("url", $msg);
-        $package = Json_decode($response, true);
-        if (0 == strcmp($this->ph->check_package($package), "Send Publickey")){
-            return $package['publickey'];
-        } else {
-            return false;
-        }
     }
 
     function create_iconet_post($content){
@@ -94,21 +87,38 @@ class processor
          return $this->db->get_notifications($username);
     }
 
-    function display_content($id, $from){
+    function display_content($id, $from, $secret){
          $msg = $this->pb->request_content($id, $from);
          $response = $this->po->send("url", $msg);
-         return Json_decode ($response, true);
+         $package = Json_decode($response,true);
+        if (0!=strcmp($this->ph->check_package($package),"Send Content")){
+            echo "Error - invalid response Package. Expected: Send Content";
+            return "Error - invalid response Package. Expected: Send Content";
+        }
+        $content = Json_decode($package['content'],true);
+        $main_content = $this->cryp->decSym($content['content'], $secret);
+        if (isset($content['interactions'])){
+            foreach ($content['interactions'] as $i){
+                $inter = $this->cryp->decSym($i['enc_int'], $secret);
+                $main_content .= "<br>Comment from: ". $i['sender'] . "<br>".$inter;
+            }
+        }
+
+        return $main_content;
+
     }
 
+    //decrypts and saves incoming notifications, returns potential errors
     public function save_notification(mixed $package)
     {
+        $error = false;
         $username = $this->user['username'];
         $link = "";
         $sender = $package['sender'];
 
         $cipher = $package['cipher'];
         $enc_pre = $package['predata'];
-        $privkey = $this->db->get_privkey_by_address($package['to']); // todo
+        $privkey = $this->db->get_privkey_by_address($package['to']); // todo check if user is logged in / privkey may be accessed
         $secret = $this->cryp->decAsym($package['cipher'], $privkey);
 
         $predata = Json_decode( $this->cryp->decSym($enc_pre, $secret) , true);
@@ -117,17 +127,16 @@ class processor
         $text = $predata['notification'];
 
         $this->db->add_notification($id, $username, $sender, $secret, $link, $text);
+        if (!$error) return false; else return $error;
     }
 
-    function get_format($name){
-         $msg = $this->pb->request_format($name);
+    function get_format($format){
+         $msg = $this->pb->request_format($format);
          $response = $this->po->send("url", $msg);
-         $package = Json_decode($response, true);
-         if (0 == strcmp($this->ph->check_package($package), "Send Format")){
+         $package = json_decode($response, true);
+         if (0==strcmp($this->ph->check_package($package),"Send Format"))
              return $package['format'];
-         } else {
-             return false;
-         }
+         else return false;
     }
 
     function read_content($id)
@@ -143,13 +152,43 @@ class processor
             } else {
                 $filename = $this->path_postings. $id. ".txt";
                 $myfile = fopen($filename, "r") or die("Error - Unable to open file!");
-                $content =  fread($myfile,filesize($filename));
+                $content['content'] =  fread($myfile,filesize($filename));
                 fclose($myfile);
-                return $content;
+
+                $interactions_db = $this->db->get_interactions_by_contentid($id);
+                $inters= array();
+                $i=0;
+                foreach ($interactions_db as $in){
+                    $inter['sender'] = $in['sender'];
+                    $inter['enc_int'] = $in['enc_int'];
+                    $inters[$i] = $inter;
+                }
+                $content['interactions'] = $inters;
+                return json_encode($content);
             }
 
         }
 
+    }
+
+    function post_interaction($interaction, $content_id, $from, $to, $type, $secret){
+         $enc_int = $this->cryp->encSym($interaction, $secret);
+
+         $msg = $this->pb->send_interaction($from, $to, $content_id, $type, $enc_int);
+         $response = $this->po->send("url", "$msg");
+         return $response;
+
+     }
+
+    function process_interaction(mixed $package)
+    {
+        $error = false;
+        if (!($this->user['address'] ==  $package['to'])){
+            return "Error - Not owner of interacted content";
+        }
+        $username = $this->user['username'];
+        $this->db->add_interaction($package['id'], $username, $package['sender'], $package['int_type'], $package['interaction']);
+        if (!$error) return false; else return $error;
     }
 
 

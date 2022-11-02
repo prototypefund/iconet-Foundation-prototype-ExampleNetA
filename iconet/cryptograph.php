@@ -84,18 +84,18 @@ class cryptograph
         return $ciphers;
     }
 
-    function encAsym($symKey,$pubKey)
+    function encAsym($data,$pubKey)
     {
-        openssl_public_encrypt($symKey, $encSymKey, $pubKey, OPENSSL_PKCS1_PADDING);
-        $encSymKey = base64_encode($encSymKey);
-        return $encSymKey;
+        openssl_public_encrypt($data, $encdata, $pubKey, OPENSSL_PKCS1_PADDING);
+        $encdata = base64_encode($encdata);
+        return $encdata;
     }
 
-    function decAsym($cipher,$privKey)
+    function decAsym($encdata,$privKey)
     {
-        $cipher = base64_decode($cipher);
-        openssl_private_decrypt($cipher, $decSecret, $privKey, OPENSSL_PKCS1_PADDING);
-        return $decSecret;
+        $encdata = base64_decode($encdata);
+        openssl_private_decrypt($encdata, $data, $privKey, OPENSSL_PKCS1_PADDING);
+        return $data;
     }
 
 
