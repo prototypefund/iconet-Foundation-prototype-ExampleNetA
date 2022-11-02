@@ -113,30 +113,30 @@ Description:
 
 Create processing interface with iconet API. Define non-optional elements of processed packages. The packages MUST all contain the element "type" and respectively:
     "Request Publickey": 
-        "address" - address of the owner of the requested public key
-    "Send Notification":
-        "sender" - address of the sender
-        "predata" - encrypted preview data of the content
+        "address" - address of requested public key's owner
+"Send Notification":
+        "sender" - address of sender
+        "predata" - encrypted preview data of content
         "cipher" - with public key encrypted secret
         "to" - address of the notification's receiver
     "Request Content":
         "id" - identification number of notification
-        "address" - address of the sender
+        "address" - address of sender
     "Request Format":
-        "name" - name of the requested format: "post-comments"
+        "name" - name of requested format: "post-comments"
     "Send Interaction":
         "id" - identification number of notification
-        "sender" - address of the sender
+        "sender" - address of sender
         "interaction" - content of interaction
     "Send Publickey":
-        "address" - address of the owner of the requested public key
+        "address" - address of requested public key's owner
         "publickey" - requested public key
     "Send Content":
-        "sender" - address of the sender
-        "format" - name of the requested format: "post-comments"
+        "sender" - address of sender
+        "format" - name of requested format: "post-comments"
         "content" - sent content
     "Send Format":
-        "name" - name of the requested format: "post-comments"
+        "name" - name of requested format: "post-comments"
         "format" - defined format for "post-comments"
 
 Code added:
