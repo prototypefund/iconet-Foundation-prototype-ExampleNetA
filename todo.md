@@ -1,0 +1,7 @@
+- includes split html tags
+- html doctype
+- what does dropdown_data_window do?
+- contacts.php overlapping posts
+- "none" username in Post.php
+- strings as bool in DB
+- why is everything an iframe?

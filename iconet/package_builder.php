@@ -1,5 +1,5 @@
 <?php
-
+namespace iconet;
 class package_builder
 {
 

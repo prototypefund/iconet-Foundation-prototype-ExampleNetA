@@ -1,22 +1,26 @@
 # Project setup
+
 ## Clone the repository
+
 ### Via HTTPS:
 
     git clone https://codeberg.org/iconet-Foundation/prototype-ExampleNetA.git
 
 ### Or Via SSH:
+
 Upload your public key in Codeberg under `Settings->Security`. Follow the instructions if you dont already have one.
 Download the repository with:
 
     git clone git@codeberg.org:iconet-Foundation/prototype-ExampleNetA.git
 
-
 ## On Ubuntu
-1. php-7.4 is already installed, install apache2, install mysql
 
-        sudo apt install apache2 mysql-server
+1. php-7.4 is already installed, install apache2, install mysql, install composer
 
-2. Make apache2 host your local folder: Create a new file called netA.conf under `/etc/apache2/sites-available/` You need sudo rights:
+        sudo apt install apache2 mysql-server composer
+
+2. Make apache2 host your local folder: Create a new file called netA.conf under `/etc/apache2/sites-available/` You
+   need sudo rights:
 
         sudoedit /etc/apache2/sites-available/netA.conf
 
@@ -52,34 +56,40 @@ Download the repository with:
 
         127.0.0.1       netA
 
+6. Install composer (`sudo apt install composer`) and run `composer install` in the project folder.
 
-6. In your browser visit the site `netA/`
 
-7. Not working? Check apache2's status for errors with
+7. In your browser visit the site `netA/`
+
+8. Not working? Check apache2's status for errors with
 
         apachectl -S
 
 
-8. Maybe you need to create the file `/etc/apache2/conf-available/fqdn.conf`. With `sudoedit` paste
+9. Maybe you need to create the file `/etc/apache2/conf-available/fqdn.conf`. With `sudoedit` paste the following line and activate it with `sudo a2enconf /etc/apache2/conf-available/fqdn.conf`
 
         ServerName localhost
 
 
-9. If apache is not running run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
-If mysql not running run `sudo service mysql start`
+10. If apache is not running run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
+   If mysql not running run `sudo service mysql start`
 
 
-10. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights and no pw.
-in mysql:
-        `CREATE USER 'admin'@'localhost' IDENTIFIED BY '';`
-        `GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;`
+11. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights and no
+    pw.
+    in mysql:
+    `CREATE USER 'admin'@'localhost' IDENTIFIED BY '';`
+    `GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;`
 
 Run following steps in mysql not with root but with admin
 
-11. Run mysql: 
-        sudo service mysql start
+12. Start the mysql server with `sudo systemctl start mysql`
+13. Run `netA.sql`
+
 ## IDE specific:
-- Connect phpstorm to your AMP and Mysql: [Follow this tutorial](https://www.jetbrains.com/help/phpstorm/installing-an-amp-package.html)
+
+- Connect phpstorm to your AMP and
+  Mysql: [Follow this tutorial](https://www.jetbrains.com/help/phpstorm/installing-an-amp-package.html)
 
 - Create Database "social":
 
@@ -88,4 +98,3 @@ Run following steps in mysql not with root but with admin
 
 - Link IDE Database social@localhost
 
-- Run social.sql on linked database. 

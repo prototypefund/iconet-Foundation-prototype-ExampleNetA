@@ -1,0 +1,22 @@
+{
+    "name": "iconet/example-net-a",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Iconet\\ExampleNetA\\": "iconet/",
+            "": "includes/classes"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.8",
+        "phpunit/phpunit": "^9.5"
+    },
+    "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon"
+    },
+  "require": {
+        "php": "8.1",
+        "ext-mysqli": "*"
+  }
+}

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Code Inspection Scope" pattern="(!file[prototype-ExampleNetA]:.idea//*&amp;&amp;!file[prototype-ExampleNetA]:assets/css//*||file:assets/css/style.css||file:assets/css/register_style.css)&amp;&amp;!file[prototype-ExampleNetA]:assets/fonts//*&amp;&amp;!file[prototype-ExampleNetA]:assets/images//*&amp;&amp;!file:assets/js/bootbox.min.js&amp;&amp;!file:assets/js/bootstrap.js&amp;&amp;!file:assets/js/jquery.jcrop.js&amp;&amp;!file:assets/css/bootstrap.css" />
+</component>

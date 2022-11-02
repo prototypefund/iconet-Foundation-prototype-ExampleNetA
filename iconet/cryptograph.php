@@ -1,6 +1,8 @@
 <?php
+namespace iconet;
 include_once './iconet/libs/AES.php';
 include_once './iconet/database.php';
+
 
 class cryptograph
 {

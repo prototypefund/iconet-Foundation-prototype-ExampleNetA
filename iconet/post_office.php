@@ -1,4 +1,5 @@
 <?php
+namespace iconet;
 $sim_post = true;
 include_once './iconet/index.php';
 class post_office

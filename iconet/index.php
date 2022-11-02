@@ -1,7 +1,6 @@
 <?php
+namespace iconet;
 // i accept and handle incoming requests!
-
-
 
 if (isset($sim_post)){
     // handle post requests
@@ -9,6 +8,7 @@ if (isset($sim_post)){
     include_once "./iconet/package_builder.php";
     include_once "./iconet/database.php";
     include_once "./iconet/processor.php";
+
 
 } else {
     // present personal inbox

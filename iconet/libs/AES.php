@@ -1,4 +1,5 @@
 <?php
+namespace iconet;
 /**
 Aes encryption
  * Taken from: https://aesencryption.net/

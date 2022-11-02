@@ -1,5 +1,4 @@
 <?php
-
 h("Start Testing");
 
 p("Includes:");
@@ -9,6 +8,11 @@ require_once "./iconet/cryptograph.php";
 require_once "./iconet/processor.php";
 require_once "./iconet/package_builder.php";
 require_once "./iconet/post_office.php";
+use iconet\database;
+use iconet\cryptograph;
+use iconet\processor;
+use iconet\package_builder;
+use iconet\post_office;
 
 $testy = new tester();
 
@@ -39,6 +43,7 @@ protected $proc;
     }
 
     function clean_test_data(){
+        session_unset();
     }
 
     function init_testdata()

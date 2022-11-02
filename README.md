@@ -1,18 +1,30 @@
 ## Iconet integration into ExampleNetA
-Check Setup.md for Setup Instructions.
 
-This repository is part of the iconet prototype development, where two networks are linked through the iconet mechanisms.
-This is very basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled demonstration, on how to integrate the iconet technology. 
+Check [setup.me](setup.md) for Setup Instructions.
+
+This repository is part of the iconet prototype development, where two networks are linked through the iconet
+mechanisms.
+This is a basic network, with a low feature set and the code uses no frameworks. This allows for a quite untangled
+demonstration, on how to integrate the iconet technology.
 ExampleNetA is taken from: https://github.com/yaswanthpalaghat/Social-Network-using-php-and-mysql
+
 ## A: Development Doku
+
 Here we document the development from ExampleNetA towards interconnectivity.
 
 #### Files added:
-While not necessary, for demonstration purposes we intend to split the initial structure of ExampleNetA as much as possible from the required structure added for iconet.
+
+While not necessary, for demonstration purposes we intend to split the initial structure of ExampleNetA as much as
+possible from the required structure added for iconet.
+
 ##### iconet/iconet.sql
+
 Fills the iconet database with the required tables. (execute only on setup)
+
 ##### iconet/index.php
+
 Catches incoming requests, initiates required action.
+
 ##### iconet/api_outwards
 HTTP helper to send packages to URLS. 
 ##### iconet/database
@@ -27,9 +39,11 @@ Handles iconet encryption and decryption
 AES class for symetric encryption
 
 ### Features added:
+
 Internal process documentation for the incrementally added features.
 
 #### Feature: Separate Infrastructure
+
 Description:
 
 Add a separate database and infrastructure for all iconet related aspects.
@@ -37,17 +51,23 @@ While networks might want the iconet features to be rather integrated, for showc
 
 Code added:
 
-iconet database table generation, folders for iconet handlers.  
+iconet database table generation, folders for iconet handlers.
 
 #### Feature: Contactlist
+
 Description:
 
-In its initial feature-set, Users of ExampleNetA have no ability to display or manage contacts/friends. So far the friends feature of ExampleNetA only enables adding and removing off friends, where being friends entails that posts are displayed within the friends feed.
-While iconet does not set any requirements on how contacts/friends are handled by a network, there needs to be some way for a user to add and manage external addresses and hold them in a contact-list, so they then may send messages towards them. 
+In its initial feature-set, Users of ExampleNetA have no ability to display or manage contacts/friends. So far the
+friends feature of ExampleNetA only enables adding and removing off friends, where being friends entails that posts are
+displayed within the friends feed.
+While iconet does not set any requirements on how contacts/friends are handled by a network, there needs to be some way
+for a user to add and manage external addresses and hold them in a contact-list, so they then may send messages towards
+them.
 
 Code added:
 
-Since ExampleNetA has no such feature, we add it. We change the requests.php to contacts.php, which previously only displayed pending friend requests.
+Since ExampleNetA has no such feature, we add it. We change the requests.php to contacts.php, which previously only
+displayed pending friend requests.
 A user will be able to display all their internal friends and friends-requests, as well as their external contacts.
 
 
@@ -64,6 +84,7 @@ On User registration, a global Address is automatically generated and added to t
 This address will be displayed on the profile of each user.
 
 #### Feature: Basic S2S: Request and Return PublicKey of Users.
+
 Description:
 
 Required to provided external sources with pubkey of local users.
@@ -72,7 +93,7 @@ Code added:
 
 Generate internal Server2Server handling structure. For now use trivial placeholders for external s2s communication.
 Return Pubkey on request.
-    
+
     For packages use JSON
     Request:
     {
