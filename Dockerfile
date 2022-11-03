@@ -16,7 +16,7 @@ RUN \
     mkdir /var/www/prototype-ExampleNetA && \
     service mysql start && \
     service apache2 start && \
-    mysql -e "CREATE USER 'admin'@'localhost' IDENTIFIED BY ''; GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;"
+    mysql -e "CREATE USER 'admin'@'localhost' IDENTIFIED BY ''; GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;" && \
     mysql -e "CREATE DATABASE netA;" && mysql -uroot --database=netA < init_netA.sql && \
     mysql -e "CREATE DATABASE netAiconet;" && mysql -uroot --database=netAiconet < init_netAiconet.sql
 
