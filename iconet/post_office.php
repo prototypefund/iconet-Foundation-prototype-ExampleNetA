@@ -15,11 +15,14 @@ class post_office
             return $response;
         } else {
             //simulate delivery inline
-            echo "<br> Sending msg: <br>".htmlspecialchars($message) . "<br>";
+            $pretty = json_encode(json_decode($message), JSON_PRETTY_PRINT);
+            echo "<br> Sending msg: <pre>".$pretty . "</pre>>";
 
             $response = receive($message);
 
-            echo "<br> Received msg: <br>".htmlspecialchars($response) . "<br>";
+            $pretty = json_encode(json_decode($response), JSON_PRETTY_PRINT);
+
+            echo "<br> Received msg: <pre>".htmlspecialchars($pretty) . "</pre>";
 
             return $response;
 

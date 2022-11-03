@@ -95,7 +95,7 @@ class processor
             echo "Error - invalid response Package. Expected: Send Content";
             return "Error - invalid response Package. Expected: Send Content";
         }
-        $content = Json_decode($package['content'],true);
+        $content = $package['content'];
         $main_content = $this->cryp->decSym($content['content'], $secret);
         if (isset($content['interactions'])){
             foreach ($content['interactions'] as $i){
@@ -158,13 +158,15 @@ class processor
                 $interactions_db = $this->db->get_interactions_by_contentid($id);
                 $inters= array();
                 $i=0;
-                foreach ($interactions_db as $in){
-                    $inter['sender'] = $in['sender'];
-                    $inter['enc_int'] = $in['enc_int'];
-                    $inters[$i] = $inter;
+                if ($interactions_db != null) {
+                    foreach($interactions_db as $in) {
+                        $inter['sender'] = $in['sender'];
+                        $inter['enc_int'] = $in['enc_int'];
+                        $inters[$i] = $inter;
+                    }
+                    $content['interactions'] = $inters;
                 }
-                $content['interactions'] = $inters;
-                return json_encode($content);
+                return $content;
             }
 
         }
