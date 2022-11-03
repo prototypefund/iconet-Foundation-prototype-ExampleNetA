@@ -1,10 +1,13 @@
 <?php
-namespace iconet;
-class package_builder
+namespace Iconet;
+
+
+//TODO user objects or make methods static
+class PackageBuilder
 {
 
     //active packages
-    function request_pubkey($address): bool|string
+    public static function request_pubkey($address): bool|string
     {
         $package['type'] = "Request Publickey";
         $package['address'] = $address;

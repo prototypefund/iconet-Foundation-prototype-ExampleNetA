@@ -1,6 +1,11 @@
 <?php
-require_once "iconet/database.php";
-require_once "iconet/cryptograph.php";
+
+use Iconet\Crypto;
+
+require_once "iconet/Database.php";
+require_once "iconet/Crypto.php";
+
+
 //Declaring variables to prevent errors
 $fname = ""; //First name
 $lname = ""; //Last name
@@ -115,10 +120,10 @@ if(isset($_POST['register_button'])) {
 
         Database::singleton()->registerUser($fname, $lname, $username, $email, $password, $date, $profile_pic);
 
-        $cryp = new cryptograph();
-        $db = new iconet/database();
+        global $iconetDB;
+        $cryp = new Crypto();
         $keyPair = $cryp->genkeyPair();
-        $db->add_user($username, $address, $keyPair[0], $keyPair[1]);
+        $iconetDB->add_user($username, $address, $keyPair[0], $keyPair[1]);
 
         array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
 

@@ -1,26 +1,30 @@
 <?php
-namespace iconet;
-class processor
+namespace Iconet;
+
+require_once 'config/config.php';
+
+class Processor
 {
     //logged in user
     protected mixed $user;
 
     //helper classes
-    protected database $db; //database
-    protected post_office $po; //postoffice
-    protected package_builder $pb; //package_builder
-    protected cryptograph $cryp; //cryptograph
-    protected package_handler $ph;
+    protected Database $db; //database
+    protected PostOffice $po; //postoffice
+    protected PackageBuilder $pb; //package_builder
+    protected Crypto $cryp; //cryptograph
+    protected PackageHandler $ph;
     protected string $path_postings ;
 
     public function __construct($userLoggedIn)
     {
-        $this->db = new database();
-        $this->po = new post_office();
-        $this->cryp = new cryptograph();
-        $this->pb = new package_builder();
-        $this->ph = new package_handler();
-        $this->path_postings = ".\iconet\posts\id.";
+        global $config;
+        $this->db = new Database();
+        $this->po = new PostOffice();
+        $this->cryp = new Crypto();
+        $this->pb = new PackageBuilder();
+        $this->ph = new PackageHandler();
+        $this->path_postings = $config['storage'];
 
         $user = $this->db->get_user_by_name($userLoggedIn);
         $this->setUser($user);

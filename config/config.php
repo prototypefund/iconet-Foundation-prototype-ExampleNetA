@@ -11,12 +11,17 @@ $config = [
     'db_password' => '',
     'db_database' => 'netA',
     'db_host' => '127.0.0.1',
-    'db_ionet_user' => 'admin',
+
+    'db_iconet_user' => 'admin',
     'db_iconet_password' => '',
     'db_iconet_database' => 'netAiconet',
     'db_iconet_host' => '127.0.0.1',
+
     'domain' => "exampleneta.net",
-    'timezone' => date_default_timezone_set("Europe/Berlin")
+    'timezone' => date_default_timezone_set("Europe/Berlin"),
+    'storage'   => "./iconet/posts/id.",
+    'openssl' => 'C:/xampp/php/extras/openssl/openssl.cnf',
+
 ];
 
 //TODO there should be nothing below. Instead use the Database class
@@ -31,16 +36,7 @@ $con = mysqli_connect(
 if(mysqli_connect_errno()) {
     echo "Failed to connect: " . mysqli_connect_errno();
 }
-/*
-$icon = mysqli_connect(
-    $config['db_iconet_host'],
-    $config['db_ionet_user'],
-    $config['db_iconet_password'],
-    $config['db_iconet_database']
-);
-if(mysqli_connect_errno()) {
-    echo "Failed to connect: " . mysqli_connect_errno();
-}
-*/
+
+$iconetDB = new \Iconet\Database();
 
 ?>

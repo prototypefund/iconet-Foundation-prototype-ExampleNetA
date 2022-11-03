@@ -3,16 +3,16 @@ h("Start Testing");
 
 p("Includes:");
 
-require_once "./iconet/database.php";
-require_once "./iconet/cryptograph.php";
-require_once "./iconet/processor.php";
-require_once "./iconet/package_builder.php";
-require_once "./iconet/post_office.php";
-use iconet\database;
-use iconet\cryptograph;
-use iconet\processor;
-use iconet\package_builder;
-use iconet\post_office;
+require_once "./iconet/Database.php";
+require_once "./iconet/Crypto.php";
+require_once "./iconet/Processor.php";
+require_once "./iconet/PackageBuilder.php";
+require_once "./iconet/PostOffice.php";
+use Iconet\Database;
+use Iconet\Crypto;
+use Iconet\Processor;
+use Iconet\PackageBuilder;
+use Iconet\PostOffice;
 
 $testy = new tester();
 
@@ -36,10 +36,10 @@ protected $proc;
 
     public function __construct()
     {
-        $this->db = new database();
-        $this->po = new post_office();
-        $this->cryp = new cryptograph();
-        $this->pb = new package_builder();
+        $this->db = new Database();
+        $this->po = new PostOffice();
+        $this->cryp = new Crypto();
+        $this->pb = new PackageBuilder();
     }
 
     function clean_test_data(){
@@ -60,7 +60,7 @@ protected $proc;
         $this->db->add_contact("alice_tester", "bob@bobnet.org", $bobKey[0]);
         $this->db->add_contact("alice_tester", "claire@clairenet.de", $claireKey[0]);
 
-        $this->proc = new processor("alice_tester");
+        $this->proc = new Processor("alice_tester");
 
     }
 

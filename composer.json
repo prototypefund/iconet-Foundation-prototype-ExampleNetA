@@ -4,7 +4,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Iconet\\ExampleNetA\\": "iconet/",
+            "Iconet\\": "iconet/",
             "": "includes/classes"
         }
     },
@@ -16,7 +16,8 @@
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon"
     },
   "require": {
-        "php": "8.1",
-        "ext-mysqli": "*"
+        "php": "^8.1",
+        "ext-mysqli": "*",
+        "ext-pdo": "*"
   }
 }

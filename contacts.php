@@ -1,9 +1,10 @@
 <?php
 
+use Iconet\PackageBuilder;
+use Iconet\PackageHandler;
+
 require_once("includes/header.php");
-require_once("iconet/format_handlers.php");
-require_once("iconet/request_builder.php");
-require_once("iconet/db_handlers.php");
+
 ?>
 
 <div class="main_column column" id="main_column">
@@ -80,32 +81,31 @@ require_once("iconet/db_handlers.php");
     <h3>External Contacts</h3>
     <div>
         <?php
-        $query = get_contacts($userLoggedIn);
-        if(mysqli_num_rows($query) == 0) {
-            echo "<p>You have no external contacts stored at this time!</p>";
-        } else {
-            echo "<form action='contacts.php' method='GET'>";
-
-            echo "<p>These are your external contacts. Your postings are also delivered to them via iconet.</p>";
-            while($row = mysqli_fetch_array($query)) {
-                echo $row['friend_address'] . " with the pubkey: " . $row['friend_pubkey'];
-                echo "   <button type='submit' name='delete_address' value =" . $row['friend_address'] . ">X</button>";
-                echo "<br><br>";
-            }
-            echo "</form>";
-        }
-        ?>
-
-        <?php
-        //handle deleted address
-        if(isset($_GET['delete_address'])) {
-            $address = strip_tags($_GET['delete_address']);
-            if(delete_contact($userLoggedIn, $address)) {
-                header("Location: contacts.php");
+            global $iconetDB;
+            $contacts = $iconetDB->get_contacts($userLoggedIn);
+            if(!$contacts) {
+                echo "<p>You have no external contacts stored at this time!</p>";
             } else {
-                echo "Error: Could not delete " . $address;
+                echo "<form action='contacts.php' method='GET'>";
+
+                echo "<p>These are your external contacts. Your postings are also delivered to them via iconet.</p>";
+                foreach($contacts as $contact) {
+                    echo $contact['address'] . " with the pubkey: " . $contact['pubkey'];
+                    echo "   <button type='submit' name='delete_address' value =" . $contact['address'] . ">X</button>";
+                    echo "<br><br>";
+                }
+
+                echo "</form>";
             }
-        }
+
+            if(isset($_GET['delete_address'])) {
+                $address = strip_tags($_GET['delete_address']);
+                if($iconetDB->delete_contact($userLoggedIn, $address)) {
+                    header("Location: contacts.php");
+                } else {
+                    echo "Error: Could not delete " . $address;
+                }
+            }
         ?>
     </div>
 
@@ -123,13 +123,13 @@ require_once("iconet/db_handlers.php");
         if(isset($_GET['add_address'])) {
             $address = strip_tags($_GET['add_address']);
 
-            if(!check_address($address)) {
+            if(!PackageHandler::check_address($address)) {
                 echo "Invalid Address.";
                 exit;
             }
-            $pubkey = request_pubkey($address);
+            $pubkey = PackageBuilder::request_pubkey($address);
 
-            if(add_contact($userLoggedIn, $address, $pubkey)) {
+            if($iconetDB->add_contact($userLoggedIn, $address, $pubkey)) {
                 header("Location: contacts.php");
             } else {
                 echo "Failed to add " . $address;

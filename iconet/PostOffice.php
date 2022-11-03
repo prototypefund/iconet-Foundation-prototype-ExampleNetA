@@ -1,8 +1,12 @@
 <?php
-namespace iconet;
+namespace Iconet;
+
+
 $sim_post = true;
 include_once './iconet/index.php';
-class post_office
+
+
+class PostOffice
 {
     //todo
     function send($url, $message): string

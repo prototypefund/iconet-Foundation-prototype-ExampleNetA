@@ -59,7 +59,7 @@ if(isset($_POST['like_button'])) {
     $query = mysqli_query($con, "UPDATE posts SET likes='$total_likes' WHERE id='$post_id'");
     $total_user_likes++;
     $user_likes = mysqli_query($con, "UPDATE users SET num_likes='$total_user_likes' WHERE username='$user_liked'");
-    $insert_user = mysqli_query($con, "INSERT INTO likes VALUES('', '$userLoggedIn', '$post_id')");
+    $insert_user = mysqli_query($con, "INSERT INTO likes (username, post_id) VALUES('$userLoggedIn', '$post_id')");
 
     //Insert Notification
     if($user_liked != $userLoggedIn) {

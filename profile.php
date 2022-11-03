@@ -1,7 +1,6 @@
 <?php
 
 require_once("includes/header.php");
-require_once "iconet/db_handlers.php";
 
 $message_obj = new Message($con, $userLoggedIn);
 
@@ -60,7 +59,9 @@ if(isset($_POST['post_message'])) {
     <img src="<?= $profileUser->profilePicture ?>">
     <div class="profile_info">
         <?php
-        $address = get_globaladdress($username); ?>
+        global $iconetDB;
+
+        $address = $iconetDB->get_globaladdress($username); ?>
         <p>Address: <?= $address ?></p>
         <p>Posts: <?= $profileUser->postsCount ?></p>
         <p>Likes: <?= $profileUser->likesCount ?></p>

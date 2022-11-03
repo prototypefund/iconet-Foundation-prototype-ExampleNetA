@@ -1,6 +1,9 @@
 <?php
-namespace iconet;
-class package_handler
+namespace Iconet;
+
+
+//TODO use objects or make all methods static
+class PackageHandler
 {
     function check_package($package): string
     {
@@ -129,7 +132,7 @@ class package_handler
 
     }
 
-    function check_address($address): bool
+    public static function check_address($address): bool
     {
         $string_array = explode("@",$address);
         if (count($string_array) < 2) return false;

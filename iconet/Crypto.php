@@ -1,15 +1,13 @@
 <?php
-namespace iconet;
+namespace Iconet;
 include_once './iconet/libs/AES.php';
-include_once './iconet/database.php';
 
 
-class cryptograph
+class Crypto
 {
 
     protected int $blockSize;
     protected $configs;
-    protected $db;
 
     public function __construct()
     {
@@ -26,7 +24,6 @@ class cryptograph
             //linux must not import openssl configs
             $this->configs = null;
         }
-        $this->db = new database();
 
     }
 
