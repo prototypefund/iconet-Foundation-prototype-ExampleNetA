@@ -26,26 +26,27 @@ Download the repository with:
 
 3. Change the paths below and paste this:
 
-        <VirtualHost netA:80>
-            ServerAdmin webmaster@localhost
-            ServerName netA
-            ServerAlias www.netA
+```
+<VirtualHost netA:80>
+        ServerAdmin webmaster@localhost
+        ServerName netA
+        ServerAlias www.netA
 
-            DocumentRoot /home/YOURUSERNAME/your/path/to/prototype-ExampleNetA
-            DirectoryIndex index.php
+        DocumentRoot YOUR_PATH_TO_SRC
+        DirectoryIndex index.php
 
-            LogLevel info
-            ErrorLog ${APACHE_LOG_DIR}/error-netA.log
-            CustomLog ${APACHE_LOG_DIR}/access-netA.log combined
+        LogLevel info
+        ErrorLog ${APACHE_LOG_DIR}/error-netA.log
+        CustomLog ${APACHE_LOG_DIR}/access-netA.log combined
 
-            <Directory /home/YOURUSERNAME/your/path/to/prototype-ExampleNetA>
-                AllowOverride All
-                Options +FollowSymLinks
-                Require local
-                #Require all granted
-            </Directory>
-        </VirtualHost>
-
+        <Directory YOUR_PATH_TO_SRC>
+        AllowOverride All
+        Options +FollowSymLinks
+        Require local
+        #Require all granted
+        </Directory>
+</VirtualHost>
+```
 
 4. Enable the site
 
@@ -71,7 +72,7 @@ Download the repository with:
         ServerName localhost
 
 
-10. If apache is not running run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
+10. If apache is not running, run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
    If mysql not running run `sudo service mysql start`
 
 
@@ -84,17 +85,32 @@ Download the repository with:
 Run following steps in mysql not with root but with admin
 
 12. Start the mysql server with `sudo systemctl start mysql`
-13. Run `netA.sql`
+
+13. Initialize database
+- Create Database "netA" (you might have to enter your mysql credentials):
+``` bash
+mysql -e "CREATE DATABASE netA;"
+mysql --database=netA < init_netA.sql && \
+mysql -e "CREATE DATABASE netAiconet;"
+mysql --database=netAiconet < init_netAiconet.sql
+```
+
+## Using Docker
+
+Alternatively, you can create a docker instance which will host a mysql and apache server.
+The docker container will serve the local development directory, so external changes are immediately made available.
+
+```bash
+docker build .
+docker run -p 80:80 -ti -u=root -v "$(pwd)":/var/www/prototype-ExampleNetA <docker image id>
+```
+
+The server is running on port 80 and a console is made available. Apache logs are located at `/var/log/apache2/`.
 
 ## IDE specific:
 
 - Connect phpstorm to your AMP and
   Mysql: [Follow this tutorial](https://www.jetbrains.com/help/phpstorm/installing-an-amp-package.html)
-
-- Create Database "social":
-
-        mysql -uroot -p
-        create database social;
 
 - Link IDE Database social@localhost
 
