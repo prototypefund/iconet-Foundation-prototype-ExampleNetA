@@ -5,6 +5,7 @@ use Iconet\Crypto;
 require_once "iconet/Database.php";
 require_once "iconet/Crypto.php";
 
+global $con;
 
 //Declaring variables to prevent errors
 $fname = ""; //First name
@@ -109,7 +110,7 @@ if(isset($_POST['register_button'])) {
         }
 
         //Generate global address by concatenating username and global URL
-        $address = $username . "@" . $config['domain'];
+        $address = $username . "@" . $_ENV['DOMAIN'];
 
         //Profile picture assignment
         $rand = rand(1, 2); //Random number between 1 and 2

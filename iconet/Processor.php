@@ -18,13 +18,12 @@ class Processor
 
     public function __construct($userLoggedIn)
     {
-        global $config;
         $this->db = new Database();
         $this->po = new PostOffice();
         $this->cryp = new Crypto();
         $this->pb = new PackageBuilder();
         $this->ph = new PackageHandler();
-        $this->path_postings = $config['storage'];
+        $this->path_postings = $_ENV['STORAGE'];
 
         $user = $this->db->get_user_by_name($userLoggedIn);
         $this->setUser($user);

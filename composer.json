@@ -18,6 +18,7 @@
   "require": {
         "php": "^8.1",
         "ext-mysqli": "*",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "vlucas/phpdotenv": "^5.5"
   }
 }

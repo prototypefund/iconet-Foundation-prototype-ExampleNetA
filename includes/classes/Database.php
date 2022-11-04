@@ -7,11 +7,10 @@ class Database
 
     private function __construct()
     {
-        global $config;
-        $db_name = $config['db_database'];
-        $db_user = $config['db_user'];
-        $db_pass = $config['db_password'];
-        $db_host = $config['db_host'];
+        $db_name = $_ENV['DB_DATABASE'];
+        $db_user = $_ENV['DB_USER'];
+        $db_pass = $_ENV['DB_PASSWORD'];
+        $db_host = $_ENV['DB_HOST'];
         $this->db = new PDO(
             "mysql:dbname=$db_name;host=$db_host;charset=latin1",
             $db_user, $db_pass

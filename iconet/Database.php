@@ -9,12 +9,11 @@ class Database
     //TODO use PDO as in the other Database class
     public function __construct()
     {
-        global $config;
         $this->db = mysqli_connect(
-            $config['db_iconet_host'],
-            $config['db_iconet_user'],
-            $config['db_iconet_password'],
-            $config['db_iconet_database']
+            $_ENV['DB_ICONET_HOST'],
+            $_ENV['DB_ICONET_USER'],
+            $_ENV['DB_ICONET_PASSWORD'],
+            $_ENV['DB_ICONET_DATABASE']
         );
 
         if(mysqli_connect_errno())

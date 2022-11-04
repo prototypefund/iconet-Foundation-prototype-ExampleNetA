@@ -2,3 +2,4 @@
 /.idea/deployment.xml
 /.phpunit.result.cache
 /iconet/posts/
+/.env
