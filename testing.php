@@ -13,6 +13,7 @@ use Iconet\Crypto;
 use Iconet\Processor;
 use Iconet\PackageBuilder;
 use Iconet\PostOffice;
+use Iconet\FormatProcessor;
 
 $testy = new tester();
 
@@ -33,6 +34,7 @@ protected $cryp;
 protected $po;
 protected $pb;
 protected $proc;
+protected $fp;
 
     public function __construct()
     {
@@ -40,6 +42,7 @@ protected $proc;
         $this->po = new PostOffice();
         $this->cryp = new Crypto();
         $this->pb = new PackageBuilder();
+        $this->fp = new FormatProcessor();
     }
 
     function clean_test_data(){
@@ -86,9 +89,9 @@ protected $proc;
         p($this->proc->display_content($notif['content_id'], $notif['sender'], $notif['secret']));
         h("Request Format");
         p("Request post-comments");
-        $response = $this->proc->get_format("post-comments");
+        $format = $this->proc->get_format("post-comments");
         p("Received Format:");
-        echo htmlspecialchars($response);
+        echo htmlspecialchars($format);
         h("Send Interaction");
         p("Make Comment as Bob: Yeey");
 
@@ -99,6 +102,18 @@ protected $proc;
         h("Request Content, including interactions");
         p($this->proc->display_content($notif['content_id'], $notif['sender'], $notif['secret']));
 
+        h("Merge Content & Format");
+        $content['sender'] = "Alice";
+        $content['time'] = "Saturday";
+        $content['text'] = "Love you! <br>";
+        p("Content:");
+        var_dump($content);
+        p("Format:");
+        var_dump(htmlspecialchars($format));
+        p("Merging");
+        $result = $this->fp->mergeFormat($format, $content);
+        p("Merged:");
+        p(htmlspecialchars($result));
 
     }
 
