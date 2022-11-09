@@ -113,7 +113,8 @@ protected $fp;
         p("Merging");
         $result = $this->fp->mergeFormat($format, $content);
         p("Merged:");
-        p(htmlspecialchars($result));
+
+        echo $result;
 
     }
 
