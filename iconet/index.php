@@ -1,6 +1,6 @@
 <?php
 namespace Iconet;
-// i accept and handle incoming requests!
+// I accept and handle incoming requests!
 
 if (isset($sim_post)){
     // handle post requests
@@ -16,47 +16,48 @@ if (isset($sim_post)){
 }
 
 //TODO this function is part of the current server 2 server internal workaround. Will be replaced by https requests.
-function receive($msg){
+function receive($message){
     // I know how to get things done!
-    $package = json_decode($msg, true);
+    $package = json_decode($message, true);
     $ph = new PackageHandler();
     $type = $ph->check_package($package);
     $db = new Database();
     $pb = new PackageBuilder();
+
     switch ($type){
-        case "Request Publickey":
 
-            $pubKey = $db->get_pubkey_by_address($package['address']);
-            return $pb->send_publickey($package['address'], $pubKey);
+        case "PublicKey Request":
+            $publicKey = $db->get_pubkey_by_address($package['address']);
+            return $pb->publickey_response($package['address'], $publicKey);
             break;
 
-        case "Send Notification":
+        case "Notification":
             $user = $db->get_user_by_address($package['to']);
-            $proc = new Processor($user['username']);
-            $error = $proc->save_notification($package);
-            if ($error) return $pb->send_error($error);
+            $processor = new Processor($user['username']);
+            $error = $processor->save_notification($package);
+            if ($error) return $pb->error($error);
             else return $pb->ack();
 
         break;
 
-        case "Request Format":
+        case "Format Request":
             $format = file_get_contents("./iconet/formats/post-comments.fmfibs");
-            return $pb->send_format($package['name'], $format);
+            return $pb->format_response($package['formatId'], $format);
             break;
 
-        case "Send Interaction":
+        case "Interaction":
             $user = $db->get_user_by_address($package['to']);
-            $proc = new Processor($user['username']);
-            $error = $proc->process_interaction($package);
-            if ($error) return $pb->send_error($error);
+            $processor = new Processor($user['username']);
+            $error = $processor->process_interaction($package);
+            if ($error) return $pb->error($error);
             else return $pb->ack();
         break;
 
-        case "Request Content":
-            $username = $db->get_user_by_address($package["address"])['username'];
-            $proc = new Processor($username);
-            $content = $proc->read_content($package["id"]);
-            return $pb ->send_content($content, "post-comments", $package["address"]);
+        case "Content Request":
+            $username = $db->get_user_by_address($package["actor"])['username'];
+            $processor = new Processor($username);
+            $content = $processor->read_content($package["id"]);
+            return $pb ->content_response($content, "post-comments", $package["actor"]);
             break;
 
         default:

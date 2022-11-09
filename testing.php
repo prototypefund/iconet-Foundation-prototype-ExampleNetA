@@ -67,8 +67,8 @@ protected $proc;
     function test_processing(){
         h("Test Processing:");
 
-        h("Request Pubkey of Bob");
-        $this->proc->get_external_pubkey("bob@bobnet.org");
+        h("Request Public Key of Bob");
+        $this->proc->get_external_publicKey("bob@bobnet.org");
 
         h("Create Content Hello World");
         $this->proc->create_iconet_post("Hello World");

@@ -29,74 +29,73 @@ class Crypto
 
     function genKeyPair(): array
     {
-        $privkey = openssl_pkey_new($this->configs);
-        $pubKey_pem = openssl_pkey_get_details($privkey)['key'];
-        $pubKey = openssl_pkey_get_public($pubKey_pem);
-        openssl_pkey_export($privkey,$privkey_pem, null, $this->configs);
-        return [$pubKey_pem,$privkey_pem];
+        $privateKey = openssl_pkey_new($this->configs);
+        $publicKey_pem = openssl_pkey_get_details($privateKey)['key'];
+        $publicKey = openssl_pkey_get_public($publicKey_pem);
+        openssl_pkey_export($privateKey,$privateKey_pem, null, $this->configs);
+        return [$publicKey_pem,$privateKey_pem];
     }
 
-    function verSignature($message,$privkey)
+    function verSignature($content,$privateKey): string
+        //TODO test function
     {
-        openssl_sign($message, $signature, $privkey, OPENSSL_ALGO_SHA1);
+        openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA1);
         return $signature;
     }
 
     function genSymKey(): string
     {
         $size = 128;
-        $key = openssl_random_pseudo_bytes($size);
-        $key = base64_encode($key);
-        return $key;
+        $secret = openssl_random_pseudo_bytes($size);
+        $secret = base64_encode($secret);
+        return $secret;
     }
 
     /**
      * @throws Exception
      */
-    function encSym($data, $key)
+    function encSym($data,$secret): string
     {
-        $AES = new AES($data, $key,$this->blockSize);
-        $encrypted = $AES ->encrypt();
-        return base64_encode($encrypted);
+        $AES = new AES($data,$secret,$this->blockSize);
+        $encryptedData = $AES ->encrypt();
+        return base64_encode($encryptedData);
     }
 
     /**
      * @throws Exception
      */
-    function decSym($encrypted, $key)
+    function decSym($encryptedData,$secret):string
     {
-        $encrypted = base64_decode($encrypted);
-        $AES = new AES($encrypted, $key,$this->blockSize);
+        $encryptedData = base64_decode($encryptedData);
+        $AES = new AES($encryptedData,$secret,$this->blockSize);
         return $AES ->decrypt();
     }
 
     function genAllCiphers($contacts,$secret): array
     {
         $i=0;
-        $ciphers = array();
+        $encryptedSecrets = array();
         foreach ($contacts as $c){
-            $cipher['address'] = $c['address'];
-            $cipher['cipher'] = $this->encAsym($secret, $c['pubkey'] );
-            $ciphers[$i] = $cipher;
+            $encryptedSecret['address'] = $c['address'];
+            $encryptedSecret['encryptedSecret'] = $this->encAsym($secret, $c['pubkey'] );
+            $encryptedSecrets[$i] = $encryptedSecret;
             $i++;
         }
-        return $ciphers;
+        return $encryptedSecrets;
     }
 
-    function encAsym($data,$pubKey)
+    function encAsym($secret,$publicKey): string
     {
-        openssl_public_encrypt($data, $encdata, $pubKey, OPENSSL_PKCS1_PADDING);
-        $encdata = base64_encode($encdata);
-        return $encdata;
+        openssl_public_encrypt($secret, $encryptedSecret, $publicKey, OPENSSL_PKCS1_PADDING);
+        $encryptedSecret = base64_encode($encryptedSecret);
+        return $encryptedSecret;
     }
 
-    function decAsym($encdata,$privKey)
+    function decAsym($encryptedSecret,$privateKey): string
     {
-        $encdata = base64_decode($encdata);
-        openssl_private_decrypt($encdata, $data, $privKey, OPENSSL_PKCS1_PADDING);
-        return $data;
+        $encryptedSecret = base64_decode($encryptedSecret);
+        openssl_private_decrypt($encryptedSecret, $secret, $privateKey, OPENSSL_PKCS1_PADDING);
+        return $secret;
     }
-
-
 
 }
