@@ -8,48 +8,59 @@ require_once 'config/config.php';
 class Processor
 {
     //logged in user
-    protected mixed $user;
+    protected $user;
 
     //helper classes
-    protected Database $db; //database
-    protected PostOffice $po; //postoffice
-    protected PackageBuilder $pb; //package_builder
-    protected Crypto $cryp; //cryptograph
-    protected PackageHandler $ph;
-    protected string $path_postings;
+    protected Database $database; //database
+    protected PostOffice $postOffice; //postoffice
+    protected PackageBuilder $packageBuilder; //package_builder
+    protected Crypto $crypto; //cryptograph
+    protected PackageHandler $packageHandler;
+    protected string $pathPostings;
 
-    public function __construct($userLoggedIn)
+    /**
+     * @param string $userLoggedIn
+     */
+    public function __construct(string $userLoggedIn)
     {
-        $this->db = new Database();
-        $this->po = new PostOffice();
-        $this->cryp = new Crypto();
-        $this->pb = new PackageBuilder();
-        $this->ph = new PackageHandler();
-        $this->path_postings = $_ENV['STORAGE'];
+        $this->database = new Database();
+        $this->postOffice = new PostOffice();
+        $this->crypto = new Crypto();
+        $this->packageBuilder = new PackageBuilder();
+        $this->packageHandler = new PackageHandler();
+        $this->pathPostings = $_ENV['STORAGE'];
 
-        $user = $this->db->get_user_by_name($userLoggedIn);
+        $user = $this->database->getUserByName($userLoggedIn);
         $this->setUser($user);
     }
 
 
     /**
-     * @param mixed $user
-     */public function setUser(mixed $user): void
+     * @param array<string> $user
+     */public function setUser(array $user): void
 {
     $this->user = $user;
 }
-    function get_external_publicKey($address){
-        $message = $this->pb->publicKey_request($address);
-        $response = $this->po->send("url", $message);
+    function getExternalPublicKey(string $address) :string
+    {
+        $message = $this->packageBuilder->publicKey_request($address);
+        $response = $this->postOffice->send("url", $message);
+        $package = (array) Json_decode($response,true);
+        if (0!=strcmp($this->packageHandler->checkPackage($package),"PublicKey Response")){
+            echo "Error - invalid response Package. Expected: PublicKey Response";
+            return "Error - invalid response Package. Expected: PublicKey Response";
+        }
+        return $package['publicKey'];
     }
 
-    function create_iconet_post($content){
+    function createIconetPost(string $content) : void
+    {
         //generate random ID
         $done = false;
         $id ="";
         while(!$done){
-            $id = md5(rand()); // generate random ID
-            if(!$this->db->get_post_by_ID($id)) $done = true; //Repeat if ID already in use (unlikely but possible)
+            $id = md5((string)rand()); // generate random ID
+            if(!$this->database->getPostById($id)) $done = true; //Repeat if ID already in use (unlikely but possible)
         }
         //generate notification
         $subject = $content . "- notification text"; //for testing content is only string
@@ -58,92 +69,109 @@ class Processor
         $predata['subject'] = $subject;
 
         //encrypt notification & content
-        $secret = $this->cryp->genSymKey();
-        $encryptedNotif = $this->cryp->encSym(Json_encode($predata),$secret);
-        $encryptedContent = $this->cryp->encSym($content,$secret);
+        $secret = $this->crypto->genSymKey();
+        $encryptedNotif = $this->crypto->encSym(Json_encode($predata),$secret);
+        $encryptedContent = $this->crypto->encSym($content,$secret);
 
         //save content
-        $file = fopen($this->path_postings.$id.".txt", "w") or die("Cannot open file.");
+        $file = fopen($this->pathPostings.$id.".txt", "w") or die("Cannot open file.");
         // Write data to the file
         fwrite($file, $encryptedContent);
         // Close the file
         fclose($file);
 
         //save post in db
-        $this->db->add_post($id, $this->user['username'], $secret);
+        $this->database->addPost($id, $this->user['username'], $secret);
 
         //generate and send notifications
 
-        $contacts = $this->db->get_contacts($this->user['username']);
+        $contacts = $this->database->getContacts($this->user['username']);
         if ($contacts == null) {
             echo "<br>You need contacts generate something for them! <br>";
-            return null;
         }
 
-        $encryptedSecret= $this->cryp->genAllCiphers($contacts, $secret);
+        $encryptedSecret= $this->crypto->genAllCiphers($contacts, $secret);
         foreach ($encryptedSecret as $c){
-            $notifPackage = $this->pb->notification($this->user['address'], $c, $encryptedNotif);
-            $response = $this->po->send("url", $notifPackage);
+            $notifPackage = $this->packageBuilder->notification($this->user['address'], $c, $encryptedNotif);
+            $response = $this->postOffice->send("url", $notifPackage);
         }
     }
 
-    function check_inbox($username){
-         return $this->db->get_notifications($username);
+    /**
+     * @param string $username
+     * @return array<string>|null
+     */
+    function checkInbox(string $username): array|null
+    {
+         return $this->database->getNotifications($username);
     }
 
-    function display_content($id, $actor, $secret){
-         $message = $this->pb->content_request($id, $actor);
-         $response = $this->po->send("url", $message);
-         $package = Json_decode($response,true);
-        if (0!=strcmp($this->ph->check_package($package),"Content Response")){
+    /**
+     * @param string $id
+     * @param string $actor
+     * @param string $secret
+     * @return string
+     */
+    function displayContent(string $id, string $actor, string $secret) : string
+    {
+         $message = $this->packageBuilder->content_request($id, $actor);
+         $response = $this->postOffice->send("url", $message);
+         $package = (array) Json_decode($response,true);
+        if (0!=strcmp($this->packageHandler->checkPackage($package),"Content Response")){
             echo "Error - invalid response Package. Expected: Content Response";
             return "Error - invalid response Package. Expected: Content Response";
         }
-        $content = $package['content'];
-        $mainContent = $this->cryp->decSym($content['content'], $secret);
+        $content = (array) $package['content'];
+        $mainContent = $this->crypto->decSym($content['content'], $secret);
         if (isset($content['interactions'])){
-            foreach ($content['interactions'] as $i){
-                $interaction = $this->cryp->decSym($i['enc_int'], $secret);
+            foreach ( (array) $content['interactions'] as $i){
+                $interaction = $this->crypto->decSym($i['enc_int'], $secret);
                 $mainContent .= "<br>Comment from: ". $i['sender'] . "<br>".$interaction;
             }
         }
         return $mainContent;
     }
 
-    //decrypts and saves incoming notifications, returns potential errors
-    public function save_notification(mixed $package)
+    /**
+     * @param array<string> $package
+     * @return void
+     */
+    public function saveNotification(array $package) : void
     {
-        $error = false;
         $username = $this->user['username'];
         $link = "";
         $actor = $package['actor'];
 
         $encryptedSecret = $package['encryptedSecret'];
         $encryptedPredata = $package['predata'];
-        $privateKey = $this->db->get_privkey_by_address($package['to']); // todo check if user is logged in / privateKey may be accessed
-        $secret = $this->cryp->decAsym($package['encryptedSecret'], $privateKey);
+        $privateKey = $this->database->getPrivateKeyByAddress($package['to']); // todo check if user is logged in / privateKey may be accessed
+        $secret = $this->crypto->decAsym($package['encryptedSecret'], $privateKey);
 
-        $predata = Json_decode($this->cryp->decSym($encryptedPredata, $secret) , true);
+        $predata = (array) Json_decode($this->crypto->decSym($encryptedPredata, $secret) , true);
 
         $id = $predata['id'];
         $subject = $predata['subject'];
 
-        $this->db->add_notification($id, $username, $actor, $secret, $link, $subject);
-        if (!$error) return false; else return $error;
+        $this->database->addNotification($id, $username, $actor, $secret, $link, $subject);
     }
 
-    function get_format($format){
-         $message = $this->pb->format_request($format);
-         $response = $this->po->send("url", $message);
-         $package = json_decode($response, true);
-         if (0==strcmp($this->ph->check_package($package),"Format Response"))
+    function getFormat(string $formatID): string|bool
+    {
+         $message = $this->packageBuilder->format_request($formatID);
+         $response = $this->postOffice->send("url", $message);
+         $package = (array) json_decode($response, true);
+         if (0==strcmp($this->packageHandler->checkPackage($package),"Format Response"))
              return $package['format'];
          else return false;
     }
 
-    function read_content($id)
+    /**
+     * @param string $id
+     * @return array<string>|string
+     */
+    function readContent(string $id): array|string
     {
-        $post = $this->db->get_post_by_id($id);
+        $post = $this->database->getPostById($id);
         if(!$post){
             echo "<br>Error - Unknown ID <br>";
             return "Error - Unknown ID";
@@ -152,12 +180,12 @@ class Processor
                 echo "<br>Error - Wrong User<br>";
                 return "Error - Wrong User";
             } else {
-                $fileName = $this->path_postings. $id. ".txt";
+                $fileName = $this->pathPostings. $id. ".txt";
                 $myFile = fopen($fileName, "r") or die("Error - Unable to open file!");
                 $content['content'] =  fread($myFile,filesize($fileName));
                 fclose($myFile);
 
-                $interactions_db = $this->db->get_interactions_by_contentid($id);
+                $interactions_db = $this->database->getInteractionsByContentId($id);
                 $interactions= array();
                 $i=0;
                 if ($interactions_db != null) {
@@ -173,23 +201,27 @@ class Processor
         }
     }
 
-    function post_interaction($interaction, $id, $actor, $to, $interactionType, $secret){
-         $encryptedInteraction = $this->cryp->encSym($interaction, $secret);
+    function postInteraction(string $interaction, string $id, string $actor, string $to, string $interactionType, string $secret) : string
+    {
+         $encryptedInteraction = $this->crypto->encSym($interaction, $secret);
 
-         $message = $this->pb->interaction($actor, $to, $id, $interactionType, $encryptedInteraction);
-         $response = $this->po->send("url", "$message");
+         $message = $this->packageBuilder->interaction($actor, $to, $id, $interactionType, $encryptedInteraction);
+         $response = $this->postOffice->send("url", "$message");
          return $response;
      }
 
-    function process_interaction(mixed $package)
+    /**
+     * @param array<string> $package
+     * @return string|null
+     */
+    function processInteraction(array $package) :string|null
     {
-        $error = false;
         if (!($this->user['address'] ==  $package['to'])){
             return "Error - Not owner of interacted content";
         }
         $username = $this->user['username'];
-        $this->db->add_interaction($package['id'], $username, $package['actor'], $package['interactionType'], $package['interaction']);
-        if (!$error) return false; else return $error;
+        $resonse= $this->database->addInteraction($package['id'], $username, $package['actor'], $package['interactionType'], $package['interaction']);
+        return null;
     }
 
 }

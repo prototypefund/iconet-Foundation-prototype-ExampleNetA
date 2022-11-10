@@ -61,7 +61,7 @@ if(isset($_POST['post_message'])) {
         <?php
         global $iconetDB;
 
-        $address = $iconetDB->get_globaladdress($username); ?>
+        $address = $iconetDB->getGlobaladdress($username); ?>
         <p>Address: <?= $address ?></p>
         <p>Posts: <?= $profileUser->postsCount ?></p>
         <p>Likes: <?= $profileUser->likesCount ?></p>

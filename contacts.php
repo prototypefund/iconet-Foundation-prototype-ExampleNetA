@@ -82,7 +82,7 @@ require_once("includes/header.php");
     <div>
         <?php
             global $iconetDB;
-            $contacts = $iconetDB->get_contacts($userLoggedIn);
+            $contacts = $iconetDB->getContacts($userLoggedIn);
             if(!$contacts) {
                 echo "<p>You have no external contacts stored at this time!</p>";
             } else {
@@ -100,7 +100,7 @@ require_once("includes/header.php");
 
             if(isset($_GET['delete_address'])) {
                 $address = strip_tags($_GET['delete_address']);
-                if($iconetDB->delete_contact($userLoggedIn, $address)) {
+                if($iconetDB->deleteContact($userLoggedIn, $address)) {
                     header("Location: contacts.php");
                 } else {
                     echo "Error: Could not delete " . $address;
@@ -123,13 +123,13 @@ require_once("includes/header.php");
         if(isset($_GET['add_address'])) {
             $address = strip_tags($_GET['add_address']);
 
-            if(!PackageHandler::check_address($address)) {
+            if(!PackageHandler::checkAddress($address)) {
                 echo "Invalid Address.";
                 exit;
             }
             $pubkey = PackageBuilder::request_pubkey($address);
 
-            if($iconetDB->add_contact($userLoggedIn, $address, $pubkey)) {
+            if($iconetDB->addContact($userLoggedIn, $address, $pubkey)) {
                 header("Location: contacts.php");
             } else {
                 echo "Failed to add " . $address;

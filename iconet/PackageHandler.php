@@ -5,7 +5,11 @@ namespace Iconet;
 //TODO use objects or make all methods static
 class PackageHandler
 {
-    function check_package($package): string
+    /**
+     * @param array<string> $package
+     * @return string
+     */
+    function checkPackage(array $package): string
     {
 
         if (!isset($package['type'])) {
@@ -19,7 +23,7 @@ class PackageHandler
                 //check if non-optional variables are set.
                 if (isset($package['address'])){
                     //check if non-optional variables are proper
-                    if ($this->check_address($package['address'])){
+                    if ($this->checkAddress($package['address'])){
                         //all conditions for publicKey request are met.
                         return "PublicKey Request";
                     } else {
@@ -30,13 +34,12 @@ class PackageHandler
                     echo "Error - Missing address in publicKey request <br>";
                     return "Error - Missing address in publicKey request";
                 }
-                break;
 
             case "PublicKey Response":
                 //check if non-optional variables are set.
                 if (isset($package['address'])and isset($package['publicKey'])){
                     //check if non-optional variables are proper
-                    if ($this->check_address($package['address'])){
+                    if ($this->checkAddress($package['address'])){
                         //all conditions for publicKey request are met.
                         return "PublicKey Response";
                     } else {
@@ -47,13 +50,12 @@ class PackageHandler
                     echo "Error - Missing field in publicKey response ('address'/'publicKey') <br>";
                     return "Error - Missing field in publicKey response ('address'/'publicKey')";
                 }
-                break;
 
             case "Notification":
                 //check if non-optional variables are set.
                 if (isset($package["actor"]) and isset($package["predata"]) and isset($package['encryptedSecret']) and isset($package['to'])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($this->check_address($package["actor"]) and $this->check_address($package['to'])) {
+                    if ($this->checkAddress($package["actor"]) and $this->checkAddress($package['to'])) {
                         //all conditions for type send notification are met.
                         return "Notification";
                     } else{
@@ -64,7 +66,6 @@ class PackageHandler
                     echo "Error - Missing field in notification ('actor'/'predata'/'ecryptedSecret'/'to') <br>";
                     return "Error - Missing field in notification ('actor'/'predata'/'ecryptedSecret'/'to')";
                 }
-                break;
 
             case "Content Request":
                 //check if non-optional variables are set.
@@ -74,12 +75,11 @@ class PackageHandler
                     echo "Error - Missing field in content request ('id'/'actor') <br>";
                     return "Error - Missing field in content request ('id'/'actor')";
                 }
-                break;
 
             case "Content Response":
                 //check if non-optional variables are set.
                 if (isset($package["actor"]) and $package["formatId"] and $package["content"]){
-                    if ($this->check_address($package['actor'])) {
+                    if ($this->checkAddress($package['actor'])) {
                         //all conditions for type send interaction are met.
                         return "Content Response";
                     } else{
@@ -90,7 +90,6 @@ class PackageHandler
                     echo "Error - Missing field in content response ('actor'/'formatId'/'content')<br>";
                     return "Error - Missing field in content response ('actor'/'formatId'/'content')";
                 }
-                break;
 
             case "Format Request":
                 //check if non-optional variables are set.
@@ -107,7 +106,6 @@ class PackageHandler
                     echo "Error - Missing field 'formatId' in format request <br>";
                     return "Error - Missing field 'formatId' in format request";
                 }
-                break;
 
             case "Format Response":
                 //check if non-optional variables are set.
@@ -124,13 +122,12 @@ class PackageHandler
                     echo "Error - Missing field in format response ('formatId'/'format')<br>";
                     return "Error - Missing field in format response ('formatId'/'format')";
                 }
-                break;
 
             case "Interaction":
                 //check if non-optional variables are set.
                 if (isset($package["id"]) and isset($package["actor"]) and isset($package["interaction"])){
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($this->check_address($package['actor'])) {
+                    if ($this->checkAddress($package['actor'])) {
                         //all conditions for type send interaction are met.
                         return "Interaction";
                     } else{
@@ -141,7 +138,6 @@ class PackageHandler
                     echo "Error - Missing field in interaction ('id'/'actor'/'interaction')<br>";
                     return "Error - Missing field in interaction ('id'/'actor'/'interaction')";
                 }
-                break;
 
             default:
                 echo "Unknown package type: <br>" . $package['type'] . "<br>";
@@ -151,7 +147,7 @@ class PackageHandler
 
     }
 
-    public static function check_address($address): bool
+    public static function checkAddress(string $address): bool
     {
         $string_array = explode("@",$address);
         if (count($string_array) < 2) return false;

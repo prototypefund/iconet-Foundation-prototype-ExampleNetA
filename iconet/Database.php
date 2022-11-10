@@ -4,12 +4,12 @@ namespace Iconet;
 
 class Database
 {
-    protected $db;
+    protected \mysqli $database;
 
     //TODO use PDO as in the other Database class
     public function __construct()
     {
-        $this->db = mysqli_connect(
+        $this->database = mysqli_connect(
             $_ENV['DB_ICONET_HOST'],
             $_ENV['DB_ICONET_USER'],
             $_ENV['DB_ICONET_PASSWORD'],
@@ -18,33 +18,35 @@ class Database
 
         if(mysqli_connect_errno())
         {
-            error_log(mysqli_connect_errno());
+            error_log((string)mysqli_connect_errno());
         }
     }
 
-    function get_pubkey_by_address($address){
-        $query = mysqli_query($this->db, "SELECT publickey FROM users WHERE address='$address'");
+    function getPublickeyByAddress(string $address): string|bool
+    {
+        $query = mysqli_query($this->database, "SELECT publickey FROM users WHERE address='$address'");
         if (mysqli_num_rows($query) > 0){
-            $row = mysqli_fetch_array($query);
+            $row = (array) mysqli_fetch_array($query);
             return $row['publickey'];
         } else {
             return false;
         }
     }
 
-    function get_privkey_by_address($address){
-        $query = mysqli_query($this->db, "SELECT privatekey FROM users WHERE address='$address'");
+    function getPrivateKeyByAddress(string $address): string|bool
+    {
+        $query = mysqli_query($this->database, "SELECT privatekey FROM users WHERE address='$address'");
         if (mysqli_num_rows($query) > 0){
-            $row = mysqli_fetch_array($query);
+            $row = (array) mysqli_fetch_array($query);
             return $row['privatekey'];
         } else {
             return false;
         }
     }
 
-    function add_post($id, $username, $secret): bool
+    function addPost(string $id, string $username, string $secret): bool
     {
-        $query = mysqli_query($this->db, "INSERT INTO posts VALUES ('$id', '$username', '$secret')");
+        $query = mysqli_query($this->database, "INSERT INTO posts VALUES ('$id', '$username', '$secret')");
         if(mysqli_connect_errno())
         {
             echo "Failed to add post: " . mysqli_connect_errno();
@@ -53,29 +55,31 @@ class Database
         return true;
     }
 
-    function get_user_by_name($name){
-        $query = mysqli_query($this->db, "SELECT * FROM users WHERE username='$name'");
-        if (mysqli_num_rows($query) > 0){
-            $user = mysqli_fetch_array($query);
-            return $user;
-        } else {
-            return false;
-        }
-    }
-
-    function get_user_by_address($address){
-        $query = mysqli_query($this->db, "SELECT * FROM users WHERE address='$address'");
-        if (mysqli_num_rows($query) > 0){
-            $user = mysqli_fetch_array($query);
-            return $user;
-        } else {
-            return false;
-        }
-    }
-
-    function get_post_by_id($ID)
+    function getUserByName(string $name): array|bool
     {
-        $query = mysqli_query($this->db, "SELECT * FROM posts WHERE id='$ID'");
+        $query = mysqli_query($this->database, "SELECT * FROM users WHERE username='$name'");
+        if (mysqli_num_rows($query) > 0){
+            $user = mysqli_fetch_array($query);
+            return $user;
+        } else {
+            return false;
+        }
+    }
+
+    function getUserByAddress(string $address): array|bool
+    {
+        $query = mysqli_query($this->database, "SELECT * FROM users WHERE address='$address'");
+        if (mysqli_num_rows($query) > 0){
+            $user = (array) mysqli_fetch_array($query);
+            return $user;
+        } else {
+            return false;
+        }
+    }
+
+    function getPostById(string $ID): array|null
+    {
+        $query = mysqli_query($this->database, "SELECT * FROM posts WHERE id='$ID'");
         if (mysqli_num_rows($query) > 0){
             return mysqli_fetch_array($query);
         } else {
@@ -84,9 +88,9 @@ class Database
     }
 
 
-    function add_user($username, $address, $pubkey, $privkey): bool
+    function addUser(string $username, string $address, string $pubkey, string $privkey): bool
     {
-        $query = mysqli_query($this->db, "INSERT INTO users VALUES ('$username', '$address', '$pubkey', '$privkey')");
+        $query = mysqli_query($this->database, "INSERT INTO users VALUES ('$username', '$address', '$pubkey', '$privkey')");
         if(mysqli_connect_errno())
         {
             echo "Failed to add user: " . mysqli_connect_errno();
@@ -95,19 +99,20 @@ class Database
         return true;
     }
 
-    function get_globaladdress($username){
-        $query = mysqli_query($this->db, "SELECT address FROM users WHERE username='$username'");
+    function getGlobaladdress(string $username): string|bool
+    {
+        $query = mysqli_query($this->database, "SELECT address FROM users WHERE username='$username'");
         if (mysqli_num_rows($query) > 0){
             $row = mysqli_fetch_array($query);
-            return $row['address'];
+            return (string) $row['address'];
         } else {
             return false;
         }
     }
 
-    function get_contacts($user): ?array
+    function getContacts(string $user): ?array
     {
-        $result = mysqli_query($this->db, "SELECT * FROM contacts WHERE username='$user'") or trigger_error(mysqli_error());
+        $result = mysqli_query($this->database, "SELECT * FROM contacts WHERE username='$user'") or trigger_error(mysqli_error());
         if(mysqli_num_rows($result) == 0)
             return null;
         else {
@@ -122,9 +127,9 @@ class Database
         }
     }
 
-    function delete_contact($user, $address): bool
+    function deleteContact(string $user, string $address): bool
     {
-        $delete_query = mysqli_query($this->db, "DELETE FROM contacts WHERE username='$user' AND friend_address='$address'");
+        $delete_query = mysqli_query($this->database, "DELETE FROM contacts WHERE username='$user' AND friend_address='$address'");
         if(mysqli_connect_errno())
         {
             echo "Failed to delete contact: " . mysqli_connect_errno();
@@ -132,9 +137,9 @@ class Database
         } else return true;
     }
 
-    function add_contact($user, $address, $pubkey): bool
+    function addContact(string $user, string $address, string $pubkey): bool
     {
-        $query = mysqli_query($this->db, "INSERT INTO contacts VALUES ('$user', '$address', '$pubkey')");
+        $query = mysqli_query($this->database, "INSERT INTO contacts VALUES ('$user', '$address', '$pubkey')");
         if(mysqli_connect_errno())
         {
             echo "Failed to add contact: " . mysqli_connect_errno();
@@ -143,9 +148,9 @@ class Database
         return true;
     }
 
-    function add_notification($content_id, $username, $sender, $secret, $link, $text): bool
+    function addNotification(string $content_id, string $username, string $sender, string $secret, string $link, string $text): bool
     {
-        $query = mysqli_query($this->db, "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$link', '$text')");
+        $query = mysqli_query($this->database, "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$link', '$text')");
         var_dump($query);
         if(mysqli_connect_errno())
         {
@@ -155,9 +160,9 @@ class Database
         return true;
     }
 
-    function add_interaction($content_id, $username, $sender, $type, $enc_int): bool
+    function addInteraction(string $content_id, string $username, string $sender, string $type, string $enc_int): bool
     {
-        $query = mysqli_query($this->db, "INSERT INTO interactions VALUES (null,'$content_id', '$username', '$sender', '$type', '$enc_int')");
+        $query = mysqli_query($this->database, "INSERT INTO interactions VALUES (null,'$content_id', '$username', '$sender', '$type', '$enc_int')");
         var_dump($query);
         if(mysqli_connect_errno())
         {
@@ -167,19 +172,19 @@ class Database
         return true;
     }
 
-    function clear_tables(): void
+    function clearTables(): void
     {
-        mysqli_query($this->db, "DELETE FROM users");
-        mysqli_query($this->db, "DELETE FROM contacts");
-        mysqli_query($this->db, "DELETE FROM notifications");
-        mysqli_query($this->db, "DELETE FROM posts");
-        mysqli_query($this->db, "DELETE FROM interactions");
+        mysqli_query($this->database, "DELETE FROM users");
+        mysqli_query($this->database, "DELETE FROM contacts");
+        mysqli_query($this->database, "DELETE FROM notifications");
+        mysqli_query($this->database, "DELETE FROM posts");
+        mysqli_query($this->database, "DELETE FROM interactions");
 
     }
 
-    public function get_notifications($username): ?array
+    public function getNotifications(string $username): ?array
     {
-        $query = mysqli_query($this->db, "SELECT * FROM notifications WHERE username='$username'");
+        $query = mysqli_query($this->database, "SELECT * FROM notifications WHERE username='$username'");
         if(mysqli_num_rows($query) == 0)
             return null;
         else {
@@ -192,9 +197,9 @@ class Database
         }
     }
 
-    function get_interactions_by_contentid($content_id)
+    function getInteractionsByContentId(string $content_id): ?array
     {
-        $query = mysqli_query($this->db, "SELECT * FROM interactions WHERE content_id='$content_id'");
+        $query = mysqli_query($this->database, "SELECT * FROM interactions WHERE content_id='$content_id'");
         if(mysqli_num_rows($query) == 0)
             return null;
         else {

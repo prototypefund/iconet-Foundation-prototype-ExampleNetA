@@ -20,21 +20,21 @@ function receive($message){
     // I know how to get things done!
     $package = json_decode($message, true);
     $ph = new PackageHandler();
-    $type = $ph->check_package($package);
+    $type = $ph->checkPackage($package);
     $db = new Database();
     $pb = new PackageBuilder();
 
     switch ($type){
 
         case "PublicKey Request":
-            $publicKey = $db->get_pubkey_by_address($package['address']);
+            $publicKey = $db->getPublickeyByAddress($package['address']);
             return $pb->publickey_response($package['address'], $publicKey);
             break;
 
         case "Notification":
-            $user = $db->get_user_by_address($package['to']);
+            $user = $db->getUserByAddress($package['to']);
             $processor = new Processor($user['username']);
-            $error = $processor->save_notification($package);
+            $error = $processor->saveNotification($package);
             if ($error) return $pb->error($error);
             else return $pb->ack();
 
@@ -46,17 +46,17 @@ function receive($message){
             break;
 
         case "Interaction":
-            $user = $db->get_user_by_address($package['to']);
+            $user = $db->getUserByAddress($package['to']);
             $processor = new Processor($user['username']);
-            $error = $processor->process_interaction($package);
+            $error = $processor->processInteraction($package);
             if ($error) return $pb->error($error);
             else return $pb->ack();
         break;
 
         case "Content Request":
-            $username = $db->get_user_by_address($package["actor"])['username'];
+            $username = $db->getUserByAddress($package["actor"])['username'];
             $processor = new Processor($username);
-            $content = $processor->read_content($package["id"]);
+            $content = $processor->readContent($package["id"]);
             return $pb ->content_response($content, "post-comments", $package["actor"]);
             break;
 

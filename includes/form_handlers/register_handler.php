@@ -124,7 +124,7 @@ if(isset($_POST['register_button'])) {
         global $iconetDB;
         $cryp = new Crypto();
         $keyPair = $cryp->genkeyPair();
-        $iconetDB->add_user($username, $address, $keyPair[0], $keyPair[1]);
+        $iconetDB->addUser($username, $address, $keyPair[0], $keyPair[1]);
 
         array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
 

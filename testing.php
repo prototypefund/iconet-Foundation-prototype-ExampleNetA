@@ -56,12 +56,12 @@ protected $fp;
         $aliceKey = $this->cryp->genKeyPair();
         $bobKey = $this->cryp->genKeyPair();
         $claireKey = $this->cryp->genkeyPair();
-        $this->db->clear_tables();
-        $this->db->add_user("alice_tester", "alice@alicenet.net", $aliceKey[0],$aliceKey[1]);
-        $this->db->add_user("bob_tester", "bob@bobnet.org", $bobKey[0], $bobKey[1]);
-        $this->db->add_user("claire_tester", "claire@clairenet.de", $claireKey[0], $claireKey[1]);
-        $this->db->add_contact("alice_tester", "bob@bobnet.org", $bobKey[0]);
-        $this->db->add_contact("alice_tester", "claire@clairenet.de", $claireKey[0]);
+        $this->db->clearTables();
+        $this->db->addUser("alice_tester", "alice@alicenet.net", $aliceKey[0],$aliceKey[1]);
+        $this->db->addUser("bob_tester", "bob@bobnet.org", $bobKey[0], $bobKey[1]);
+        $this->db->addUser("claire_tester", "claire@clairenet.de", $claireKey[0], $claireKey[1]);
+        $this->db->addContact("alice_tester", "bob@bobnet.org", $bobKey[0]);
+        $this->db->addContact("alice_tester", "claire@clairenet.de", $claireKey[0]);
 
         $this->proc = new Processor("alice_tester");
 
@@ -71,13 +71,14 @@ protected $fp;
         h("Test Processing:");
 
         h("Request Public Key of Bob");
-        $this->proc->get_external_publicKey("bob@bobnet.org");
+        $pubkey = $this->proc->getExternalPublicKey("bob@bobnet.org");
+        p($pubkey);
 
         h("Create Content Hello World");
-        $this->proc->create_iconet_post("Hello World");
+        $this->proc->createIconetPost("Hello World");
 
         h("Check Inbox of bob");
-        $notifs = $this->proc->check_inbox("bob_tester");
+        $notifs = $this->proc->checkInbox("bob_tester");
         p("Notifs:");
         foreach ($notifs as $n){
             var_dump($n);
@@ -86,21 +87,21 @@ protected $fp;
         h("Request Content");
         $notif = $notifs[0]; // use bobs notif
 
-        p($this->proc->display_content($notif['content_id'], $notif['sender'], $notif['secret']));
+        p($this->proc->displayContent($notif['content_id'], $notif['sender'], $notif['secret']));
         h("Request Format");
         p("Request post-comments");
-        $format = $this->proc->get_format("post-comments");
+        $format = $this->proc->getFormat("post-comments");
         p("Received Format:");
         echo htmlspecialchars($format);
         h("Send Interaction");
         p("Make Comment as Bob: Yeey");
 
-        $response = $this->proc->post_interaction("Yeey!", $notif['content_id'], "bob@bobnet.net", $notif['sender'], "comment", $notif['secret'] );
+        $response = $this->proc->postInteraction("Yeey!", $notif['content_id'], "bob@bobnet.net", $notif['sender'], "comment", $notif['secret'] );
         p("Response:");
         var_dump($response);
 
         h("Request Content, including interactions");
-        p($this->proc->display_content($notif['content_id'], $notif['sender'], $notif['secret']));
+        p($this->proc->displayContent($notif['content_id'], $notif['sender'], $notif['secret']));
 
         h("Merge Content & Format");
         $content['sender'] = "Alice";

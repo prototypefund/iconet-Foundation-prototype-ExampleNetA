@@ -6,7 +6,7 @@ namespace Iconet;
 class PackageBuilder
 {
 
-    function publicKey_request($address): bool|string
+    function publicKey_request(string $address): bool|string
     {
         $package['type'] = "PublicKey Request";
         $package['address'] = $address;
@@ -14,7 +14,7 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function publicKey_response($address, $publicKey): bool|string
+    function publicKey_response(string $address, string $publicKey): bool|string
     {
         $package['type'] = "PublicKey Response";
         $package['address'] = $address;
@@ -23,7 +23,13 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function notification($actor, $encryptedSecret, $predata): bool|string
+    /**
+     * @param string $actor
+     * @param array<string> $encryptedSecret
+     * @param string $predata
+     * @return bool|string
+     */
+    function notification(string $actor, array $encryptedSecret, string $predata): bool|string
     {
         $package['type'] = "Notification";
         $package['actor'] = $actor;
@@ -40,7 +46,7 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function content_request($id, $actor): bool|string
+    function content_request(string $id, string $actor): bool|string
     {
         $package['type'] = "Content Request";
         $package['actor'] = $actor;
@@ -59,7 +65,7 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function format_request($formatId): bool|string
+    function format_request(string $formatId): bool|string
     {
         $package['type'] = "Format Request";
         $package['formatId'] = $formatId;
@@ -67,7 +73,7 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function format_response($formatId, $format): bool|string
+    function format_response(string $formatId, string $format): bool|string
     {
         $package['type'] = "Format Response";
         $package['formatId'] = $formatId;
@@ -76,7 +82,7 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function interaction($actor, $to, $id, $interactionType, $interaction): bool|string
+    function interaction(string $actor, string $to, string $id, string $interactionType, string $interaction): bool|string
     {
         $package['type'] = "Interaction";
         $package['actor'] = $actor;
@@ -88,14 +94,14 @@ class PackageBuilder
         return Json_encode($package);
     }
 
-    function ack()
+    function ack() : bool|string
     {
         $response['type'] = "ACK";
 
         return json_encode($response);
     }
 
-    function error($error): bool|string
+    function error(string $error): bool|string
     {
         $package['type'] = "Error";
         $package['error'] = $error;
