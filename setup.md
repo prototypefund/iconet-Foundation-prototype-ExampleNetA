@@ -110,6 +110,34 @@ docker run -p 80:80 -ti -u=root -v "$(pwd)":/var/www/prototype-ExampleNetA <dock
 
 The server is running on port 80 and a console is made available. Apache logs are located at `/var/log/apache2/`.
 
+
+## XDebug
+
+XDebug is needed for debugging and code coverage analysis of the tests.
+1. Install it with `sudo apt install php-xdebug`
+2. If php 8.1 is the version you use, `/etc/php/8.1/mods-available/xdebug.ini` should contain at least the first two lines:
+
+    ```apache
+    zend_extension=xdebug.so
+    xdebug.mode=debug
+
+    #xdebug.remote_enable=1
+    #xdebug.remote_connect_back = 1
+    #xdebug.remote_port = 9000
+    #xdebug.scream=0 
+    #xdebug.cli_color=1
+    #xdebug.show_local_vars=1
+    ```
+
+3. This config will be included in your `php.ini` via `sudo phpenmod -v 8.1 xdebug`.
+4. Restart apache: `sudo systemctl restart apache2`
+5. In phpstorm under `File->Setting->PHP->Debug`, run the IDE's validation script from step 2 in the project folder.
+
+
+
+
+
+
 ## phpstorm IDE specific:
 
 - For windows: Connect phpstorm to your AMP and
