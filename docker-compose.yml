@@ -1,0 +1,35 @@
+services:
+  netA:
+    build: .
+    image: neta
+    container_name: netA
+    tty: true
+    stdin_open: true
+    ports:
+      - "8001:80"
+    volumes:
+      - .:/var/www/prototype-ExampleNetA
+    networks:
+      iconet:
+        aliases:
+          - neta.localhost
+
+#  netB:
+#    build: .
+#    image: neta
+#    container_name: netB
+#    tty: true
+#    stdin_open: true
+#    ports:
+#      - "8002:80"
+#    volumes:
+#      - .:/var/www/prototype-ExampleNetA
+#    networks:
+#      iconet:
+#        aliases:
+#          - netb.localhost
+
+networks:
+  iconet:
+    attachable: true
+    name: iconet

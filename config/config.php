@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
@@ -6,8 +7,8 @@ ob_start(); //Turns on output buffering
 session_start();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__. "/..");
+//Try loading .env, if it does not exist, use .env.default
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/..", ['.env', '.env.default']);
 $dotenv->load();
 
 date_default_timezone_set($_ENV['TIMEZONE']);

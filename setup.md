@@ -27,10 +27,9 @@ Download the repository with:
 3. Change the paths below and paste this:
 
 ```apacheconf
-<VirtualHost netA:80>
-        ServerAdmin webmaster@localhost
-        ServerName netA
-        ServerAlias www.netA
+<VirtualHost neta.localhost:80>
+        ServerAdmin webmaster@neta.localhost
+        ServerName neta.localhost
 
         DocumentRoot YOUR_PATH_TO_SRC
         DirectoryIndex index.php
@@ -40,10 +39,10 @@ Download the repository with:
         CustomLog ${APACHE_LOG_DIR}/access-netA.log combined
 
         <Directory YOUR_PATH_TO_SRC>
-        AllowOverride All
-        Options +FollowSymLinks
-        Require local
-        #Require all granted
+            AllowOverride All
+            Options +FollowSymLinks
+            Require local
+            #Require all granted
         </Directory>
 </VirtualHost>
 ```
@@ -92,7 +91,7 @@ Download the repository with:
     mysql --database=netAiconet < iconet/iconet.sql
     ```
 
-13. Set the admin credentials in a file named `.env` in the project root. Use `.env.example` as a template.
+13. Set the admin credentials in a file named `.env` in the project root. Use `.env.default` as a template.
 
 
 
@@ -104,11 +103,11 @@ Alternatively, you can create a docker instance which will host a mysql and apac
 The docker container will serve the local development directory, so external changes are immediately made available.
 
 ```bash
-docker build .
-docker run -p 80:80 -ti -u=root -v "$(pwd)":/var/www/prototype-ExampleNetA <docker image id>
+docker-compose up
 ```
 
-The server is running on port 80 and a console is made available. Apache logs are located at `/var/log/apache2/`.
+The container is reachable from the host port 8001 ([http://localhost:8001](http://localhost:8001)). You can attach to
+it with `docker attach netA` (`Ctrl+P` `Ctlr+Q` to detach). Apache logs are located at `/var/log/apache2/`.
 
 
 ## XDebug
