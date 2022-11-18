@@ -1,6 +1,6 @@
 <?php
 
-use Iconet\Crypto;
+use Iconet\UserManager;
 
 require_once "iconet/Database.php";
 require_once "iconet/Crypto.php";
@@ -52,9 +52,8 @@ if(isset($_POST['register_button'])) {
 
     if($email == $email2) {
         //Check if email is in valid format
-        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $email = filter_var($email, FILTER_VALIDATE_EMAIL);
-
+        $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+        if($email) {
             //Check if email already exists
             $e_check = mysqli_query($con, "SELECT email FROM users WHERE email='$email'");
 
@@ -72,18 +71,18 @@ if(isset($_POST['register_button'])) {
     }
 
 
-    if(strlen($fname) > 25 || strlen($fname) < 2) {
-        array_push($error_array, "Your first name must be between 2 and 25 characters<br>");
+    if(!preg_match('/^[A-Za-z]{2,25}$/', $fname)) {
+        array_push($error_array, "Your first name must be between 2 and 25 letters<br>");
     }
 
-    if(strlen($lname) > 25 || strlen($lname) < 2) {
-        array_push($error_array, "Your last name must be between 2 and 25 characters<br>");
+    if(!preg_match('/^[A-Za-z]{2,25}$/', $lname)) {
+        array_push($error_array, "Your last name must be between 2 and 25 letters<br>");
     }
 
     if($password != $password2) {
         array_push($error_array, "Your passwords do not match<br>");
     } else {
-        if(preg_match('/[^A-Za-z0-9]/', $password)) {
+        if(!preg_match('/^[A-Za-z0-9]+$/', $password)) {
             array_push($error_array, "Your password can only contain english characters or numbers<br>");
         }
     }
@@ -109,9 +108,6 @@ if(isset($_POST['register_button'])) {
             $check_username_query = mysqli_query($con, "SELECT username FROM users WHERE username='$username'");
         }
 
-        //Generate global address by concatenating username and global URL
-        $address = $username . "@" . $_ENV['DOMAIN'];
-
         //Profile picture assignment
         $rand = rand(1, 2); //Random number between 1 and 2
         $profile_pic = "assets/images/profile_pics/defaults/head_deep_blue.png";
@@ -119,20 +115,28 @@ if(isset($_POST['register_button'])) {
             $profile_pic = "assets/images/profile_pics/defaults/head_emerald.png";
         }
 
-        Database::singleton()->registerUser($fname, $lname, $username, $email, $password, $date, $profile_pic);
+        if(!UserManager::addNewUser($username)) {
+            array_push($error_array, "Could not create iconet user<br>");
+        } else {
+            Database::singleton()->registerUser(
+                $fname,
+                $lname,
+                $username,
+                $email,
+                $password,
+                $date,
+                $profile_pic
+            );
 
-        global $iconetDB;
-        $cryp = new Crypto();
-        $keyPair = $cryp->genkeyPair();
-        $iconetDB->addUser($username, $address, $keyPair[0], $keyPair[1]);
 
-        array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
+            array_push($error_array, "<span style='color: #14C800;'>You're all set! Go ahead and login!</span><br>");
 
-        //Clear session variables
-        $_SESSION['reg_fname'] = "";
-        $_SESSION['reg_lname'] = "";
-        $_SESSION['reg_email'] = "";
-        $_SESSION['reg_email2'] = "";
+            //Clear session variables
+            $_SESSION['reg_fname'] = "";
+            $_SESSION['reg_lname'] = "";
+            $_SESSION['reg_email'] = "";
+            $_SESSION['reg_email2'] = "";
+        }
     }
 }
 ?>

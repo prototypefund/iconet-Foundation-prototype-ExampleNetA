@@ -2,161 +2,167 @@
 namespace Iconet;
 
 
-//TODO use objects or make all methods static
+enum PackageTypes: string
+{
+    case INVALID = "";
+    case PUBLICKEY_REQUEST = "PublicKey Request";
+    case PUBLICKEY_RESPONSE = "PublicKey Response";
+    case NOTIFICATION = "Notification";
+    case CONTENT_REQUEST = "Content Request";
+    case CONTENT_RESPONSE = "Content Response";
+    case FORMAT_REQUEST = "Format Request";
+    case FORMAT_RESPONSE = "Format Response";
+    case INTERACTION = "Interaction";
+}
+
 class PackageHandler
 {
-    /**
-     * @param array<string> $package
-     * @return string
-     */
-    function checkPackage(array $package): string
-    {
+    //TODO split this into getType and validation logic
+    //TODO remove echos
+    //TODO remove redundancy: Packages can be objects that have a property for required fields
 
-        if (!isset($package['type'])) {
+    /**
+     * @param mixed $package
+     * @return PackageTypes The determined type of the package (includes INVALID)
+     */
+    public static function checkPackage(mixed $package): PackageTypes
+    {
+        if(!isset($package->type)) {
             echo "Error - Must set field 'type' <br>";
-            return "Error - Must set field 'type' ";
+            return PackageTypes::INVALID;
         }
 
-        switch ($package['type']){
+        $type = PackageTypes::tryFrom($package->type);
+        if(!$type) {
+            return PackageTypes::INVALID;
+        }
 
-            case "PublicKey Request":
+        switch($type) {
+            case PackageTypes::PUBLICKEY_REQUEST:
                 //check if non-optional variables are set.
-                if (isset($package['address'])){
+                if(isset($package->address)) {
                     //check if non-optional variables are proper
-                    if ($this->checkAddress($package['address'])){
+                    if(Address::validate($package->address)) {
                         //all conditions for publicKey request are met.
-                        return "PublicKey Request";
+                        return PackageTypes::PUBLICKEY_REQUEST;
                     } else {
-                        echo "Error - Faulty address in publicKey request <br>" . $package['address'] . "<br>";
-                        return "Error - Faulty address in publicKey request";
+                        echo "Error - Faulty address in publicKey request <br>" . $package->address . "<br>";
+                        return PackageTypes::INVALID;
                     }
                 } else {
                     echo "Error - Missing address in publicKey request <br>";
-                    return "Error - Missing address in publicKey request";
+                    return PackageTypes::INVALID;
                 }
 
-            case "PublicKey Response":
+            case PackageTypes::PUBLICKEY_RESPONSE:
                 //check if non-optional variables are set.
-                if (isset($package['address'])and isset($package['publicKey'])){
+                if(isset($package->address) && isset($package->publicKey)) {
                     //check if non-optional variables are proper
-                    if ($this->checkAddress($package['address'])){
+                    if(Address::validate($package->address)) {
                         //all conditions for publicKey request are met.
-                        return "PublicKey Response";
+                        return PackageTypes::PUBLICKEY_RESPONSE;
                     } else {
-                        echo "Error - Faulty address in publicKey response <br>" . $package['address'] . "<br>";
-                        return "Error - Faulty address in publicKey response";
+                        echo "Error - Faulty address in publicKey response <br>" . $package->address . "<br>";
+                        return PackageTypes::INVALID;
                     }
                 } else {
                     echo "Error - Missing field in publicKey response ('address'/'publicKey') <br>";
-                    return "Error - Missing field in publicKey response ('address'/'publicKey')";
+                    return PackageTypes::INVALID;
                 }
 
-            case "Notification":
+            case PackageTypes::NOTIFICATION:
                 //check if non-optional variables are set.
-                if (isset($package["actor"]) and isset($package["predata"]) and isset($package['encryptedSecret']) and isset($package['to'])){
+                if(isset($package->actor) && isset($package->predata) && isset($package->encryptedSecret) && isset($package->to)) {
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($this->checkAddress($package["actor"]) and $this->checkAddress($package['to'])) {
+                    if(Address::validate($package->actor) && Address::validate($package->to)) {
                         //all conditions for type send notification are met.
-                        return "Notification";
-                    } else{
+                        return PackageTypes::NOTIFICATION;
+                    } else {
                         echo "Error - Faulty actor or recipient address <br>";
-                        return "Error - Faulty actor or recipient address";
+                        return PackageTypes::INVALID;
                     }
-                } else{
+                } else {
                     echo "Error - Missing field in notification ('actor'/'predata'/'ecryptedSecret'/'to') <br>";
-                    return "Error - Missing field in notification ('actor'/'predata'/'ecryptedSecret'/'to')";
+                    return PackageTypes::INVALID;
                 }
 
-            case "Content Request":
+            case PackageTypes::CONTENT_REQUEST:
                 //check if non-optional variables are set.
-                if (isset($package["id"]) and isset($package["actor"])){
-                    return "Content Request";
-                } else{
+                if(isset($package->id) && isset($package->actor)) {
+                    return PackageTypes::CONTENT_REQUEST;
+                } else {
                     echo "Error - Missing field in content request ('id'/'actor') <br>";
-                    return "Error - Missing field in content request ('id'/'actor')";
+                    return PackageTypes::INVALID;
                 }
 
-            case "Content Response":
+            case PackageTypes::CONTENT_RESPONSE:
                 //check if non-optional variables are set.
-                if (isset($package["actor"]) and $package["formatId"] and $package["content"]){
-                    if ($this->checkAddress($package['actor'])) {
+                if(isset($package->actor) && isset($package->formatId) && isset($package->content)) {
+                    if(Address::validate($package->actor)) {
                         //all conditions for type send interaction are met.
-                        return "Content Response";
-                    } else{
+                        return PackageTypes::CONTENT_RESPONSE;
+                    } else {
                         echo "Error - Faulty actor address <br>";
-                        return "Error - Faulty actor address";
+                        return PackageTypes::INVALID;
                     }
-                } else{
+                } else {
                     echo "Error - Missing field in content response ('actor'/'formatId'/'content')<br>";
-                    return "Error - Missing field in content response ('actor'/'formatId'/'content')";
+                    return PackageTypes::INVALID;
                 }
 
-            case "Format Request":
+            case PackageTypes::FORMAT_REQUEST:
                 //check if non-optional variables are set.
-                if (isset($package["formatId"])){
+                if(isset($package->formatId)) {
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($package["formatId"] == "post-comments") {
+                    if($package->formatId) {  //TODO specify syntax for format ids
                         //all conditions for type request format are met.
-                        return "Format Request";
-                    } else{
+                        return PackageTypes::FORMAT_REQUEST;
+                    } else {
                         echo "Error - Faulty formatId, can only provide 'post-comments'<br>";
-                        return "Error - Faulty formatId, can only provide 'post-comments'";
+                        return PackageTypes::INVALID;
                     }
-                } else{
+                } else {
                     echo "Error - Missing field 'formatId' in format request <br>";
-                    return "Error - Missing field 'formatId' in format request";
+                    return PackageTypes::INVALID;
                 }
 
-            case "Format Response":
+            case PackageTypes::FORMAT_RESPONSE:
                 //check if non-optional variables are set.
-                if (isset($package["formatId"]) and $package["format"]){
+                if(isset($package->formatId) && isset($package->format)) {
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($package["formatId"] == "post-comments") {
+                    if($package->formatId) { //TODO specify syntax for format ids
                         //all conditions for type request format are met.
-                        return "Format Response";
-                    } else{
+                        return PackageTypes::FORMAT_RESPONSE;
+                    } else {
                         echo "Error - Faulty format formatId, can only provide 'post-comments' <br>";
-                        return "Error - Faulty format formatId, can only provide 'post-comments'";
+                        return PackageTypes::INVALID;
                     }
-                } else{
+                } else {
                     echo "Error - Missing field in format response ('formatId'/'format')<br>";
-                    return "Error - Missing field in format response ('formatId'/'format')";
+                    return PackageTypes::INVALID;
                 }
 
-            case "Interaction":
+            case PackageTypes::INTERACTION:
                 //check if non-optional variables are set.
-                if (isset($package["id"]) and isset($package["actor"]) and isset($package["interaction"])){
+                if(isset($package->id) && isset($package->actor) && isset($package->interaction)) {
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if ($this->checkAddress($package['actor'])) {
+                    if(Address::validate($package->actor)) {
                         //all conditions for type send interaction are met.
-                        return "Interaction";
-                    } else{
+                        return PackageTypes::INTERACTION;
+                    } else {
                         echo "Error - Faulty actor address<br>";
-                        return "Error - Faulty actor address";
+                        return PackageTypes::INVALID;
                     }
-                } else{
+                } else {
                     echo "Error - Missing field in interaction ('id'/'actor'/'interaction')<br>";
-                    return "Error - Missing field in interaction ('id'/'actor'/'interaction')";
+                    return PackageTypes::INVALID;
                 }
 
             default:
-                echo "Unknown package type: <br>" . $package['type'] . "<br>";
-                return "Error - Unknown package type " . $package['type'];
-
+                echo "Unknown package type: <br>" . $package->type . "<br>";
+                return PackageTypes::INVALID;
         }
 
-    }
-
-    public static function checkAddress(string $address): bool
-    {
-        $string_array = explode("@",$address);
-        if (count($string_array) < 2) return false;
-        $url = $string_array[count($string_array)-1];
-        if(filter_var($url, FILTER_VALIDATE_DOMAIN)){
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

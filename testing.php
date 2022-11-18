@@ -1,107 +1,113 @@
 <?php
+
 h("Start Testing");
 
-p("Includes:");
+require_once 'config/config.php';
 
-require_once "./iconet/Database.php";
-require_once "./iconet/Crypto.php";
-require_once "./iconet/Processor.php";
-require_once "./iconet/PackageBuilder.php";
-require_once "./iconet/PostOffice.php";
-use Iconet\Database;
+
+use Iconet\Address;
 use Iconet\Crypto;
+use Iconet\Database;
 use Iconet\Processor;
-use Iconet\PackageBuilder;
-use Iconet\PostOffice;
-use Iconet\FormatProcessor;
+use Iconet\S2STransmitter;
+use Iconet\TemplateProcessor;
+use Iconet\UserManager;
 
 $testy = new tester();
 
-//$testy->test_encryption();
-
+$testy->test_encryption();
 $testy->init_testdata();
-
 $testy->test_processing();
-
 //$testy->clean_test_data();
+
 
 h("Done Testing.");
 
 
-class tester{
-protected $db;
-protected $cryp;
-protected $po;
-protected $pb;
-protected $proc;
-protected $fp;
+class Tester
+{
+    private Database $db;
+    private Crypto $cryp;
+    private Processor $proc;
+
+    private \Iconet\User $alice;
+    private \Iconet\User $bob;
+    private \Iconet\User $claire;
 
     public function __construct()
     {
         $this->db = new Database();
-        $this->po = new PostOffice();
+        $this->po = new S2STransmitter();
         $this->cryp = new Crypto();
-        $this->pb = new PackageBuilder();
-        $this->fp = new FormatProcessor();
     }
 
-    function clean_test_data(){
+    public function clean_test_data()
+    {
         session_unset();
     }
 
-    function init_testdata()
+    public function init_testdata()
     {
         h("Init Testdata");
         // create testusers alice, bob & claire
-        $aliceKey = $this->cryp->genKeyPair();
-        $bobKey = $this->cryp->genKeyPair();
-        $claireKey = $this->cryp->genkeyPair();
         $this->db->clearTables();
-        $this->db->addUser("alice_tester", "alice@alicenet.net", $aliceKey[0],$aliceKey[1]);
-        $this->db->addUser("bob_tester", "bob@bobnet.org", $bobKey[0], $bobKey[1]);
-        $this->db->addUser("claire_tester", "claire@clairenet.de", $claireKey[0], $claireKey[1]);
-        $this->db->addContact("alice_tester", "bob@bobnet.org", $bobKey[0]);
-        $this->db->addContact("alice_tester", "claire@clairenet.de", $claireKey[0]);
+        $um = new UserManager();
+        $this->alice = $um->addNewUser('alice');
+        $this->bob = $um->addNewUser('bob');
+        $this->claire = $um->addNewUser('claire');
 
-        $this->proc = new Processor("alice_tester");
+        $this->alice->addContact($this->bob);
+        $this->alice->addContact($this->claire);
 
+        $this->proc = new Processor($this->alice);
     }
 
-    function test_processing(){
+    public function test_processing()
+    {
         h("Test Processing:");
 
         h("Request Public Key of Bob");
-        $pubkey = $this->proc->getExternalPublicKey("bob@bobnet.org");
+        $addressBob = $this->bob->address;
+        $pubkey = $this->proc->getExternalPublicKey($addressBob);
         p($pubkey);
 
         h("Create Content Hello World");
-        $this->proc->createIconetPost("Hello World");
+        $this->proc->createPost("Hello World");
 
         h("Check Inbox of bob");
-        $notifs = $this->proc->checkInbox("bob_tester");
+        $notifs = (new Processor($this->bob))->getNotifications();
         p("Notifs:");
-        foreach ($notifs as $n){
+        foreach($notifs as $n) {
             var_dump($n);
         }
 
         h("Request Content");
         $notif = $notifs[0]; // use bobs notif
+        p($this->proc->displayContent($notif['content_id'], new Address($notif['sender']), $notif['secret']));
 
-        p($this->proc->displayContent($notif['content_id'], $notif['sender'], $notif['secret']));
         h("Request Format");
         p("Request post-comments");
-        $format = $this->proc->getFormat("post-comments");
+        $format = $this->proc->getFormat("post-comments@neta.localhost");
         p("Received Format:");
         echo htmlspecialchars($format);
+
+
         h("Send Interaction");
         p("Make Comment as Bob: Yeey");
 
-        $response = $this->proc->postInteraction("Yeey!", $notif['content_id'], "bob@bobnet.net", $notif['sender'], "comment", $notif['secret'] );
+        $response = $this->proc->postInteraction(
+            "Yeey!",
+            $notif['content_id'],
+            "bob@bobnet.net",
+            $notif['sender'],
+            "comment",
+            $notif['secret']
+        );
         p("Response:");
         var_dump($response);
 
         h("Request Content, including interactions");
-        p($this->proc->displayContent($notif['content_id'], $notif['sender'], $notif['secret']));
+        p($this->proc->displayContent($notif['content_id'], new Address($notif['sender']), $notif['secret']));
 
         h("Merge Content & Format");
         $content['sender'] = "Alice";
@@ -112,18 +118,15 @@ protected $fp;
         p("Format:");
         var_dump(htmlspecialchars($format));
         p("Merging");
-        $result = $this->fp->mergeFormat($format, $content);
+        $result = TemplateProcessor::fillTemplate($format, $content);
         p("Merged:");
 
         echo $result;
-
     }
 
 
-    function test_encryption()
+    public function test_encryption()
     {
-
-
         h("Encryption");
 
         $message = "Hello Bob, here are some funny symbols: äöü123{}ß. Love you!";
@@ -163,7 +166,6 @@ protected $fp;
         $decrypted_content = $this->cryp->decSym($encrypted_content, $decrypted_secret);
         p("decrypted_content");
         var_dump($decrypted_content);
-
     }
 
 

@@ -1,7 +1,7 @@
 <?php
 
-use Iconet\PackageBuilder;
-use Iconet\PackageHandler;
+use Iconet\Address;
+use Iconet\UserManager;
 
 require_once("includes/header.php");
 
@@ -86,26 +86,26 @@ require_once("includes/header.php");
             if(!$contacts) {
                 echo "<p>You have no external contacts stored at this time!</p>";
             } else {
-                echo "<form action='contacts.php' method='GET'>";
+                echo "<form action='contacts.php' method='POST'>";
 
                 echo "<p>These are your external contacts. Your postings are also delivered to them via iconet.</p>";
                 foreach($contacts as $contact) {
-                    echo $contact['address'] . " with the pubkey: " . $contact['pubkey'];
-                    echo "   <button type='submit' name='delete_address' value =" . $contact['address'] . ">X</button>";
+                    echo $contact->address . " with the pubkey: " . $contact->publicKey;
+                    echo "   <button type='submit' name='delete_address' value =" . $contact->address . ">X</button>";
                     echo "<br><br>";
                 }
 
                 echo "</form>";
             }
 
-            if(isset($_GET['delete_address'])) {
-                $address = strip_tags($_GET['delete_address']);
-                if($iconetDB->deleteContact($userLoggedIn, $address)) {
-                    header("Location: contacts.php");
-                } else {
-                    echo "Error: Could not delete " . $address;
-                }
+        if(isset($_POST['delete_address'])) {
+            $address = strip_tags($_POST['delete_address']);
+            if($iconetDB->deleteContact($userLoggedIn, $address)) {
+                header("Location: contacts.php");
+            } else {
+                echo "Error: Could not delete " . $address;
             }
+        }
         ?>
     </div>
 
@@ -114,25 +114,24 @@ require_once("includes/header.php");
         <h4>Add external contacts</h4>
         <p>Into the following textbox you can enter iconet-addresses of external contacts. <br>
             We'll make sure, you're postings are also delivered to them!</p>
-        <form action="contacts.php" method="GET">
+        <form action="contacts.php" method="POST">
             <input type="text" name="add_address"><br> <br>
             <input type="submit" value="Enter">
         </form>
 
         <?php
-        if(isset($_GET['add_address'])) {
-            $address = strip_tags($_GET['add_address']);
-
-            if(!PackageHandler::checkAddress($address)) {
+        if(isset($_POST['add_address'])) {
+            $address = htmlspecialchars($_POST['add_address']);
+            if(!Address::validate($address)) {
                 echo "Invalid Address.";
                 exit;
             }
-            $pubkey = PackageBuilder::request_pubkey($address);
-
-            if($iconetDB->addContact($userLoggedIn, $address, $pubkey)) {
+            $success = UserManager::addContact(
+                \Iconet\User::fromUsername($userLoggedIn),
+                new Address($address)
+            );
+            if($success) {
                 header("Location: contacts.php");
-            } else {
-                echo "Failed to add " . $address;
             }
         }
         ?>
