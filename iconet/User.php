@@ -28,7 +28,7 @@ class User extends Contact
     {
         global $iconetDB;
         $userData = $iconetDB->getUserByName($username);
-        return self::fromUserData($userData);
+        return $userData ? self::fromUserData($userData) : null;
     }
 
     public function addContact(Contact $contact): bool

@@ -29,6 +29,23 @@ class Database
         return self::$singleton;
     }
 
+    public function clearTables(): void
+    {
+        $stmt = $this->db->prepare(
+            "SET FOREIGN_KEY_CHECKS=0;
+            TRUNCATE TABLE users;
+            TRUNCATE TABLE friend_requests;
+            TRUNCATE TABLE comments;
+            TRUNCATE TABLE likes;
+            TRUNCATE TABLE messages;
+            TRUNCATE TABLE posts;
+            TRUNCATE TABLE notifications;
+            TRUNCATE TABLE is_friend;
+            SET FOREIGN_KEY_CHECKS=1;"
+        );
+        $stmt->execute();
+    }
+
     public function getUser(string $username)
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username=:username");
