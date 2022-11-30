@@ -1,0 +1,17 @@
+<body>
+<script>
+    window.tunnel.addEventListener("initialized", async () => {
+        const testNode = document.createElement('p')
+        testNode.innerText = "This is the Format Template without data"
+        document.body.appendChild(testNode)
+        document.body.style.backgroundColor = "lightgreen";
+
+        testNode.innerText += "\nWaiting for data"
+        const content = await window.tunnel.getContent()
+        console.log("Frame got content", content)
+        const contentNode = document.createElement('h3')
+        contentNode.innerText = content
+        document.body.appendChild(contentNode)
+    })
+</script>
+</body>

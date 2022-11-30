@@ -1,0 +1,10 @@
+<body>
+<script>
+    const image = document.createElement('img')
+    image.alt = "Could not escape sandbox via img"
+    image.src = "neta.localhost/favicon.ico"
+    document.body.appendChild(image)
+    image.onerror = e => document.body.style.backgroundColor = "lime";
+    image.onload = e => document.body.style.backgroundColor = "red";
+</script>
+</body>

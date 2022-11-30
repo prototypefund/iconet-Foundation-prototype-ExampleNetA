@@ -1,0 +1,17 @@
+<body>
+<script>
+    const info = document.createElement('p')
+    info.innerText = `Trying to change current location ${window.location}`
+    document.body.appendChild(info)
+    document.body.style.backgroundColor = "orange";
+    window.location = "//neta.localhost";
+
+    // TODO this redirects to an error page an FF, inspect if there are more cases like this
+    // window.location = "about:srcdoc"
+    if (window.location === "about:srcdoc") {
+        document.body.style.backgroundColor = "red";
+    } else {
+        document.body.style.backgroundColor = "lime";
+    }
+</script>
+</body>

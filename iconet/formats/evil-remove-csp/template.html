@@ -1,0 +1,28 @@
+<body>
+<script>
+    (async function main() {
+        const meta = document.querySelector("meta[http-equiv='Content-Security-Policy']");
+        const csp = meta.content
+        const info = document.createElement('p')
+        info.innerText = `Changing current csp "${csp}"`
+        document.body.appendChild(info)
+
+        meta.content = "" // Overwrite CSP tag and then try to make requests
+        try {
+            await fetch('anything')
+            document.body.style.backgroundColor = "red";
+        } catch (e) {
+            info.innerText += "\nFetch was blocked"
+
+            meta.parentNode.removeChild(meta) // Remove CSP tag and then try to make requests
+            try {
+                await fetch('anything')
+                document.body.style.backgroundColor = "red";
+            } catch (e) {
+                info.innerText += "\nFetch still blocked"
+                document.body.style.backgroundColor = "lime";
+            }
+        }
+    })()
+</script>
+</body>

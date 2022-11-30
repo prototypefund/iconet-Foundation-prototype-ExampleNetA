@@ -1,0 +1,26 @@
+<body>
+<script>
+    const info = document.createElement('p')
+    info.innerText = "Trying to request content without permission"
+    document.body.appendChild(info)
+    document.body.style.backgroundColor = "orange";
+    (async () => {
+        setTimeout(async () => {
+
+
+                window.tunnel.addEventListener("initialized", async () => {
+                    try {
+                        const content = await window.tunnel.getContent()
+                        document.body.style.backgroundColor = "red";
+                    } catch (e) {
+                        info.innerText += `\n${e}`
+                        document.body.style.backgroundColor = "lime";
+                    }
+                })
+            }
+            ,
+            0 // 1000 TODO If this runs after the initialized event is fired, it will never get triggered
+        )
+    })()
+</script>
+</body>

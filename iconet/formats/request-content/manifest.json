@@ -1,0 +1,13 @@
+{
+  "id": "neta/request-content",
+  "version": "1.0",
+  "iconet-version": "1.0",
+  "hash": "104789612847612984716238947",
+  "template": "/iconet/formats/request-content/template.html",
+  "scripts": [
+    "/iconet/public/tunnel.js"
+  ],
+  "permissions": {
+    "requestContent": true
+  }
+}

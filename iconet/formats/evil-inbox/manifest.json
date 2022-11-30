@@ -1,0 +1,11 @@
+{
+  "id": "neta/evil-html",
+  "version": "1.0",
+  "iconet-version": "1.0",
+  "hash": "104789612847612984716238947",
+  "template": "/iconet/",
+  "scripts": [
+    "/iconet/formats/evil-inbox/evil.js"
+  ],
+  "permissions": {}
+}
