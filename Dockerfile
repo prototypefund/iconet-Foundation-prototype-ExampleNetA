@@ -13,6 +13,8 @@ WORKDIR /var/www/prototype-ExampleNetA
 COPY apache.conf /etc/apache2/sites-available/netA.conf
 
 RUN \
+    a2enmod rewrite && \
+    a2enmod headers && \
     a2dissite 000-default.conf && \
     a2ensite netA.conf
 
@@ -32,6 +34,7 @@ ENTRYPOINT \
     service apache2 start && \
     service mysql start && \
     composer install && \
+    echo "SUCCESS! The site is reachable from the host under http://localhost:8001" && \
     /bin/bash
 
 EXPOSE 80 8001

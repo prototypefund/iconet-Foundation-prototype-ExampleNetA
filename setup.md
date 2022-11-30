@@ -47,9 +47,11 @@ Download the repository with:
 </VirtualHost>
 ```
 
-4. Enable the site
+4. Enable the site and needed modules
 
         sudo a2ensite netA.conf
+        sudo a2enmod rewrite 
+        sudo a2enmod headers
 
 
 5. Add the following line to your `/etc/hosts` file with `sudoedit`

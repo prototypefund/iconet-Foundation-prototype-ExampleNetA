@@ -2,7 +2,7 @@
 
 namespace Iconet;
 
-require_once "../config/config.php";
+require_once "../../config/config.php";
 
 // User interface for open inbox and endpoint for incoming requests
 
@@ -16,6 +16,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     echo (new S2SReceiver())->receive($body);
 } else {
-    // TODO present personal inbox
-    echo "<h3>Your open Inbox!</h3>";
+    if(isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        $user = User::fromUsername($username);
+    }
+    if(!isset($user)) {
+        header("Location: /register.php");
+        exit();
+    }
+    include "inbox.php";
 }
