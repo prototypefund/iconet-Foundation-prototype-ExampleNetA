@@ -2,7 +2,7 @@ import {EEManifest} from "./EEManifest.js";
 
 // The sandbox does not have an origin (it's a unique origin that equals only '*')
 const ALLOWED_POST_MSG_ORIGIN = "*";
-const IFRAME_CSP = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';";
+const IFRAME_CSP = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:;";
 
 /**
  * Encapsulates the iframe sandbox and provides interface to the EEProxy

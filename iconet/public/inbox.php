@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'self'; child-src 'none';  connect-src *; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline';"/>
-    <!--    FIXME unsafe inline-->
+            content=
+            "default-src 'self';
+            child-src 'none';
+            connect-src *;
+            style-src 'unsafe-inline';
+            script-src 'self' 'unsafe-inline';
+            img-src 'self' data: blob:;"/>
+    <!--    FIXME does the parent need to have a laxer csp than its children? unsafe inline-->
     <title>Inbox</title>
     <script defer src='/iconet/public/inbox.js' type="module"></script>
     <style>
