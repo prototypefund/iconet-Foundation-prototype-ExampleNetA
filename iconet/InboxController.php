@@ -33,7 +33,7 @@ class InboxController
             ['content' => 'This content will not be seen by the template', 'format' => '/iconet/formats/no-template'],
             ['content' => 'Content will not be seen by the template', 'format' => '/iconet/formats/empty-skeleton'],
             ['content' => 'This content will not be seen by the template', 'format' => '/iconet/formats/empty-styled'],
-            ['content' => 'This format does not need content', 'format' => '/iconet/formats/static'],
+            ['content' => 'This format does not need content', 'format' => '/iconet/formats/static-no-js'],
             ['content' => 'This content is injected into the template', 'format' => '/iconet/formats/static'],
             ['content' => 'Different content for the same template', 'format' => '/iconet/formats/static'],
             ['content' => 'Content requested through tunnel', 'format' => '/iconet/formats/request-content'],

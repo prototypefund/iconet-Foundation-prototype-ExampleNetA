@@ -11,21 +11,19 @@ export class EmbeddedExperience extends HTMLElement {
     #shadow
     #iframe
     #info
-    token // TODO only authentify by postMessage event.source ?
     format
     #content
     #manifest
 
     constructor() {
         super()
-        this.token = this.getAttribute('token') // TODO should be generated on client
         this.format = this.getAttribute('format')
         this.#content = this.getAttribute('content') // TODO maybe fetch this on demand
 
         this.#createShadowDom()
 
         // Let the proxy know that it can connect to this sandbox (after calling initialize)
-        window.proxy.register(this)
+        window.proxy.register(this.#iframe.contentWindow, this)
     }
 
     async initialize() {
@@ -35,10 +33,7 @@ export class EmbeddedExperience extends HTMLElement {
             console.error("Could not load manifest", e)
             return
         }
-        // Let the iframe load, so that it can start listening
         await this.#loadIframe()
-        await this.sendInitializationMessage()
-        console.log("Initialized ", this.format)
     }
 
     #createShadowDom() {
@@ -61,7 +56,7 @@ export class EmbeddedExperience extends HTMLElement {
         // TODO While there is no widespread adoption for the csp attribute on iframes, we use this workaround:
         // TODO We set the csp in the meta tag of a minimal html document and load it via srcdoc into the iframe
         try {
-            this.#iframe.srcdoc = await this.#createSrcdoc(this.token)
+            this.#iframe.srcdoc = await this.#createSrcdoc()
         } catch (e) {
             this.#info.innerText += `\n${e}`
             return Promise.resolve(e)
@@ -72,11 +67,11 @@ export class EmbeddedExperience extends HTMLElement {
         })
     }
 
-    async #createSrcdoc(token) {
+    async #createSrcdoc() {
         const template = await this.#getTemplate()
         const document = new DOMParser().parseFromString(template, "text/html");
         EmbeddedExperience.#injectCSP(document)
-        EmbeddedExperience.#injectToken(document, token)
+        EmbeddedExperience.#injectProxyOrigin(document)
         await EmbeddedExperience.#injectScripts(document, this.#manifest.scripts)
         this.#injectContent(document)
         return document.documentElement.outerHTML
@@ -95,10 +90,10 @@ export class EmbeddedExperience extends HTMLElement {
     }
 
 
-    static #injectToken(document, token) {
+    static #injectProxyOrigin(document) {
         const meta = document.createElement('meta')
-        meta.id = 'token'
-        meta.content = token
+        meta.id = 'proxyOrigin'
+        meta.content = window.location.origin
 
         document.head.append(meta)
     }
@@ -123,18 +118,13 @@ export class EmbeddedExperience extends HTMLElement {
         }
     }
 
-    async sendInitializationMessage() {
-        const origin = window.location.origin; //sandbox should only send data, when the parent is on this origin
-        const message = {initialize: true, origin}
-        this.#sendMessage(message);
-    }
 
     // The sandbox is waiting for a request with that id.
     // TODO We send the content to the iframe here,
     //  but it could also be any other data that was fetched by the client
     sendContent(id) {
         if (!this.#manifest.hasPermission('requestContent')) {
-            console.error(`Client got not permitted content request`)
+            console.error(`Proxy got not permitted content request`)
             return
         }
         this.#sendMessage({content: this.#content, id})
@@ -148,9 +138,8 @@ export class EmbeddedExperience extends HTMLElement {
 
     // TODO maybe move this sending part to the proxy as well?
     #sendMessage(message) {
-        message.token = this.token
         this.#iframe.contentWindow.postMessage(message, ALLOWED_POST_MSG_ORIGIN)
-        console.log(`Proxy sent message to child at origin ${this.format}: ${JSON.stringify(message)}\n`)
+        console.log(`Proxy sent message to child ${this.format} at origin ${ALLOWED_POST_MSG_ORIGIN} ${JSON.stringify(message)}`)
     }
 
     async #getTemplate() {

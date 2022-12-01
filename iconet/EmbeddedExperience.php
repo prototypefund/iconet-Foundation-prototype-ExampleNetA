@@ -15,13 +15,10 @@ class EmbeddedExperience
 
     public function render(): string
     {
-        $token = bin2hex(openssl_random_pseudo_bytes(16));
-
         return
             "<embedded-experience
                 format='$this->format'
                 content='$this->content'
-                token='$token'    
             ></embedded-experience>";
     }
 }
