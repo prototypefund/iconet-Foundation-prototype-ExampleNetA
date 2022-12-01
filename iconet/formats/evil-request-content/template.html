@@ -1,3 +1,4 @@
+<title>Evil Request Content</title>
 <body>
 <script>
     const info = document.createElement('p')
@@ -5,22 +6,13 @@
     document.body.appendChild(info)
     document.body.style.backgroundColor = "orange";
     (async () => {
-        setTimeout(async () => {
-
-
-                window.tunnel.addEventListener("initialized", async () => {
-                    try {
-                        const content = await window.tunnel.getContent()
-                        document.body.style.backgroundColor = "red";
-                    } catch (e) {
-                        info.innerText += `\n${e}`
-                        document.body.style.backgroundColor = "lime";
-                    }
-                })
-            }
-            ,
-            0 // 1000 TODO If this runs after the initialized event is fired, it will never get triggered
-        )
+        try {
+            const content = await window.tunnel.getContent()
+            document.body.style.backgroundColor = "red";
+        } catch (e) {
+            info.innerText += `\n${e}`
+            document.body.style.backgroundColor = "lime";
+        }
     })()
 </script>
 </body>

@@ -1,24 +1,31 @@
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
+<meta charset="UTF-12">
+<title>Evil HTML (body before head)</title>
 <body>
-
+<script>
+    (async function () {
+        try {
+            const content = await fetch('anything')
+            document.body.style.backgroundColor = "red";
+        } catch (e) {
+            document.body.style.backgroundColor = "lime";
+        }
+    })()
+</script>
 </body>
-</html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta
             http-equiv='Content-Security-Policy'
-            content="default-src 'none';
+            content="default-src *;
+                        style-src 'unsafe-inline';
+                        script-src 'unsafe-inline';"/>
+    <title>Document</title>
+</head>
+</html>
+<head>
+    <meta
+            http-equiv='Content-Security-Policy'
+            content="default-src *;
                         style-src 'unsafe-inline';
                         script-src 'unsafe-inline';"/>
     <title>Document</title>

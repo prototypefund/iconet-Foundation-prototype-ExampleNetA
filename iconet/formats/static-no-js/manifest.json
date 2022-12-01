@@ -1,8 +1,8 @@
 {
-  "id": "neta/static-body",
+  "id": "neta/static-no-js",
   "version": "1.0",
   "iconet-version": "1.0",
   "hash": "104789612847612984716238947",
-  "template": "/iconet/formats/static-body/template.html",
+  "template": "/iconet/formats/static-no-js/template.html",
   "permissions": {}
 }

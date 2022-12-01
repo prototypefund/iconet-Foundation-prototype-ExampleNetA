@@ -1,6 +1,7 @@
+<title>Request Content</title>
 <body>
 <script>
-    window.tunnel.addEventListener("initialized", async () => {
+    (async function () {
         const testNode = document.createElement('p')
         testNode.innerText = "This is the Format Template without data"
         document.body.appendChild(testNode)
@@ -12,6 +13,6 @@
         const contentNode = document.createElement('h3')
         contentNode.innerText = content
         document.body.appendChild(contentNode)
-    })
+    })();
 </script>
 </body>
