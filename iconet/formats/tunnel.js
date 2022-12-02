@@ -51,7 +51,7 @@ class Tunnel {
 
     #requestContent(resolve, reject) {
         const id = this.#requestCounter += 1
-        const request = {type: "requestContent", id}
+        const request = {"@context": "https://iconet-foundation.org/ns#", "@type": "requestContent", id}
         parent.postMessage(request, this.#proxyOrigin)
         this.#openRequests.set(id, resolve)
         setTimeout(() => reject(`Tunnel request timed out after ${this.TIME_OUT}ms`), this.TIME_OUT)

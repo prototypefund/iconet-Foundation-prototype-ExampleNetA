@@ -5,7 +5,7 @@ const ALLOWED_POST_MSG_ORIGIN = "*";
 const IFRAME_CSP = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:;";
 
 /**
- * Encapsulates the iframe sandbox and provides interface to the EEProxy
+ * Encapsulates the iframe sandbox and provides interface to the SandboxController
  */
 export class EmbeddedExperience extends HTMLElement {
     #shadow
@@ -22,8 +22,8 @@ export class EmbeddedExperience extends HTMLElement {
 
         this.#createShadowDom()
 
-        // Let the proxy know that it can connect to this sandbox (after calling initialize)
-        window.proxy.register(this.#iframe.contentWindow, this)
+        // Make the SandboxController listen to this iframe
+        window.sandboxController.register(this.#iframe.contentWindow, this)
     }
 
     async initialize() {
@@ -77,6 +77,7 @@ export class EmbeddedExperience extends HTMLElement {
         return document.documentElement.outerHTML
     }
 
+    // This function is part of the srcdoc workaround.
     static #injectCSP(document) {
         // Delete all existing CSP meta tags
         document.documentElement.querySelectorAll('meta[http-equiv="Content-Security-Policy"]')
@@ -89,7 +90,7 @@ export class EmbeddedExperience extends HTMLElement {
         document.head.prepend(meta) // CSP should be first element
     }
 
-
+    // This function is part of the srcdoc workaround.
     static #injectProxyOrigin(document) {
         const meta = document.createElement('meta')
         meta.id = 'proxyOrigin'
@@ -98,7 +99,7 @@ export class EmbeddedExperience extends HTMLElement {
         document.head.append(meta)
     }
 
-
+    // This function is only for debugging convenience.
     static async #injectScripts(document, scriptUrls) {
         for (const scriptUrl of scriptUrls) {
             const scriptNode = document.createElement('script')
@@ -136,7 +137,7 @@ export class EmbeddedExperience extends HTMLElement {
     }
 
 
-    // TODO maybe move this sending part to the proxy as well?
+    // TODO maybe move this sending part to the sandboxController as well?
     #sendMessage(message) {
         this.#iframe.contentWindow.postMessage(message, ALLOWED_POST_MSG_ORIGIN)
         console.log(`Proxy sent message to child ${this.format} at origin ${ALLOWED_POST_MSG_ORIGIN} ${JSON.stringify(message)}`)

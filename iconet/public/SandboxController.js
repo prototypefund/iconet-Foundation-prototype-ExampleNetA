@@ -4,8 +4,8 @@ import {EmbeddedExperience} from "./EmbeddedExperience.js";
  * Listens for requests from sandboxes, checks validity and
  * delegates the sending of responses to the corresponding EmbeddedExperience element.
  */
-export class EEProxy {
-    #EEs = new Map() // Maps postMessage sources onto EmbeddedExperiences to which this proxy is connected
+export class SandboxController {
+    #sandboxes = new Map() // Maps postMessage sources onto EmbeddedExperiences to which this sandboxController is connected
 
     constructor() {
         window.addEventListener('message', async (event) => {
@@ -16,10 +16,10 @@ export class EEProxy {
                 return
             }
             // TODO validate packet structure
-            if (!event.data.hasOwnProperty('type')) {
+            if (!event.data.hasOwnProperty('@type')) {
                 console.warn(`Proxy got unknown message`, event.data)
             }
-            switch (event.data.type) {
+            switch (event.data['@type']) {
                 case "requestContent":
                     ee.sendContent(event.data.id)
                     break
@@ -29,8 +29,8 @@ export class EEProxy {
     }
 
     static async initialize() {
-        window.proxy = new EEProxy()
-        await window.proxy.#initialize()
+        window.sandboxController = new SandboxController()
+        await window.sandboxController.#initialize()
     }
 
 
@@ -38,12 +38,12 @@ export class EEProxy {
         // Define the embedded-experience html component
         customElements.define('embedded-experience', EmbeddedExperience)
         console.log('Proxy is initializing sandboxes')
-        await Promise.all(Array.from(this.#EEs.values(), embEx => embEx.initialize()))
+        await Promise.all(Array.from(this.#sandboxes.values(), embEx => embEx.initialize()))
     }
 
 
     register(source, embEx) {
-        this.#EEs.set(source, embEx)
+        this.#sandboxes.set(source, embEx)
     }
 
     /**
@@ -52,7 +52,7 @@ export class EEProxy {
      * @returns {EmbeddedExperience|null} Returns the EmbeddedExperience that sent this message, or null
      */
     #authentifiedEE(event) {
-        const ee = this.#EEs.get(event.source);
+        const ee = this.#sandboxes.get(event.source);
         const isAuthentified = ee?.isAuthentified(event)
         return isAuthentified ? ee : null;
     }

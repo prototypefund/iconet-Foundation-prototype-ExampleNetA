@@ -5,7 +5,7 @@
   "hash": "104789612847612984716238947",
   "template": "/iconet/formats/request-content/template.html",
   "scripts": [
-    "/iconet/public/tunnel.js"
+    "/iconet/formats/tunnel.js"
   ],
   "permissions": {
     "requestContent": true

@@ -1,6 +1,6 @@
-import {EEProxy} from "./EEProxy.js";
+import {SandboxController} from "./SandboxController.js";
 
 
 (async function () {
-    window.client = await EEProxy.initialize();
+    await SandboxController.initialize();
 })();
