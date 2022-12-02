@@ -130,7 +130,7 @@ class ProcessorTest extends TestCase
     public function test_getEncryptedPost(): void
     {
         $id = $this->notification['content_id'];
-        $fullContent = $this->procA->getEncryptedPost($id);
+        $fullContent = $this->procA->getEncryptedPostFromDB($id);
         self::assertObjectHasAttribute('id', $fullContent);
         self::assertObjectHasAttribute('content', $fullContent);
         self::assertObjectHasAttribute('secret', $fullContent);

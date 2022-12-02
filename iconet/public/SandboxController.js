@@ -20,8 +20,11 @@ export class SandboxController {
                 console.warn(`Proxy got unknown message`, event.data)
             }
             switch (event.data['@type']) {
-                case "requestContent":
+                case "ContentRequest":
                     ee.sendContent(event.data.id)
+                    break
+                case "InteractionMessage":
+                    ee.sendInteraction(event.data.id, event.data.payload)
                     break
             }
 

@@ -29,15 +29,26 @@
     </style>
 </head>
 <body>
-<h3>Your open Inbox!</h3>
 
 <?php
 
 use Iconet\InboxController;
 
 global $user;
-echo (new InboxController($user))->renderInbox();
+$inboxController = new InboxController($user);
 ?>
+
+<h3>Your Open Inbox</h3>
+<details>
+    <summary>Raw Data</summary>
+    <pre><?= json_encode($inboxController->inboxContents(), JSON_PRETTY_PRINT) ?></pre>
+</details>
+
+
+<?php
+$inboxController->renderInbox() ?>
+
+
 </body>
 </html>
 

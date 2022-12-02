@@ -1,13 +1,14 @@
 {
-  "id": "neta/request-content",
+  "id": "neta/interaction-button",
   "version": "1.0",
   "iconet-version": "1.0",
   "hash": "104789612847612984716238947",
-  "template": "/iconet/formats/request-content/template.html",
+  "template": "/iconet/formats/interaction-button/template.html",
   "scripts": [
     "/iconet/formats/tunnel.js"
   ],
   "permissions": {
+    "InteractionMessage": true,
     "ContentRequest": true
   }
 }

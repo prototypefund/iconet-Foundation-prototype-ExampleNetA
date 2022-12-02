@@ -3,6 +3,7 @@ import {EEManifest} from "./EEManifest.js";
 // The sandbox does not have an origin (it's a unique origin that equals only '*')
 const ALLOWED_POST_MSG_ORIGIN = "*";
 const IFRAME_CSP = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:;";
+const INTERACTION_ENDPOINT = "/iconet/public/interaction.php";
 
 /**
  * Encapsulates the iframe sandbox and provides interface to the SandboxController
@@ -11,14 +12,25 @@ export class EmbeddedExperience extends HTMLElement {
     #shadow
     #iframe
     #info
-    format
-    #content
     #manifest
+
+    #format
+    #id
+    #content
+    #secret
+    #actor
 
     constructor() {
         super()
-        this.format = this.getAttribute('format')
-        this.#content = this.getAttribute('content') // TODO maybe fetch this on demand
+        // TODO maybe fetch this only on demand
+        const contentDataJson = this.getAttribute('contentData')
+        const contentData = JSON.parse(contentDataJson)
+        // For E2EE we would need to decrypt first.
+        this.#content = contentData.content
+        this.#id = contentData.contentId
+        this.#format = contentData.formatId
+        this.#secret = contentData.secret
+        this.#actor = contentData.actor
 
         this.#createShadowDom()
 
@@ -28,7 +40,7 @@ export class EmbeddedExperience extends HTMLElement {
 
     async initialize() {
         try {
-            this.#manifest = await EEManifest.fromFormat(this.format)
+            this.#manifest = await EEManifest.fromFormat(this.#format)
         } catch (e) {
             console.error("Could not load manifest", e)
             return
@@ -41,7 +53,7 @@ export class EmbeddedExperience extends HTMLElement {
         this.#shadow = this.attachShadow({mode: 'open'})
 
         this.#info = document.createElement('p')
-        this.#info.textContent = `Format: ${this.format}`
+        this.#info.textContent = `Format: ${this.#format}`
 
         this.#iframe = document.createElement('iframe')
         this.#iframe.sandbox = "allow-scripts";
@@ -121,26 +133,66 @@ export class EmbeddedExperience extends HTMLElement {
 
 
     // The sandbox is waiting for a request with that id.
-    // TODO We send the content to the iframe here,
-    //  but it could also be any other data that was fetched by the client
-    sendContent(id) {
-        if (!this.#manifest.hasPermission('requestContent')) {
+    async sendContent(id) {
+        if (!this.#manifest.hasPermission('ContentRequest')) {
             console.error(`Proxy got not permitted content request`)
             return
         }
-        this.#sendMessage({content: this.#content, id})
+        const contentRequest = {
+            type: "Content Request", contentId: this.#id, actor: this.#actor, secret: this.#secret
+        }
+        await this.#sendResponseFromHomeServer(id, contentRequest);
     }
+
+
+    async sendInteraction(id, payload) {
+        if (!this.#manifest.hasPermission('InteractionMessage')) {
+            console.error(`Proxy got not permitted interaction request`)
+            return
+        }
+        const interaction = {
+            contentId: this.#id,
+            payload,
+            secret: this.#secret,
+            to: this.#actor
+        }
+        await this.#sendResponseFromHomeServer(id, interaction);
+    }
+
+
+    async #sendResponseFromHomeServer(id, request) {
+        console.log('Client -> Server', request)
+        let response = await fetch(INTERACTION_ENDPOINT, {
+            method: "POST",
+            body: JSON.stringify(request)
+        })
+        let status = response.status;
+
+        if (response.status !== 200) {
+            this.#sendMessage({id, status})
+            return
+        }
+
+        let content, json
+        try {
+            json = (await response.text())
+            content = JSON.parse(json)
+        } catch (e) {
+            console.error(e, json)
+        }
+
+        this.#sendMessage({id, content})
+    }
+
 
     // Checks if an incoming message was really coming from this EE
     isAuthentified(event) {
         return event.source === this.#iframe.contentWindow
     }
 
-
-    // TODO maybe move this sending part to the sandboxController as well?
     #sendMessage(message) {
         this.#iframe.contentWindow.postMessage(message, ALLOWED_POST_MSG_ORIGIN)
-        console.log(`Proxy sent message to child ${this.format} at origin ${ALLOWED_POST_MSG_ORIGIN} ${JSON.stringify(message)}`)
+        console.log(`Proxy sent message to child ${this.#format} at origin ${ALLOWED_POST_MSG_ORIGIN} ${JSON.stringify(message)}`)
     }
 
     async #getTemplate() {

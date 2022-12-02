@@ -21,11 +21,13 @@ SET time_zone = "+00:00";
 -- Table structure for table `contacts`
 --
 
-CREATE TABLE `contacts` (
-                            `username` varchar(100) NOT NULL,
-                            `friend_address` varchar(60) NOT NULL,
-                            `friend_pubkey` varchar(500) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `contacts`
+(
+    `username`       varchar(100) NOT NULL,
+    `friend_address` varchar(60)  NOT NULL,
+    `friend_pubkey`  varchar(500) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 --
 -- Dumping data for table `contacts`
@@ -35,13 +37,14 @@ CREATE TABLE `contacts` (
 -- Table structure for table `notifications`
 --
 
-CREATE TABLE `notifications` (
-                                 `id`         int          NOT NULL primary key auto_increment,
-                                 `content_id` varchar(60)  NOT NULL,
-                                 `username`   varchar(100) NOT NULL,
-                                 `sender`     varchar(60)  NOT NULL,
-                                 `secret`     varchar(200) NOT NULL,
-                                 `subject`    text         NOT NULL
+CREATE TABLE `notifications`
+(
+    `id`         int          NOT NULL primary key auto_increment,
+    `content_id` varchar(60)  NOT NULL,
+    `username`   varchar(100) NOT NULL,
+    `sender`     varchar(60)  NOT NULL,
+    `secret`     varchar(200) NOT NULL,
+    `subject`    text         NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -69,11 +72,12 @@ CREATE TABLE `posts`
 
 CREATE TABLE `users`
 (
-    `username`                        varchar(100)  NOT NULL,
-    `address`                         varchar(60)   NOT NULL,
-                         `publickey` varchar(500) NOT NULL,
-                         `privatekey` varchar(2000) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `username`   varchar(100)  NOT NULL,
+    `address`    varchar(60)   NOT NULL,
+    `publickey`  varchar(500)  NOT NULL,
+    `privatekey` varchar(2000) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 --
 -- Table structure for table `interactions`

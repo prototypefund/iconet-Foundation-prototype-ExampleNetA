@@ -4,21 +4,18 @@ namespace Iconet;
 
 class EmbeddedExperience
 {
-    public readonly string $format;
-    public readonly string $content;
+    private string $contentData;
 
-    public function __construct(string $format, string $content)
+    public function __construct(mixed $contentData)
     {
-        $this->format = $format;
-        $this->content = $content;
+        $this->contentData = json_encode($contentData);
     }
 
     public function render(): string
     {
         return
             "<embedded-experience
-                format='$this->format'
-                content='$this->content'
+                contentData='$this->contentData'
             ></embedded-experience>";
     }
 }

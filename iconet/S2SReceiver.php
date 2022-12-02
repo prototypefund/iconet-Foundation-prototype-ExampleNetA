@@ -82,7 +82,7 @@ class S2SReceiver
     {
         $user = User::fromAddress(new Address($packet->actor));
         $processor = new Processor($user);
-        $encryptedPost = $processor->getEncryptedPost($packet->id);
+        $encryptedPost = $processor->getEncryptedPostFromDB($packet->id);
         $interactions = $processor->getEncryptedInteractions($packet->id);
         return PacketBuilder::content_response(
             $encryptedPost->content,

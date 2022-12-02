@@ -9,9 +9,8 @@
 
         testNode.innerText += "\nWaiting for data"
         const content = await window.tunnel.getContent()
-        console.log("Frame got content", content)
         const contentNode = document.createElement('h3')
-        contentNode.innerText = content
+        contentNode.innerText = JSON.stringify(content, null, '\t')
         document.body.appendChild(contentNode)
     })();
 </script>

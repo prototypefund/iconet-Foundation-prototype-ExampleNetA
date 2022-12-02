@@ -93,7 +93,8 @@ Download the repository with:
     mysql --database=netAiconet < iconet/iconet.sql
     ```
 
-13. Set the admin credentials in a file named `.env` in the project root. Use `.env.default` as a template.
+13. Set the admin credentials in a file named `.env` in the project root. Use `.env.default` as a template. You can skip
+    this step, if you used the same ones as in the default file.
 
 
 

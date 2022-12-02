@@ -4,8 +4,6 @@ namespace Iconet;
 
 use RuntimeException;
 
-require_once 'config/config.php';
-
 class Processor
 {
     //logged in user
@@ -104,14 +102,16 @@ class Processor
         return $this->database->getNotifications($this->user->username) ?? [];
     }
 
+
     /**
-     * @param string $id
+     * Request a content packet from an actor's outbox by id. The contentId is provided by received notifications.
+     * @param string $contentId The content id
      * @param Address $actor The address from where content should be requested. This is the author of the content.
      * @return object The encrypted content response packet object
      */
-    public function requestContent(string $id, Address $actor)
+    public function requestContent(string $contentId, Address $actor)
     {
-        $message = PacketBuilder::content_request($id, $actor);
+        $message = PacketBuilder::content_request($contentId, $actor);
         $response = $this->transmitter->send($actor, $message);
         $packet = json_decode($response);
         if($this->packetHandler->checkPacket($packet) !== PacketTypes::CONTENT_RESPONSE) {
@@ -159,6 +159,7 @@ class Processor
      * @param Address $actor
      * @param string $secret
      * @return string A string representation of the content including its interactions.
+     * @deprecated Content is now processed on the client side.
      */
     public function displayContent(string $id, Address $actor, string $secret): string
     {
@@ -214,7 +215,7 @@ class Processor
      * @param string $id
      * @return object
      */
-    public function getEncryptedPost(string $id)
+    public function getEncryptedPostFromDB(string $id)
     {
         $post = $this->database->getPostById($id);
         if(!$post) {
@@ -234,12 +235,11 @@ class Processor
     {
         $interactions_db = $this->database->getInteractionsByContentId($id);
         $interactions = [];
-        $i = 0;
         if($interactions_db != null) {
-            foreach($interactions_db as $in) {
-                $interactions[$i] = (object)[
-                    'actor' => $in['sender'],
-                    'encPayload' => $in['payload'],
+            foreach($interactions_db as $inter) {
+                $interactions[] = (object)[
+                    'actor' => $inter['sender'],
+                    'encPayload' => $inter['payload'],
                 ];
             }
         }
