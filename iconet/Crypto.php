@@ -1,7 +1,7 @@
 <?php
 namespace Iconet;
-include_once './iconet/libs/AES.php';
 
+use Iconet\libs\AES;
 
 class Crypto
 {
