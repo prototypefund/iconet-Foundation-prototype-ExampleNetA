@@ -155,7 +155,8 @@ written in bold lettering.
 |                         |                                |                                       |                                                                                                                                                        |
 | **Content Response**    | **`type`**                     | `"Content Response"`                  | **Required**                                                                                                                                           |
 |                         | **`actor`**                    | `"alice@alicenet.net"`                | **Required**                                                                                                                                           |
-|                         | **`formatId`**                 | `"post-comments"`                     | **Required:** The format identifier is a string specifying the name of the sent format.                                                                |
+|                         | **`formatId`**                 | `"post-comments"`                     | **
+Required:** The format identifier is a string specifying the name of the sent format.                                                                |
 |                         | **`content`**                  | `"ZXloOUp2Nn..."`                     | **
 Required:** The actual content is encrypted symmetrically with the secret.                                                                           |
 |                         | `encrypted`                    | `bool(true)`                          | "Encrypted" is true, if the content is encrypted.                                                                                                      |
