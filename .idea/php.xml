@@ -59,6 +59,7 @@
       <skipped_function name="Composer\Autoload\ClassLoader-&gt;loadClass" />
       <skipped_function name="Composer\Autoload\ClassLoader-&gt;findFile" />
       <skipped_function name="Composer\Autoload\ClassLoader-&gt;findFileWithExtension" />
+      <skipped_function name="Composer\Autoload\includeFile" />
     </skipped_functions>
   </component>
   <component name="PhpUnit">

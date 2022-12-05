@@ -35,14 +35,14 @@ class PackageBuilder
         string $actor,
         string $toAddress,
         string $encryptedSecret,
-        string $predata
+        string $encryptedPredata
     ): string {
         $package['type'] = "Notification";
         $package['actor'] = $actor;
         $package['to'] = $toAddress;
         $package['encryptedSecret'] = $encryptedSecret;
 
-        $package['predata'] = $predata;
+        $package['predata'] = $encryptedPredata;
 
         //optional interoperability-header
         $interoperability['protocol'] = "ExampleNetA";

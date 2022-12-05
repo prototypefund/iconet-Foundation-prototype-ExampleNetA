@@ -1,4 +1,5 @@
 <?php
+
 namespace Iconet;
 
 use RuntimeException;
@@ -25,8 +26,7 @@ class Processor
         $this->transmitter = new S2STransmitter();
         $this->crypto = new Crypto();
         $this->packageHandler = new PackageHandler();
-        $this->pathPostings = $_ENV['STORAGE'];
-
+        $this->pathPostings = __DIR__ . '/' . $_ENV['STORAGE'];
         $this->user = $user;
     }
 
@@ -52,7 +52,7 @@ class Processor
         } while($this->database->getPostById($id));
 
         //generate notification
-        $subject = $content . "- notification text"; //for testing content is only string
+        $subject = "Example Subject"; // FIXME This should not be hard coded
 
         $predata['id'] = $id;
         $predata['subject'] = $subject;
@@ -104,6 +104,7 @@ class Processor
     }
 
     /**
+     * FIXME This returns the wrong field names (e.g. text instead of predata.subject)
      * @return array<string>
      */
     public function getNotifications(): array
@@ -115,7 +116,7 @@ class Processor
      * @param string $id
      * @param Address $actor
      * @param string $secret
-     * @return string
+     * @return string A string representation of the content including its interactions.
      */
     public function displayContent(string $id, Address $actor, string $secret): string
     {
