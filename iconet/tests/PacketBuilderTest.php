@@ -14,7 +14,7 @@ class PacketBuilderTest extends TestCase
     private string $encryptedSecret;
     private string $encryptedPredata;
     private string $id;
-    private object $content;
+    private string $content;
     private string $formatId;
     private string $format;
     private string $to;
@@ -34,10 +34,7 @@ class PacketBuilderTest extends TestCase
         $this->error = "error";
         $this->encryptedSecret = "jtqgp5D2Z4...";
         $this->encryptedPredata = "as8d98d7fz";
-        $this->content = (object)[
-            "content" => "ZXloOUp2Nn...",
-            // TODO add interactions
-        ];
+        $this->content = "TestContent";
     }
 
     public function testPublicKeyRequest(): void
@@ -77,7 +74,12 @@ class PacketBuilderTest extends TestCase
 
     public function testContentResponse(): void
     {
-        $packet = PacketBuilder::content_response($this->content, $this->formatId, $this->actor);
+        $packet = PacketBuilder::content_response(
+            $this->content,
+            $this->formatId,
+            [],
+            $this->actor
+        );
         $packetType = PacketHandler::checkPacket(json_decode($packet));
         self::assertEquals(PacketTypes::CONTENT_RESPONSE, $packetType);
     }

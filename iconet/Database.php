@@ -46,14 +46,19 @@ class Database
         }
     }
 
-    public function addPost(string $id, string $username, string $secret): bool
+    public function addPost(string $username, string $secret, string $formatId, string $content): ?int
     {
-        $query = mysqli_query($this->database, "INSERT INTO posts VALUES ('$id', '$username', '$secret')");
+        $stmt = $this->database->prepare(
+            "INSERT INTO posts (username, secret, formatId, content) VALUES (?, ?, ?, ?)"
+        );
+        $stmt->bind_param("ssss", $username, $secret, $formatId, $content);
+        $stmt->execute();
+
         if(mysqli_connect_errno()) {
             echo "Failed to add post: " . mysqli_connect_errno();
-            return false;
+            return null;
         }
-        return true;
+        return $this->database->insert_id;
     }
 
     public function getUserByName(string $name): array|bool
@@ -78,9 +83,9 @@ class Database
         }
     }
 
-    public function getPostById(string $ID): array|null
+    public function getPostById(string $id): array|null
     {
-        $query = mysqli_query($this->database, "SELECT * FROM posts WHERE id='$ID'");
+        $query = mysqli_query($this->database, "SELECT * FROM posts WHERE id='$id'");
         if(mysqli_num_rows($query) > 0) {
             return mysqli_fetch_array($query);
         } else {

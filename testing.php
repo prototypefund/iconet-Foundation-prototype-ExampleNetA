@@ -72,7 +72,9 @@ class Tester
         p($pubkey);
 
         h("Create Content Hello World");
-        $this->proc->createPost("Hello World");
+        $content = "Hello World";
+        $formatId = "/iconet/formats/interaction";
+        $this->proc->createPost($content, $formatId);
 
         h("Check Inbox of bob");
         $notifs = (new Processor($this->bob))->getNotifications();
@@ -109,15 +111,15 @@ class Tester
         p($this->proc->displayContent($notif['content_id'], new Address($notif['sender']), $notif['secret']));
 
         h("Merge Content & Format");
-        $content['sender'] = "Alice";
-        $content['time'] = "Saturday";
-        $content['text'] = "Love you! <br>";
+        $replacements['sender'] = "Alice";
+        $replacements['time'] = "Saturday";
+        $replacements['text'] = "Love you! <br>";
         p("Content:");
-        var_dump($content);
+        var_dump($replacements);
         p("Format:");
         var_dump(htmlspecialchars($format));
         p("Merging");
-        $result = TemplateProcessor::fillTemplate($format, $content);
+        $result = TemplateProcessor::fillTemplate($format, $replacements);
         p("Merged:");
 
         echo $result;

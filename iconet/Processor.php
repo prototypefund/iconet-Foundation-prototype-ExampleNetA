@@ -15,7 +15,6 @@ class Processor
     private S2STransmitter $transmitter;
     private Crypto $crypto;
     private PacketHandler $packetHandler;
-    private string $pathPostings;
 
     /**
      * @param User $user
@@ -26,7 +25,6 @@ class Processor
         $this->transmitter = new S2STransmitter();
         $this->crypto = new Crypto();
         $this->packetHandler = new PacketHandler();
-        $this->pathPostings = __DIR__ . '/' . $_ENV['STORAGE'];
         $this->user = $user;
     }
 
@@ -44,41 +42,36 @@ class Processor
         return $packet->publicKey;
     }
 
-    public function createPost(string $content): void
+    /**
+     * @param string $content
+     * @param string $formatId
+     * @return void
+     */
+    public function createPost(string $content, string $formatId): void
     {
-        do {
-            $id = md5((string)rand()); // generate random ID
-            //Repeat if ID already in use (unlikely but possible)
-        } while($this->database->getPostById($id));
-
-        //generate notification
-        $subject = "Example Subject"; // FIXME This should not be hard coded
-
-        $predata['id'] = $id;
-        $predata['subject'] = $subject;
-
         //encrypt notification & content
         $secret = $this->crypto->genSymKey();
-        $encryptedNotif = $this->crypto->encSym(json_encode($predata), $secret);
         $encryptedContent = $this->crypto->encSym($content, $secret);
-
-        //save content
-        $file = fopen($this->pathPostings . $id . ".txt", "w") or die("Cannot open file.");
-        // Write data to the file
-        fwrite($file, $encryptedContent);
-        // Close the file
-        fclose($file);
+        $encryptedFormatId = $this->crypto->encSym($formatId, $secret);
 
         //save post in db
-        $this->database->addPost($id, $this->user->username, $secret);
+        $id = $this->database->addPost(
+            $this->user->username,
+            $secret,
+            $encryptedFormatId,
+            $encryptedContent
+        );
+
+        //generate notification
+        $predata['id'] = $id;
+        $predata['subject'] = "Example Subject"; // FIXME This should not be hard coded
+        $encryptedNotif = $this->crypto->encSym(json_encode($predata), $secret);
 
         //generate and send notifications
-
         $contacts = $this->database->getContacts($this->user->username);
         if(!$contacts) {
             echo "<br>You need contacts generate something for them! <br>";
         }
-
         $this->sendNotifications($contacts, $encryptedNotif, $secret);
     }
 
@@ -104,12 +97,61 @@ class Processor
     }
 
     /**
-     * FIXME This returns the wrong field names (e.g. text instead of predata.subject)
      * @return array<string>
      */
     public function getNotifications(): array
     {
         return $this->database->getNotifications($this->user->username) ?? [];
+    }
+
+    /**
+     * @param string $id
+     * @param Address $actor The address from where content should be requested. This is the author of the content.
+     * @return object The encrypted content response packet object
+     */
+    public function requestContent(string $id, Address $actor)
+    {
+        $message = PacketBuilder::content_request($id, $actor);
+        $response = $this->transmitter->send($actor, $message);
+        $packet = json_decode($response);
+        if($this->packetHandler->checkPacket($packet) !== PacketTypes::CONTENT_RESPONSE) {
+            echo "Error - invalid response Packet. Expected: Content Response";
+            return "Error - invalid response Packet. Expected: Content Response";
+        }
+        return $packet;
+    }
+
+
+    /**
+     * @param object $encPacket
+     * @param string $secret
+     * @return object A new packet with all its attributes decrypted.
+     */
+    public function decryptContentPacket($encPacket, $secret): object
+    {
+        $result = (object)[];
+        $result->actor = $encPacket->actor;
+        $result->content = $this->crypto->decSym($encPacket->content, $secret);
+        $result->formatId = $this->crypto->decSym($encPacket->formatId, $secret);
+        $result->interactions = $this->decryptInteractions($encPacket->interactions, $secret);
+        return $result;
+    }
+
+    /**
+     * @param array $encrypedInteractions
+     * @param string $secret
+     * @return array
+     */
+    public function decryptInteractions(array $encrypedinteractions, string $secret): array
+    {
+        $result = [];
+        foreach($encrypedinteractions as $inter) {
+            $result[] = (object)[
+                'actor' => $inter->actor,
+                'interaction' => $this->crypto->decSym($inter->encInteraction, $secret)
+            ];
+        }
+        return $result;
     }
 
     /**
@@ -120,22 +162,13 @@ class Processor
      */
     public function displayContent(string $id, Address $actor, string $secret): string
     {
-        $message = PacketBuilder::content_request($id, $actor);
-        $response = $this->transmitter->send($actor, $message);
-        $packet = json_decode($response);
-        if($this->packetHandler->checkPacket($packet) !== PacketTypes::CONTENT_RESPONSE) {
-            echo "Error - invalid response Packet. Expected: Content Response";
-            return "Error - invalid response Packet. Expected: Content Response";
+        $encPacket = $this->requestContent($id, $actor);
+        $contentPacket = $this->decryptContentPacket($encPacket, $secret);
+        $result = $contentPacket->content;
+        foreach($contentPacket->interactions as $i) {
+            $result .= "<br>Comment from: " . $i->actor . "<br>" . $i->interaction;
         }
-        $content = $packet->content;
-        $mainContent = $this->crypto->decSym($content->content, $secret);
-        if(isset($content->interactions)) {
-            foreach($content->interactions as $i) {
-                $interaction = $this->crypto->decSym($i->enc_int, $secret);
-                $mainContent .= "<br>Comment from: " . $i->sender . "<br>" . $interaction;
-            }
-        }
-        return $mainContent;
+        return $result;
     }
 
 
@@ -176,40 +209,41 @@ class Processor
         return $packet->format;
     }
 
+
     /**
      * @param string $id
-     * @return array<string>|string
+     * @return object
      */
-    public function readContent(string $id): array|string
+    public function getEncryptedPost(string $id)
     {
         $post = $this->database->getPostById($id);
         if(!$post) {
             echo "<br>Error - Unknown ID <br>";
             return "Error - Unknown ID";
-        } else {
-            if(!$post['username'] == $this->user->username) {
-                echo "<br>Error - Wrong User<br>";
-                return "Error - Wrong User";
-            } else {
-                $fileName = $this->pathPostings . $id . ".txt";
-                $myFile = fopen($fileName, "r") or die("Error - Unable to open file!");
-                $content['content'] = fread($myFile, filesize($fileName));
-                fclose($myFile);
+        }
+        if(!$post['username'] == $this->user->username) {
+            // TODO Check this somewhere else
+            echo "<br>Error - Wrong User<br>";
+            return "Error - Wrong User";
+        }
 
-                $interactions_db = $this->database->getInteractionsByContentId($id);
-                $interactions = array();
-                $i = 0;
-                if($interactions_db != null) {
-                    foreach($interactions_db as $in) {
-                        $interaction['sender'] = $in['sender'];
-                        $interaction['enc_int'] = $in['enc_int'];
-                        $interactions[$i] = $interaction;
-                    }
-                    $content['interactions'] = $interactions;
-                }
-                return $content;
+        return (object)$post;
+    }
+
+    public function getEncryptedInteractions(string $id): array
+    {
+        $interactions_db = $this->database->getInteractionsByContentId($id);
+        $interactions = [];
+        $i = 0;
+        if($interactions_db != null) {
+            foreach($interactions_db as $in) {
+                $interactions[$i] = (object)[
+                    'actor' => $in['sender'],
+                    'encInteraction' => $in['enc_int'],
+                ];
             }
         }
+        return $interactions;
     }
 
     public function postInteraction(
@@ -235,10 +269,9 @@ class Processor
         if(!($this->user->address == $packet->to)) {
             return "Error - Not owner of interacted content";
         }
-        $username = $this->user->username;
         $resonse = $this->database->addInteraction(
             $packet->id,
-            $username,
+            $this->user->username,
             $packet->actor,
             $packet->interaction
         );

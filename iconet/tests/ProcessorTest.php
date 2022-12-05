@@ -13,11 +13,12 @@ class ProcessorTest extends TestCase
 {
     private Processor $procA;
     private Database $db;
-    private string $content;
+    private object $contentPacket;
+    private object $contentPacketWithInter;
     private string $expectedContent;
+    private string $expectedFormatId;
+    private string $expectedInteraction;
     private array $notification;
-    private string $interaction;
-    private string $fullContent;
     private User $alice;
     private User $bob;
     private User $claire;
@@ -40,26 +41,29 @@ class ProcessorTest extends TestCase
         $this->procB = new Processor($this->bob);
 
         // Alice creates content
-        $this->expectedContent = "Hello World";
-        $this->procA->createPost($this->expectedContent);
+        $this->expectedContent = "Hello World! Test Content";
+        $this->expectedFormatId = "/iconet/formats/interaction";
+
+        $this->procA->createPost($this->expectedContent, $this->expectedFormatId);
 
         // Get Bob's notification
         $this->notification = $this->procB->getNotifications()[0];
         $notification = $this->notification;
 
         // Get content without interactions
-        $this->content = $this->procA->displayContent(
+        $encContentPacket = $this->procA->requestContent(
             $notification['content_id'],
-            new Address($notification['sender']),
+            new Address($notification['sender'])
+        );
+        $this->contentPacket = $this->procA->decryptContentPacket(
+            $encContentPacket,
             $notification['secret']
         );
 
         # Bob creates an interaction
-        $this->interaction = "Yeey!";
-        $interaction = $this->interaction;
-        $interactionType = "comment";
+        $this->expectedInteraction = "Yeey! Interaction content";
         $this->procA->postInteraction(
-            $interaction,
+            $this->expectedInteraction,
             $notification['content_id'],
             $this->bob->address,
             $notification['sender'],
@@ -67,9 +71,12 @@ class ProcessorTest extends TestCase
         );
 
         # Get the content for Bob with the interactions
-        $this->fullContent = $this->procB->displayContent(
+        $encContentPacket = $this->procA->requestContent(
             $notification['content_id'],
-            new Address($notification['sender']),
+            new Address($notification['sender'])
+        );
+        $this->contentPacketWithInter = $this->procA->decryptContentPacket(
+            $encContentPacket,
             $notification['secret']
         );
     }
@@ -93,8 +100,11 @@ class ProcessorTest extends TestCase
      */
     public function testCreate_content(): void
     {
-        self::assertEquals($this->expectedContent, $this->content);
+        self::assertEquals($this->expectedContent, $this->contentPacket->content);
+        self::assertEquals($this->expectedFormatId, $this->contentPacket->formatId);
         self::assertEquals("Example Subject", $this->notification["subject"]);
+        $interactions = $this->contentPacket->interactions;
+        self::assertEmpty($interactions);
     }
 
 
@@ -104,23 +114,41 @@ class ProcessorTest extends TestCase
      */
     public function testPost_interaction(): void
     {
-        // FIXME displayContent is not a good API
-        $ecpectedFullContent = $this->content . "<br>Comment from: " . $this->bob->address . "<br>" . $this->interaction;
-        self::assertEquals($ecpectedFullContent, $this->fullContent);
+        self::assertEquals($this->expectedContent, $this->contentPacketWithInter->content);
+        self::assertEquals($this->expectedFormatId, $this->contentPacketWithInter->formatId);
+
+        $interactions = $this->contentPacketWithInter->interactions;
+        self::assertNotEmpty($interactions);
+        $inter = $interactions[0];
+        self::assertEquals($this->expectedInteraction, $inter->interaction);
+        self::assertEquals($this->bob->address, $inter->actor);
     }
 
     /**
      * Test if the expected content with interactions is returned by using the content id.
      */
-    public function testRead_content(): void
+    public function test_getEncryptedPost(): void
     {
         $id = $this->notification['content_id'];
-        $fullContent = $this->procA->readContent($id);
+        $fullContent = $this->procA->getEncryptedPost($id);
+        self::assertObjectHasAttribute('id', $fullContent);
+        self::assertObjectHasAttribute('content', $fullContent);
+        self::assertObjectHasAttribute('secret', $fullContent);
+        self::assertObjectHasAttribute('formatId', $fullContent);
+    }
 
-        self::assertArrayHasKey('content', $fullContent);
-        self::assertArrayHasKey('interactions', $fullContent);
-        $interaction = $fullContent['interactions'][0];
-        self::assertEquals($this->bob->address, $interaction['sender']);
-        self::assertArrayHasKey('enc_int', $interaction);
+    /**
+     * Test if the expected content with interactions is returned by using the content id.
+     */
+    public function test_getEncryptedInteractions(): void
+    {
+        $id = $this->notification['content_id'];
+        $interactions = $this->procA->getEncryptedInteractions($id);
+
+        self::assertIsArray($interactions);
+        self::assertNotEmpty($interactions);
+        $interaction = $interactions[0];
+        self::assertEquals($this->bob->address, $interaction->actor);
+        self::assertObjectHasAttribute('encInteraction', $interaction);
     }
 }

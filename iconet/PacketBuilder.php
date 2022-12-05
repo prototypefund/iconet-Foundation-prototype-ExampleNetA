@@ -62,12 +62,17 @@ class PacketBuilder
         return self::jsonOrThrow($packet);
     }
 
-    public static function content_response(mixed $content, string $formatId, string $actor): string
-    {
+    public static function content_response(
+        string $content,
+        string $formatId,
+        mixed $interactions,
+        string $actor
+    ): string {
         $packet['type'] = "Content Response";
         $packet['actor'] = $actor;
         $packet['formatId'] = $formatId;
         $packet['content'] = $content;
+        $packet['interactions'] = $interactions;
 
         return self::jsonOrThrow($packet);
     }

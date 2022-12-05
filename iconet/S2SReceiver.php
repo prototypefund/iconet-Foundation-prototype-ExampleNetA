@@ -82,8 +82,14 @@ class S2SReceiver
     {
         $user = User::fromAddress(new Address($packet->actor));
         $processor = new Processor($user);
-        $content = $processor->readContent($packet->id);
-        return PacketBuilder::content_response($content, "post-comments", $packet->actor);
+        $encryptedPost = $processor->getEncryptedPost($packet->id);
+        $interactions = $processor->getEncryptedInteractions($packet->id);
+        return PacketBuilder::content_response(
+            $encryptedPost->content,
+            $encryptedPost->formatId,
+            $interactions,
+            $packet->actor
+        );
     }
 
 }
