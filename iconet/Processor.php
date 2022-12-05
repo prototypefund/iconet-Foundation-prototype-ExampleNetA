@@ -14,7 +14,7 @@ class Processor
     private Database $database;
     private S2STransmitter $transmitter;
     private Crypto $crypto;
-    private PackageHandler $packageHandler;
+    private PacketHandler $packetHandler;
     private string $pathPostings;
 
     /**
@@ -25,7 +25,7 @@ class Processor
         $this->database = new Database();
         $this->transmitter = new S2STransmitter();
         $this->crypto = new Crypto();
-        $this->packageHandler = new PackageHandler();
+        $this->packetHandler = new PacketHandler();
         $this->pathPostings = __DIR__ . '/' . $_ENV['STORAGE'];
         $this->user = $user;
     }
@@ -33,15 +33,15 @@ class Processor
 
     public function getExternalPublicKey(Address $address): string
     {
-        $message = PackageBuilder::publicKey_request($address);
+        $message = PacketBuilder::publicKey_request($address);
         $response = $this->transmitter->send($address, $message);
-        $package = json_decode($response);
-        if($this->packageHandler->checkPackage($package) !== PackageTypes::PUBLICKEY_RESPONSE) {
+        $packet = json_decode($response);
+        if($this->packetHandler->checkPacket($packet) !== PacketTypes::PUBLICKEY_RESPONSE) {
             //TODO decide how and where to handle errors and unexpected input
-            $error = json_encode($package);
-            throw new RuntimeException("Invalid response Package. Expected: PublicKey Response. Got $error");
+            $error = json_encode($packet);
+            throw new RuntimeException("Invalid response Packet. Expected: PublicKey Response. Got $error");
         }
-        return $package->publicKey;
+        return $packet->publicKey;
     }
 
     public function createPost(string $content): void
@@ -92,14 +92,14 @@ class Processor
     {
         foreach($contacts as $contact) {
             $encryptedSecret = $this->crypto->encAsym($secret, $contact->publicKey);
-            $notifPackage = PackageBuilder::notification(
+            $notifPacket = PacketBuilder::notification(
                 $this->user->address,
                 $contact->address,
                 $encryptedSecret,
                 $encryptedNotif
             );
             // TODO Check response
-            $response = $this->transmitter->send($contact->address, $notifPackage);
+            $response = $this->transmitter->send($contact->address, $notifPacket);
         }
     }
 
@@ -120,14 +120,14 @@ class Processor
      */
     public function displayContent(string $id, Address $actor, string $secret): string
     {
-        $message = PackageBuilder::content_request($id, $actor);
+        $message = PacketBuilder::content_request($id, $actor);
         $response = $this->transmitter->send($actor, $message);
-        $package = json_decode($response);
-        if($this->packageHandler->checkPackage($package) !== PackageTypes::CONTENT_RESPONSE) {
-            echo "Error - invalid response Package. Expected: Content Response";
-            return "Error - invalid response Package. Expected: Content Response";
+        $packet = json_decode($response);
+        if($this->packetHandler->checkPacket($packet) !== PacketTypes::CONTENT_RESPONSE) {
+            echo "Error - invalid response Packet. Expected: Content Response";
+            return "Error - invalid response Packet. Expected: Content Response";
         }
-        $content = $package->content;
+        $content = $packet->content;
         $mainContent = $this->crypto->decSym($content->content, $secret);
         if(isset($content->interactions)) {
             foreach($content->interactions as $i) {
@@ -140,19 +140,19 @@ class Processor
 
 
     /**
-     * @param object $package
+     * @param object $packet
      * @return bool true when successful
      */
-    public function saveNotification(object $package): bool
+    public function saveNotification(object $packet): bool
     {
         $username = $this->user->username;
         $link = "";//TODO
-        $actor = $package->actor;
+        $actor = $packet->actor;
 
-        $encryptedSecret = $package->encryptedSecret;
-        $encryptedPredata = $package->predata;
+        $encryptedSecret = $packet->encryptedSecret;
+        $encryptedPredata = $packet->predata;
         $privateKey = $this->database->getPrivateKeyByAddress(
-            $package->to
+            $packet->to
         ); // todo check if user is logged in / privateKey may be accessed
         $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
 
@@ -168,13 +168,13 @@ class Processor
     //TODO there needs to be an url/address for the format server
     public function getFormat(string $formatID): string|bool
     {
-        $message = PackageBuilder::format_request($formatID);
+        $message = PacketBuilder::format_request($formatID);
         $response = $this->transmitter->send(new Address($formatID), $message);
-        $package = json_decode($response);
-        if($this->packageHandler->checkPackage($package) !== PackageTypes::FORMAT_RESPONSE) {
+        $packet = json_decode($response);
+        if($this->packetHandler->checkPacket($packet) !== PacketTypes::FORMAT_RESPONSE) {
             return false;
         }
-        return $package->format;
+        return $packet->format;
     }
 
     /**
@@ -223,27 +223,27 @@ class Processor
     ): string {
         $encryptedInteraction = $this->crypto->encSym($interaction, $secret);
 
-        $message = PackageBuilder::interaction($actor, $to, $id, $interactionType, $encryptedInteraction);
+        $message = PacketBuilder::interaction($actor, $to, $id, $interactionType, $encryptedInteraction);
         $response = $this->transmitter->send(new Address($to), $message);
         return $response;
     }
 
     /**
-     * @param object $package
+     * @param object $packet
      * @return string|null
      */
-    public function processInteraction(object $package): string|null
+    public function processInteraction(object $packet): string|null
     {
-        if(!($this->user->address == $package->to)) {
+        if(!($this->user->address == $packet->to)) {
             return "Error - Not owner of interacted content";
         }
         $username = $this->user->username;
         $resonse = $this->database->addInteraction(
-            $package->id,
+            $packet->id,
             $username,
-            $package->actor,
-            $package->interactionType,
-            $package->interaction
+            $packet->actor,
+            $packet->interactionType,
+            $packet->interaction
         );
         return null;
     }

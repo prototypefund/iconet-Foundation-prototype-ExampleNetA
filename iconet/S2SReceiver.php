@@ -9,81 +9,81 @@ class S2SReceiver
 
     public function receive(string $message): string
     {
-        $package = json_decode($message);
-        if(!$package) {
-            return PackageBuilder::error("Invalid json");
+        $packet = json_decode($message);
+        if(!$packet) {
+            return PacketBuilder::error("Invalid json");
         }
-        $type = PackageHandler::checkPackage($package);
+        $type = PacketHandler::checkPacket($packet);
         $this->db = new Database();
 
         switch($type) {
-            case PackageTypes::PUBLICKEY_REQUEST:
-                $response = self::processPublickeyRequest($package);
+            case PacketTypes::PUBLICKEY_REQUEST:
+                $response = self::processPublickeyRequest($packet);
                 break;
-            case PackageTypes::NOTIFICATION:
-                $response = self::processNotification($package);
+            case PacketTypes::NOTIFICATION:
+                $response = self::processNotification($packet);
                 break;
-            case PackageTypes::FORMAT_REQUEST:
-                $response = self::processFormatRequest($package);
+            case PacketTypes::FORMAT_REQUEST:
+                $response = self::processFormatRequest($packet);
                 break;
-            case PackageTypes::INTERACTION:
-                $response = self::processInteraction($package);
+            case PacketTypes::INTERACTION:
+                $response = self::processInteraction($packet);
                 break;
-            case PackageTypes::CONTENT_REQUEST:
-                $response = self::processContentRequest($package);
+            case PacketTypes::CONTENT_REQUEST:
+                $response = self::processContentRequest($packet);
                 break;
             default:
-                $response = PackageBuilder::error("Can not process this package");
+                $response = PacketBuilder::error("Can not process this packet");
         }
 
         return $response;
     }
 
-    private function processPublickeyRequest(object $package): string
+    private function processPublickeyRequest(object $packet): string
     {
-        $publicKey = $this->db->getPublickeyByAddress($package->address);
+        $publicKey = $this->db->getPublickeyByAddress($packet->address);
         if(!$publicKey) {
-            return PackageBuilder::error("No public key found for $package->address");
+            return PacketBuilder::error("No public key found for $packet->address");
         }
-        return PackageBuilder::publickey_response($package->address, $publicKey);
+        return PacketBuilder::publickey_response($packet->address, $publicKey);
     }
 
-    private function processNotification(object $package): string
+    private function processNotification(object $packet): string
     {
-        $user = User::fromAddress(new Address($package->to));
+        $user = User::fromAddress(new Address($packet->to));
         $processor = new Processor($user);
-        $success = $processor->saveNotification($package);
+        $success = $processor->saveNotification($packet);
         if($success) {
-            return PackageBuilder::error("Could not save notification");
+            return PacketBuilder::error("Could not save notification");
         } else {
-            return PackageBuilder::ack();
+            return PacketBuilder::ack();
         }
     }
 
-    private function processFormatRequest(object $package): string
+    private function processFormatRequest(object $packet): string
     {
         $format = file_get_contents("./iconet/formats/post-comments.fmfibs");
-        return PackageBuilder::format_response($package->formatId, $format);
+        return PacketBuilder::format_response($packet->formatId, $format);
     }
 
-    private function processInteraction(object $package): string
+    private function processInteraction(object $packet): string
     {
-        $user = User::fromAddress(new Address($package->to));
+        $user = User::fromAddress(new Address($packet->to));
         $processor = new Processor($user);
-        $error = $processor->processInteraction($package);
+        $error = $processor->processInteraction($packet);
         if($error) {
-            return PackageBuilder::error($error);
+            return PacketBuilder::error($error);
         } else {
-            return PackageBuilder::ack();
+            return PacketBuilder::ack();
         }
     }
 
-    private function processContentRequest(object $package): string
+    private function processContentRequest(object $packet): string
     {
-        $user = User::fromAddress(new Address($package->actor));
+        $user = User::fromAddress(new Address($packet->actor));
         $processor = new Processor($user);
-        $content = $processor->readContent($package->id);
-        return PackageBuilder::content_response($content, "post-comments", $package->actor);
+        $content = $processor->readContent($packet->id);
+        return PacketBuilder::content_response($content, "post-comments", $packet->actor);
     }
 
 }

@@ -1,9 +1,9 @@
 <?php
 
 
-use Iconet\PackageBuilder;
-use Iconet\PackageHandler;
-use Iconet\PackageTypes;
+use Iconet\PacketBuilder;
+use Iconet\PacketHandler;
+use Iconet\PacketTypes;
 use PHPUnit\Framework\TestCase;
 
 class PacketBuilderTest extends TestCase
@@ -44,78 +44,78 @@ class PacketBuilderTest extends TestCase
 
     public function testPublicKeyRequest(): void
     {
-        $packet = PackageBuilder::publicKey_request($this->address);
+        $packet = PacketBuilder::publicKey_request($this->address);
         self::assertEquals(
-            PackageTypes::PUBLICKEY_REQUEST,
-            PackageHandler::checkPackage(json_decode($packet))
+            PacketTypes::PUBLICKEY_REQUEST,
+            PacketHandler::checkPacket(json_decode($packet))
         );
     }
 
     public function testPublicKeyResponse(): void
     {
-        $packet = PackageBuilder::publicKey_response($this->address, $this->publicKey);
-        $packetType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::PUBLICKEY_RESPONSE, $packetType);
+        $packet = PacketBuilder::publicKey_response($this->address, $this->publicKey);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::PUBLICKEY_RESPONSE, $packetType);
     }
 
     public function testNotification(): void
     {
-        $packet = PackageBuilder::notification(
+        $packet = PacketBuilder::notification(
             $this->actor,
             $this->to,
             $this->encryptedSecret,
             $this->encryptedPredata
         );
-        $packageType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::NOTIFICATION, $packageType);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::NOTIFICATION, $packetType);
     }
 
     public function testContentRequest(): void
     {
-        $packet = PackageBuilder::content_request($this->id, $this->actor);
-        $packageType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::CONTENT_REQUEST, $packageType);
+        $packet = PacketBuilder::content_request($this->id, $this->actor);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::CONTENT_REQUEST, $packetType);
     }
 
     public function testContentResponse(): void
     {
-        $packet = PackageBuilder::content_response($this->content, $this->formatId, $this->actor);
-        $packageType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::CONTENT_RESPONSE, $packageType);
+        $packet = PacketBuilder::content_response($this->content, $this->formatId, $this->actor);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::CONTENT_RESPONSE, $packetType);
     }
 
     public function testFormatRequest(): void
     {
-        $packet = PackageBuilder::format_request($this->formatId);
-        $packageType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::FORMAT_REQUEST, $packageType);
+        $packet = PacketBuilder::format_request($this->formatId);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::FORMAT_REQUEST, $packetType);
     }
 
     public function testFormatResponse(): void
     {
-        $packet = PackageBuilder::format_response($this->formatId, $this->format);
-        $packageType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::FORMAT_RESPONSE, $packageType);
+        $packet = PacketBuilder::format_response($this->formatId, $this->format);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::FORMAT_RESPONSE, $packetType);
     }
 
     public function testInteraction(): void
     {
-        $packet = PackageBuilder::interaction(
+        $packet = PacketBuilder::interaction(
             $this->address,
             $this->to,
             $this->id,
             $this->interactionType,
             $this->interaction
         );
-        $packageType = PackageHandler::checkPackage(json_decode($packet));
-        self::assertEquals(PackageTypes::INTERACTION, $packageType);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        self::assertEquals(PacketTypes::INTERACTION, $packetType);
     }
 
     public function testError(): void
     {
-        $packet = PackageBuilder::error($this->error);
-        $packetType = PackageHandler::checkPackage(json_decode($packet));
+        $packet = PacketBuilder::error($this->error);
+        $packetType = PacketHandler::checkPacket(json_decode($packet));
 
-        self::assertEquals(PackageTypes::INVALID, $packetType);
+        self::assertEquals(PacketTypes::INVALID, $packetType);
     }
 }

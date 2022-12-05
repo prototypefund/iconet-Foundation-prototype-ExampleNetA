@@ -13,8 +13,8 @@ export class EEProxy {
                 console.log(`Proxy got unauthenticated message`)
                 return
             }
-            // TODO validate package structure
-            // TODO switch package types
+            // TODO validate packet structure
+            // TODO switch packet types
 
             //Case requestContent
             ee.sendContent(event.data.id)

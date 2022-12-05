@@ -20,7 +20,7 @@ class TemplateProcessor
             function($matches) use ($contentMap) {
                 $placeholder = $matches[1];
                 if(!isset($contentMap[$placeholder])) {
-                    $error = "Error: Missing field in Content Package: $placeholder <br>";
+                    $error = "Error: Missing field in Content Packet: $placeholder <br>";
                     // TODO handle errors
                     return $error;
                 }

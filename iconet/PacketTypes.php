@@ -2,7 +2,7 @@
 
 namespace Iconet;
 
-enum PackageTypes: string
+enum PacketTypes: string
 {
     case INVALID = "";
     case PUBLICKEY_REQUEST = "PublicKey Request";

@@ -20,7 +20,7 @@ class S2STransmitter
         $query = [];
 
         if($address->isInternal || $_ENV['DEBUG_SIM_REQ']) {
-            //TODO The data flow for packages that are handled by the own server can be branched off earlier.
+            //TODO The data flow for packets that are handled by the own server can be branched off earlier.
             $result = (new S2SReceiver())->receive($message);
         } else {
             if($_ENV['DEBUG_NO_EXT_REQ']) {

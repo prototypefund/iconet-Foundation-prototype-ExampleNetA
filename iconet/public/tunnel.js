@@ -21,7 +21,7 @@ class Tunnel extends EventTarget {
                 console.error(`Frame got unauthenticated message from`, event.source)
                 return
             }
-            // TODO Validate package structure
+            // TODO Validate packet structure
             if (message.hasOwnProperty('initialize')) {
                 this.#parentOrigin = message.origin
                 this.dispatchEvent(new Event("initialized"))
