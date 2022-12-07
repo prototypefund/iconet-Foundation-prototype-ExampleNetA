@@ -52,16 +52,21 @@ export class EmbeddedExperience extends HTMLElement {
         // Create a shadow root
         this.#shadow = this.attachShadow({mode: 'open'})
 
-        this.#info = document.createElement('p')
+        this.#info = document.createElement('pre')
         this.#info.textContent = `Format: ${this.#format}`
 
         this.#iframe = document.createElement('iframe')
         this.#iframe.sandbox = "allow-scripts";
-        this.#iframe.style.width = "100%"; //TODO make style sheet
-        this.#iframe.style.height = "100%";
 
-        this.#shadow.appendChild(this.#info)
-        this.#shadow.appendChild(this.#iframe)
+        const style = ":host {display: flex;}" +
+            ":host, iframe {width: 100%; height: 100%;}" +
+            "iframe {border: none;}"
+        const styleNode = document.createElement('style')
+        styleNode.innerHTML = style
+
+        this.#shadow.append(this.#info)
+        this.#shadow.append(this.#iframe)
+        this.#shadow.append(styleNode)
     }
 
     async #loadIframe() {

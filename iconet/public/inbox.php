@@ -16,15 +16,16 @@
     <script defer src='/iconet/public/inbox.js' type="module"></script>
     <style>
         embedded-experience {
-            width: 27em;
+            width: calc(100% - 4em);
             height: 15em;
 
             margin: 2em;
             padding: 0.5em;
             border: solid 1px;
-            display: inline-grid;
             flex-direction: column;
-            background: lightgray;
+            background: whitesmoke;
+            overflow: auto;
+            resize: both;
         }
     </style>
 </head>
