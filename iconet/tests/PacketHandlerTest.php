@@ -302,7 +302,7 @@ class PacketHandlerTest extends TestCase
             "to" => "alice@alicenet.net",
             "id" => "92defee110...",
             "interactionType" => "comment",
-            "interaction" => "bCsyRG5xRlF..."
+            "payload" => "bCsyRG5xRlF..."
         ];
         $packetType = PacketHandler::checkPacket($packet);
         self::assertEquals(PacketTypes::INTERACTION, $packetType);
@@ -315,7 +315,7 @@ class PacketHandlerTest extends TestCase
             "to" => "alice@alicenet.net",
             "id" => "92defee110...",
             "interactionType" => "comment",
-            "interaction" => "bCsyRG5xRlF..."
+            "payload" => "bCsyRG5xRlF..."
         ];
         $wrongAddress = (object)[
             "type" => "Interaction",
@@ -323,14 +323,14 @@ class PacketHandlerTest extends TestCase
             "to" => "alice@alicenet.net",
             "id" => "92defee110...",
             "interactionType" => "comment",
-            "interaction" => "bCsyRG5xRlF..."
+            "payload" => "bCsyRG5xRlF..."
         ];
         $missingField = (object)[
             "type" => "Interaction",
             "actor" => "bob@bobnet.org",
             "to" => "alice@alicenet.net",
             "interactionType" => "comment",
-            "interaction" => "bCsyRG5xRlF..."
+            "payload" => "bCsyRG5xRlF..."
         ];
 
         $checkNoType = PacketHandler::checkPacket($noType);

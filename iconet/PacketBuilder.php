@@ -98,13 +98,13 @@ class PacketBuilder
         string $actor,
         string $to,
         string $id,
-        string $interaction
+        string $payload
     ): string {
         $packet['type'] = "Interaction";
         $packet['actor'] = $actor;
         $packet['to'] = $to;
         $packet['id'] = $id;
-        $packet['interaction'] = $interaction;
+        $packet['payload'] = $payload;
 
         return self::jsonOrThrow($packet);
     }

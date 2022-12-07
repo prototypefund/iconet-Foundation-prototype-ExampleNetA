@@ -85,7 +85,7 @@ CREATE TABLE `interactions`
     `content_id` varchar(100) NOT NULL,
     `username`   varchar(60)  NOT NULL,
     `sender`     varchar(100) NOT NULL,
-    `enc_int`    text         NOT NULL
+    `payload`    text         NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

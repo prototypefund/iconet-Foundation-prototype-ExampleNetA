@@ -148,7 +148,7 @@ class Processor
         foreach($encrypedinteractions as $inter) {
             $result[] = (object)[
                 'actor' => $inter->actor,
-                'interaction' => $this->crypto->decSym($inter->encInteraction, $secret)
+                'payload' => $this->crypto->decSym($inter->encPayload, $secret)
             ];
         }
         return $result;
@@ -166,7 +166,7 @@ class Processor
         $contentPacket = $this->decryptContentPacket($encPacket, $secret);
         $result = $contentPacket->content;
         foreach($contentPacket->interactions as $i) {
-            $result .= "<br>Comment from: " . $i->actor . "<br>" . $i->interaction;
+            $result .= "<br>Comment from: " . $i->actor . "<br>" . $i->payload;
         }
         return $result;
     }
@@ -239,7 +239,7 @@ class Processor
             foreach($interactions_db as $in) {
                 $interactions[$i] = (object)[
                     'actor' => $in['sender'],
-                    'encInteraction' => $in['enc_int'],
+                    'encPayload' => $in['payload'],
                 ];
             }
         }
@@ -247,15 +247,15 @@ class Processor
     }
 
     public function postInteraction(
-        string $interaction,
-        string $id,
+        string $payload,
+        string $contentId,
         string $actor,
         string $to,
         string $secret
     ): string {
-        $encryptedInteraction = $this->crypto->encSym($interaction, $secret);
+        $encryptedPayload = $this->crypto->encSym($payload, $secret);
 
-        $message = PacketBuilder::interaction($actor, $to, $id, $encryptedInteraction);
+        $message = PacketBuilder::interaction($actor, $to, $contentId, $encryptedPayload);
         $response = $this->transmitter->send(new Address($to), $message);
         return $response;
     }
@@ -273,7 +273,7 @@ class Processor
             $packet->id,
             $this->user->username,
             $packet->actor,
-            $packet->interaction
+            $packet->payload
         );
         return null;
     }

@@ -131,7 +131,7 @@ class PacketHandler
 
             case PacketTypes::INTERACTION:
                 //check if non-optional variables are set.
-                if(isset($packet->id) && isset($packet->actor) && isset($packet->interaction)) {
+                if(isset($packet->id) && isset($packet->actor) && isset($packet->payload)) {
                     //check if non-optional variables are proper (can't check notification content, potentially encrypted)
                     if(Address::validate($packet->actor)) {
                         //all conditions for type send interaction are met.
@@ -141,7 +141,7 @@ class PacketHandler
                         return PacketTypes::INVALID;
                     }
                 } else {
-                    echo "Error - Missing field in interaction ('id'/'actor'/'interaction')<br>";
+                    echo "Error - Missing field in interaction ('id'/'actor'/'payload')<br>";
                     return PacketTypes::INVALID;
                 }
 

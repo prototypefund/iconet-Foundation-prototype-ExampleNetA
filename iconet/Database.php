@@ -187,11 +187,11 @@ class Database
         string $content_id,
         string $username,
         string $sender,
-        string $enc_int
+        string $payload
     ): bool {
         $query = mysqli_query(
             $this->database,
-            "INSERT INTO interactions VALUES (null,'$content_id', '$username', '$sender', '$enc_int')"
+            "INSERT INTO interactions VALUES (null,'$content_id', '$username', '$sender', '$payload')"
         );
         if(mysqli_connect_errno()) {
             echo "Failed to add interaction: " . mysqli_connect_errno();

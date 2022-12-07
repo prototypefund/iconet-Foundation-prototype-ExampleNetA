@@ -17,7 +17,7 @@ class ProcessorTest extends TestCase
     private object $contentPacketWithInter;
     private string $expectedContent;
     private string $expectedFormatId;
-    private string $expectedInteraction;
+    private string $expectedPayload;
     private array $notification;
     private User $alice;
     private User $bob;
@@ -61,9 +61,9 @@ class ProcessorTest extends TestCase
         );
 
         # Bob creates an interaction
-        $this->expectedInteraction = "Yeey! Interaction content";
+        $this->expectedPayload = "Yeey! Interaction content";
         $this->procA->postInteraction(
-            $this->expectedInteraction,
+            $this->expectedPayload,
             $notification['content_id'],
             $this->bob->address,
             $notification['sender'],
@@ -120,7 +120,7 @@ class ProcessorTest extends TestCase
         $interactions = $this->contentPacketWithInter->interactions;
         self::assertNotEmpty($interactions);
         $inter = $interactions[0];
-        self::assertEquals($this->expectedInteraction, $inter->interaction);
+        self::assertEquals($this->expectedPayload, $inter->payload);
         self::assertEquals($this->bob->address, $inter->actor);
     }
 
@@ -149,6 +149,6 @@ class ProcessorTest extends TestCase
         self::assertNotEmpty($interactions);
         $interaction = $interactions[0];
         self::assertEquals($this->bob->address, $interaction->actor);
-        self::assertObjectHasAttribute('encInteraction', $interaction);
+        self::assertObjectHasAttribute('encPayload', $interaction);
     }
 }
