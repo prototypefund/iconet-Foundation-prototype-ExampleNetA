@@ -41,7 +41,7 @@ CREATE TABLE `notifications` (
                                  `username` varchar(100) NOT NULL,
                                  `sender` varchar(60) NOT NULL,
                                  `secret` varchar(200) NOT NULL,
-                                 `text` text NOT NULL
+                                 `subject` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

@@ -165,11 +165,11 @@ class Database
         string $username,
         string $sender,
         string $secret,
-        string $text
+        string $subject
     ): bool {
         $query = mysqli_query(
             $this->database,
-            "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$text')"
+            "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$subject')"
         );
         if(mysqli_connect_errno()) {
             echo "Failed to add notification: " . mysqli_connect_errno();

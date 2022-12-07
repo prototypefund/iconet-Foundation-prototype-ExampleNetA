@@ -94,7 +94,7 @@ class ProcessorTest extends TestCase
     public function testCreate_content(): void
     {
         self::assertEquals($this->expectedContent, $this->content);
-        self::assertEquals("Example Subject", $this->notification["text"]);
+        self::assertEquals("Example Subject", $this->notification["subject"]);
     }
 
 
