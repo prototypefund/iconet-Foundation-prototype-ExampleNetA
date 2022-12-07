@@ -1,3 +1,9 @@
+# Prevent the client being used as an iframe
+# Does not work while we are using the srcdoc workaround
+<IfModule mod_headers.c>
+  Header add X-Frame-Options: "DENY"
+</IfModule>
+
 RewriteEngine On
 # Handle Authorization Header
 RewriteCond %{HTTP:Authorization} .
