@@ -100,7 +100,6 @@ class Tester
             $notif['content_id'],
             "bob@bobnet.net",
             $notif['sender'],
-            "comment",
             $notif['secret']
         );
         p("Response:");

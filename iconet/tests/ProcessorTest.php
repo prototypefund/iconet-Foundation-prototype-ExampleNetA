@@ -63,7 +63,6 @@ class ProcessorTest extends TestCase
             $notification['content_id'],
             $this->bob->address,
             $notification['sender'],
-            $interactionType,
             $notification['secret']
         );
 

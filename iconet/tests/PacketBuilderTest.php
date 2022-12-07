@@ -18,7 +18,6 @@ class PacketBuilderTest extends TestCase
     private string $formatId;
     private string $format;
     private string $to;
-    private string $interactionType;
     private string $interaction;
     private string $error;
 
@@ -31,7 +30,6 @@ class PacketBuilderTest extends TestCase
         $this->formatId = "post-comments";
         $this->format = "<i>New Message by: ['sender'] <\/i>\n<p>['text']<\/p>\n<small>Sent: ['time']<\/small>";
         $this->to = "alice@alicenet.net";
-        $this->interactionType = "comment";
         $this->interaction = "bCsyRG5xRlF...";
         $this->error = "error";
         $this->encryptedSecret = "jtqgp5D2Z4...";
@@ -104,7 +102,6 @@ class PacketBuilderTest extends TestCase
             $this->address,
             $this->to,
             $this->id,
-            $this->interactionType,
             $this->interaction
         );
         $packetType = PacketHandler::checkPacket(json_decode($packet));

@@ -218,12 +218,11 @@ class Processor
         string $id,
         string $actor,
         string $to,
-        string $interactionType,
         string $secret
     ): string {
         $encryptedInteraction = $this->crypto->encSym($interaction, $secret);
 
-        $message = PacketBuilder::interaction($actor, $to, $id, $interactionType, $encryptedInteraction);
+        $message = PacketBuilder::interaction($actor, $to, $id, $encryptedInteraction);
         $response = $this->transmitter->send(new Address($to), $message);
         return $response;
     }
@@ -242,7 +241,6 @@ class Processor
             $packet->id,
             $username,
             $packet->actor,
-            $packet->interactionType,
             $packet->interaction
         );
         return null;

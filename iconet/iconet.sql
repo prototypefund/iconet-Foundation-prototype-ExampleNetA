@@ -75,13 +75,13 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `interactions` (
-                        `id` int NOT NULL primary key auto_increment,
-                         `content_id` varchar(100) NOT NULL,
-                         `username` varchar(60) NOT NULL,
-                         `sender` varchar(100) NOT NULL,
-                         `type` varchar(60) NOT NULL,
-                         `enc_int` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                                `id`         int          NOT NULL primary key auto_increment,
+                                `content_id` varchar(100) NOT NULL,
+                                `username`   varchar(60)  NOT NULL,
+                                `sender`     varchar(100) NOT NULL,
+                                `enc_int`    text         NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 --
 -- Indexes for dumped tables
