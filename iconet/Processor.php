@@ -146,7 +146,6 @@ class Processor
     public function saveNotification(object $packet): bool
     {
         $username = $this->user->username;
-        $link = "";//TODO
         $actor = $packet->actor;
 
         $encryptedSecret = $packet->encryptedSecret;
@@ -161,7 +160,7 @@ class Processor
         $id = $predata->id;
         $subject = $predata->subject;
 
-        $this->database->addNotification($id, $username, $actor, $secret, $link, $subject);
+        $this->database->addNotification($id, $username, $actor, $secret, $subject);
         return true;
     }
 
