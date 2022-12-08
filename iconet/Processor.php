@@ -154,24 +154,6 @@ class Processor
         return $result;
     }
 
-    /**
-     * @param string $id
-     * @param Address $actor
-     * @param string $secret
-     * @return string A string representation of the content including its interactions.
-     * @deprecated Content is now processed on the client side.
-     */
-    public function displayContent(string $id, Address $actor, string $secret): string
-    {
-        $encPacket = $this->requestContent($id, $actor);
-        $contentPacket = $this->decryptContentPacket($encPacket, $secret);
-        $result = $contentPacket->content;
-        foreach($contentPacket->interactions as $i) {
-            $result .= "<br>Comment from: " . $i->actor . "<br>" . $i->payload;
-        }
-        return $result;
-    }
-
 
     /**
      * @param object $packet
