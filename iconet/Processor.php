@@ -32,10 +32,10 @@ class Processor
         $message = PacketBuilder::publicKey_request($address);
         $response = $this->transmitter->send($address, $message);
         $packet = json_decode($response);
-        if($this->packetHandler->checkPacket($packet) !== PacketTypes::PUBLICKEY_RESPONSE) {
+        if($this->packetHandler->checkPacket($packet) !== PacketTypes::PUBLIC_KEY_RESPONSE) {
             //TODO decide how and where to handle errors and unexpected input
             $error = json_encode($packet);
-            throw new RuntimeException("Invalid response Packet. Expected: PublicKey Response. Got $error");
+            throw new RuntimeException("Invalid response Packet. Expected: Public Key Response. Got $error");
         }
         return $packet->publicKey;
     }

@@ -4,13 +4,14 @@ namespace Iconet;
 
 enum PacketTypes: string
 {
-    case INVALID = "";
-    case PUBLICKEY_REQUEST = "PublicKey Request";
-    case PUBLICKEY_RESPONSE = "PublicKey Response";
+    case ERROR = "Error";
+    case ACK = "ACK";
+    case PUBLIC_KEY_REQUEST = "PublicKeyRequest";
+    case PUBLIC_KEY_RESPONSE = "PublicKeyResponse";
     case NOTIFICATION = "Notification";
-    case CONTENT_REQUEST = "Content Request";
-    case CONTENT_RESPONSE = "Content Response";
-    case FORMAT_REQUEST = "Format Request";
-    case FORMAT_RESPONSE = "Format Response";
+    case CONTENT_REQUEST = "ContentRequest";
+    case CONTENT_RESPONSE = "ContentResponse";
+    case FORMAT_REQUEST = "FormatRequest";
+    case FORMAT_RESPONSE = "FormatResponse";
     case INTERACTION = "Interaction";
 }

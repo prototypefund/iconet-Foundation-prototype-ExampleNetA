@@ -90,15 +90,16 @@ Packets are formatted in JSON.
 Request:
 ```json
 {
-    "type": "Request PublicKey"
+    "type": "Request PublicKey",
     "address": %address
 }
 ```
 Response:
+
 ```json
 {
-    "type": "PublicKey Response"
-    "address": %address
+    "type": "PublicKeyResponse",
+    "address": %address,
     "publickey": %pubkey
 }
 ```
@@ -130,7 +131,7 @@ written in bold lettering.
 | **Packet**              | **Field**                      | **Value/Example**                     | **Description**                                                                                                                                        |
 |-------------------------|--------------------------------|---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                         |                                |                                       |                                                                                                                                                        |
-| **Public Key Request**  | **`type`**                     | `"publicKeyRequest"`                  | **Required:** The packet type is a specific name, identifying, what kind of packet is sent.                                                          |
+| **Public Key Request**  | **`type`**                     | `"publicKeyRequest"`                  | **Required:** The packet type is a specific name, identifying, what kind of packet is sent.                                                            |
 |                         | **`address`**                  | `"bob@bobnet.org"`                    | **Required:** "Address" is the global address of the owner of the requested public key including the owners name and the one of the hosting network.   |
 |                         |                                |                                       |                                                                                                                                                        |
 | **Public Key Response** | **`type`**                     | `"publicKeyResponse"`                 | **Required**                                                                                                                                           |
@@ -149,25 +150,23 @@ written in bold lettering.
 |                         | `interoperability.protocol`    | `"ExampleNetA"`                       | If needed, the technology of the sender's network can be described.                                                                                    |
 |                         | `interoperability.contentType` | `"Posting"`                           | The content type tells the receiving network, what sort of content is sent.                                                                            |
 |                         |                                |                                       |                                                                                                                                                        |
-| **Content Request**     | **`type`**                     | `"Content Request"`                   | **Required**                                                                                                                                           |
+| **Content Request**     | **`type`**                     | `"ContentRequest"`                    | **Required**                                                                                                                                           |
 |                         | **`actor`**                    | `"alice@alicenet.net"`                | **Required:** "Actor" specifies the address of the sender of the content.                                                                              |
 |                         | **`id`**                       | `"92defee110..."`                     | **Required:** The content identifier is required, to be able to assign the pre-data as well as all past and coming interactions to the actual content. |
 |                         |                                |                                       |                                                                                                                                                        |
-| **Content Response**    | **`type`**                     | `"Content Response"`                  | **Required**                                                                                                                                           |
+| **Content Response**    | **`type`**                     | `"ContentResponse"`                   | **Required**                                                                                                                                           |
 |                         | **`actor`**                    | `"alice@alicenet.net"`                | **Required**                                                                                                                                           |
-|                         | **`formatId`**                 | `"post-comments"`                     | **
-Required:** The format identifier is a string specifying the name of the sent format.                                                                |
-|                         | **`content`**                  | `"ZXloOUp2Nn..."`                     | **
-Required:** The actual content is encrypted symmetrically with the secret.                                                                           |
+|                         | **`formatId`**                 | `"post-comments"`                     | **Required:** The format identifier is a string specifying the name of the sent format.                                                                |
+|                         | **`content`**                  | `"ZXloOUp2Nn..."`                     | **Required:** The actual content is encrypted symmetrically with the secret.                                                                           |
 |                         | `encrypted`                    | `bool(true)`                          | "Encrypted" is true, if the content is encrypted.                                                                                                      |
 |                         | `interactions`                 |                                       | Here, the list of interactions to original content can be attached.                                                                                    |
 |                         | `interactions.sender`          | `"bob@bobnet.net"`                    | Each interaction needs the information about the address of the interaction's sender.                                                                  |
 |                         | `interactions.interaction`     | `"ERt3dsfsdf..."`                     | All interaction contents are symmetrically encrypted with the secret.                                                                                  |
 |                         |                                |                                       |                                                                                                                                                        |
-| **Format Request**      | **`type`**                     | `"Format Request"`                    | **Required**                                                                                                                                           |
+| **Format Request**      | **`type`**                     | `"FormatRequest"`                     | **Required**                                                                                                                                           |
 |                         | **`formatId`**                 | `"post-comments"`                     | **Required:** The format identifier is a string, specifying the name of the sent format.                                                               |
 |                         |                                |                                       |                                                                                                                                                        |
-| **Format Response**     | **`type`**                     | `"Format Response"`                   | **Required**                                                                                                                                           |
+| **Format Response**     | **`type`**                     | `"FormatResponse"`                    | **Required**                                                                                                                                           |
 |                         | **`formatId`**                 | `"post-comments"`                     | **Required**                                                                                                                                           |
 |                         | **`format`**                   | `"<i>New Message..."`                 | **Required:** "Format" includes information about the structure of the sent content.                                                                   |
 |                         |                                |                                       |                                                                                                                                                        |
@@ -180,7 +179,7 @@ Required:** The actual content is encrypted symmetrically with the secret.      
 |                         | `nonce`                        | `"90353ß2350..."`                     | The "number only used once" is used to identify and sort the interactions.                                                                             |
 |                         | `encrypted`                    | `bool(true)`                          | "Encrypted" is true, if the interaction content is encrypted.                                                                                          |
 |                         |                                |                                       |                                                                                                                                                        |
-| **ACK**                 | **`type`**                     | `"ACK"`                               | **Required:** An acknowledgment about the received content is sent to the actor's network.                                                             |
+| **Acknowledgment**      | **`type`**                     | `"ACK"`                               | **Required:** An acknowledgment about the received content is sent to the actor's network.                                                             |
 |                         |                                |                                       |                                                                                                                                                        |
 | **Error**               | **`type`**                     | `"Error"`                             | **Required**                                                                                                                                           |
 |                         | **`error`**                    | `"Error!"`                            | **Required:** The error message includes information about the occurring problem.                                                                      |

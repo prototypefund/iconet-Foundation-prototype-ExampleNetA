@@ -16,11 +16,11 @@ class PacketHandlerTest extends TestCase
     public function testPublicKeyRequest(): void
     {
         $packet = (object)[
-            "type" => "PublicKey Request",
+            "type" => "PublicKeyRequest",
             "address" => "test@something.tld"
         ];
         self::assertEquals(
-            PacketTypes::PUBLICKEY_REQUEST,
+            PacketTypes::PUBLIC_KEY_REQUEST,
             PacketHandler::checkPacket($packet)
         );
     }
@@ -32,32 +32,32 @@ class PacketHandlerTest extends TestCase
             "address" => "bob@bobnet.org"
         ];
         $wrongAddress = (object)[
-            "type" => "PublicKey Request",
+            "type" => "PublicKeyRequest",
             "address" => "wrongAddress"
         ];
         $noAddress = (object)[
-            "type" => "PublicKey Request"
+            "type" => "PublicKeyRequest"
         ];
 
         $checkNoType = PacketHandler::checkPacket($noType);
         $checkWrongAddress = PacketHandler::checkPacket($wrongAddress);
         $checkNoAddress = PacketHandler::checkPacket($noAddress);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkWrongAddress);
-        self::assertEquals(PacketTypes::INVALID, $checkNoAddress);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress);
+        self::assertEquals(PacketTypes::ERROR, $checkNoAddress);
     }
 
 
     public function testPublicKeyResponse(): void
     {
         $packet = (object)[
-            "type" => "PublicKey Response",
+            "type" => "PublicKeyResponse",
             "address" => "alice@net.org",
             "publicKey" => "-----BEGIN PUBLIC KEY-----\nM...QAB\n-----END PUBLIC KEY-----\n"
         ];
         $packetType = PacketHandler::checkPacket($packet);
-        self::assertEquals(PacketTypes::PUBLICKEY_RESPONSE, $packetType);
+        self::assertEquals(PacketTypes::PUBLIC_KEY_RESPONSE, $packetType);
     }
 
     public function testPublicKeyResponseInvalid(): void
@@ -66,7 +66,7 @@ class PacketHandlerTest extends TestCase
             "address" => "bob@bobnet.org"
         ];
         $wrongAddress = (object)[
-            "type" => "PublicKey Response",
+            "type" => "PublicKeyResponse",
             "address" => "wrongAddress",
             "publicKey" => "-----BEGIN PUBLIC KEY-----\nM...QAB\n-----END PUBLIC KEY-----\n"
         ];
@@ -78,9 +78,9 @@ class PacketHandlerTest extends TestCase
         $checkWrongAddress = PacketHandler::checkPacket($wrongAddress);
         $checkMissingField = PacketHandler::checkPacket($missingField);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkWrongAddress);
-        self::assertEquals(PacketTypes::INVALID, $checkMissingField);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress);
+        self::assertEquals(PacketTypes::ERROR, $checkMissingField);
     }
 
 
@@ -150,17 +150,17 @@ class PacketHandlerTest extends TestCase
         $checkWrongAddress2 = PacketHandler::checkPacket($wrongAddress2);
         $checkMissingField = PacketHandler::checkPacket($missingField);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkWrongAddress1);
-        self::assertEquals(PacketTypes::INVALID, $checkWrongAddress2);
-        self::assertEquals(PacketTypes::INVALID, $checkMissingField);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress1);
+        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress2);
+        self::assertEquals(PacketTypes::ERROR, $checkMissingField);
     }
 
 
     public function testContentRequest(): void
     {
         $packet = (object)[
-            "type" => "Content Request",
+            "type" => "ContentRequest",
             "actor" => "alice@alicenet.net",
             "id" => "92defee110..."
         ];
@@ -175,22 +175,22 @@ class PacketHandlerTest extends TestCase
             "id" => "92defee110..."
         ];
         $missingField = (object)[
-            "type" => "Content Request",
+            "type" => "ContentRequest",
             "actor" => "alice@alicenet.net"
         ];
 
         $checkNoType = PacketHandler::checkPacket($noType);
         $checkMissingField = PacketHandler::checkPacket($missingField);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkMissingField);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkMissingField);
     }
 
 
     public function testContentResponse(): void
     {
         $packet = (object)[
-            "type" => "Content Response",
+            "type" => "ContentResponse",
             "actor" => "alice@alicenet.net",
             "formatId" => "post-comments",
             "content" => [
@@ -211,7 +211,7 @@ class PacketHandlerTest extends TestCase
             ]
         ];
         $wrongAddress = (object)[
-            "type" => "Content Response",
+            "type" => "ContentResponse",
             "actor" => "wrongAddress",
             "formatId" => "post-comments",
             "content" => [
@@ -219,7 +219,7 @@ class PacketHandlerTest extends TestCase
             ]
         ];
         $missingField = (object)[
-            "type" => "Content Response",
+            "type" => "ContentResponse",
             "formatId" => "post-comments",
             "content" => [
                 "ZXloOUp2Nn..."
@@ -230,16 +230,16 @@ class PacketHandlerTest extends TestCase
         $checkWrongAddress = PacketHandler::checkPacket($wrongAddress);
         $checkMissingField = PacketHandler::checkPacket($missingField);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkWrongAddress);
-        self::assertEquals(PacketTypes::INVALID, $checkMissingField);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress);
+        self::assertEquals(PacketTypes::ERROR, $checkMissingField);
     }
 
 
     public function testFormatRequest(): void
     {
         $packet = (object)[
-            "type" => "Format Request",
+            "type" => "FormatRequest",
             "formatId" => "wrongFormatId"
         ];
         $packetType = PacketHandler::checkPacket($packet);
@@ -253,21 +253,21 @@ class PacketHandlerTest extends TestCase
         ];
 
         $noId = (object)[
-            "type" => "Format Request"
+            "type" => "FormatRequest"
         ];
 
         $checkNoType = PacketHandler::checkPacket($noType);
         $checkNoId = PacketHandler::checkPacket($noId);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkNoId);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkNoId);
     }
 
 
     public function testFormatResponse(): void
     {
         $packet = (object)[
-            "type" => "Format Response",
+            "type" => "FormatResponse",
             "formatId" => "wrongFormatId",
             "format" => "<i>New Message by: ['sender'] <\/i>\n<p>['text']<\/p>\n<small>Sent: ['time']<\/small>"
         ];
@@ -283,14 +283,14 @@ class PacketHandlerTest extends TestCase
             "formatId" => "post-comments"
         ];
         $noId = (object)[
-            "type" => "Format Response"
+            "type" => "FormatResponse"
         ];
 
         $checkNoType = PacketHandler::checkPacket($noType);
         $checkNoId = PacketHandler::checkPacket($noId);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkNoId);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkNoId);
     }
 
 
@@ -337,9 +337,9 @@ class PacketHandlerTest extends TestCase
         $checkWrongAddress = PacketHandler::checkPacket($wrongAddress);
         $checkMissingField = PacketHandler::checkPacket($missingField);
 
-        self::assertEquals(PacketTypes::INVALID, $checkNoType);
-        self::assertEquals(PacketTypes::INVALID, $checkWrongAddress);
-        self::assertEquals(PacketTypes::INVALID, $checkMissingField);
+        self::assertEquals(PacketTypes::ERROR, $checkNoType);
+        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress);
+        self::assertEquals(PacketTypes::ERROR, $checkMissingField);
     }
 
 
@@ -351,6 +351,6 @@ class PacketHandlerTest extends TestCase
         ];
         $packetType = PacketHandler::checkPacket($packet);
 
-        self::assertEquals(PacketTypes::INVALID, $packetType);
+        self::assertEquals(PacketTypes::ERROR, $packetType);
     }
 }

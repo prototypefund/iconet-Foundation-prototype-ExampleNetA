@@ -16,45 +16,45 @@ class PacketHandler
     {
         if(!isset($packet->type)) {
             echo "Error - Must set field 'type' <br>";
-            return PacketTypes::INVALID;
+            return PacketTypes::ERROR;
         }
 
         $type = PacketTypes::tryFrom($packet->type);
         if(!$type) {
-            return PacketTypes::INVALID;
+            return PacketTypes::ERROR;
         }
 
         switch($type) {
-            case PacketTypes::PUBLICKEY_REQUEST:
+            case PacketTypes::PUBLIC_KEY_REQUEST:
                 //check if non-optional variables are set.
                 if(isset($packet->address)) {
                     //check if non-optional variables are proper
                     if(Address::validate($packet->address)) {
                         //all conditions for publicKey request are met.
-                        return PacketTypes::PUBLICKEY_REQUEST;
+                        return PacketTypes::PUBLIC_KEY_REQUEST;
                     } else {
                         echo "Error - Faulty address in publicKey request <br>" . $packet->address . "<br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing address in publicKey request <br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
-            case PacketTypes::PUBLICKEY_RESPONSE:
+            case PacketTypes::PUBLIC_KEY_RESPONSE:
                 //check if non-optional variables are set.
                 if(isset($packet->address) && isset($packet->publicKey)) {
                     //check if non-optional variables are proper
                     if(Address::validate($packet->address)) {
                         //all conditions for publicKey request are met.
-                        return PacketTypes::PUBLICKEY_RESPONSE;
+                        return PacketTypes::PUBLIC_KEY_RESPONSE;
                     } else {
                         echo "Error - Faulty address in publicKey response <br>" . $packet->address . "<br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing field in publicKey response ('address'/'publicKey') <br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             case PacketTypes::NOTIFICATION:
@@ -66,11 +66,11 @@ class PacketHandler
                         return PacketTypes::NOTIFICATION;
                     } else {
                         echo "Error - Faulty actor or recipient address <br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing field in notification ('actor'/'predata'/'ecryptedSecret'/'to') <br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             case PacketTypes::CONTENT_REQUEST:
@@ -79,7 +79,7 @@ class PacketHandler
                     return PacketTypes::CONTENT_REQUEST;
                 } else {
                     echo "Error - Missing field in content request ('id'/'actor') <br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             case PacketTypes::CONTENT_RESPONSE:
@@ -90,11 +90,11 @@ class PacketHandler
                         return PacketTypes::CONTENT_RESPONSE;
                     } else {
                         echo "Error - Faulty actor address <br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing field in content response ('actor'/'formatId'/'content')<br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             case PacketTypes::FORMAT_REQUEST:
@@ -106,11 +106,11 @@ class PacketHandler
                         return PacketTypes::FORMAT_REQUEST;
                     } else {
                         echo "Error - Faulty formatId, can only provide 'post-comments'<br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing field 'formatId' in format request <br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             case PacketTypes::FORMAT_RESPONSE:
@@ -122,11 +122,11 @@ class PacketHandler
                         return PacketTypes::FORMAT_RESPONSE;
                     } else {
                         echo "Error - Faulty format formatId, can only provide 'post-comments' <br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing field in format response ('formatId'/'format')<br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             case PacketTypes::INTERACTION:
@@ -138,16 +138,16 @@ class PacketHandler
                         return PacketTypes::INTERACTION;
                     } else {
                         echo "Error - Faulty actor address<br>";
-                        return PacketTypes::INVALID;
+                        return PacketTypes::ERROR;
                     }
                 } else {
                     echo "Error - Missing field in interaction ('id'/'actor'/'payload')<br>";
-                    return PacketTypes::INVALID;
+                    return PacketTypes::ERROR;
                 }
 
             default:
                 echo "Unknown packet type: <br>" . $packet->type . "<br>";
-                return PacketTypes::INVALID;
+                return PacketTypes::ERROR;
         }
 
     }

@@ -144,7 +144,7 @@ export class EmbeddedExperience extends HTMLElement {
             return
         }
         const contentRequest = {
-            type: "Content Request", contentId: this.#id, actor: this.#actor, secret: this.#secret
+            type: "ContentRequest", contentId: this.#id, actor: this.#actor, secret: this.#secret
         }
         await this.#sendResponseFromHomeServer(id, contentRequest);
     }

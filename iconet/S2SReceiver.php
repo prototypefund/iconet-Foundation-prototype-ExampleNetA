@@ -17,7 +17,7 @@ class S2SReceiver
         $this->db = new Database();
 
         switch($type) {
-            case PacketTypes::PUBLICKEY_REQUEST:
+            case PacketTypes::PUBLIC_KEY_REQUEST:
                 $response = self::processPublickeyRequest($packet);
                 break;
             case PacketTypes::NOTIFICATION:

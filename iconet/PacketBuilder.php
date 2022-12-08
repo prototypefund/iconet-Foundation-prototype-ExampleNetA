@@ -10,7 +10,7 @@ class PacketBuilder
 
     public static function publicKey_request(string $address): string
     {
-        $packet['type'] = "PublicKey Request";
+        $packet['type'] = PacketTypes::PUBLIC_KEY_REQUEST;
         $packet['address'] = $address;
 
         return self::jsonOrThrow($packet);
@@ -18,7 +18,7 @@ class PacketBuilder
 
     public static function publicKey_response(string $address, string $publicKey): string
     {
-        $packet['type'] = "PublicKey Response";
+        $packet['type'] = PacketTypes::PUBLIC_KEY_RESPONSE;
         $packet['address'] = $address;
         $packet['publicKey'] = $publicKey;
 
@@ -38,7 +38,7 @@ class PacketBuilder
         string $encryptedSecret,
         string $encryptedPredata
     ): string {
-        $packet['type'] = "Notification";
+        $packet['type'] = PacketTypes::NOTIFICATION;
         $packet['actor'] = $actor;
         $packet['to'] = $toAddress;
         $packet['encryptedSecret'] = $encryptedSecret;
@@ -55,7 +55,7 @@ class PacketBuilder
 
     public static function content_request(string $id, string $actor): string
     {
-        $packet['type'] = "Content Request";
+        $packet['type'] = PacketTypes::CONTENT_REQUEST;
         $packet['actor'] = $actor;
         $packet['id'] = $id;
 
@@ -68,7 +68,7 @@ class PacketBuilder
         mixed $interactions,
         string $actor
     ): string {
-        $packet['type'] = "Content Response";
+        $packet['type'] = PacketTypes::CONTENT_RESPONSE;
         $packet['actor'] = $actor;
         $packet['formatId'] = $formatId;
         $packet['content'] = $content;
@@ -79,7 +79,7 @@ class PacketBuilder
 
     public static function format_request(string $formatId): string
     {
-        $packet['type'] = "Format Request";
+        $packet['type'] = PacketTypes::FORMAT_REQUEST;
         $packet['formatId'] = $formatId;
 
         return self::jsonOrThrow($packet);
@@ -87,7 +87,7 @@ class PacketBuilder
 
     public static function format_response(string $formatId, string $format): string
     {
-        $packet['type'] = "Format Response";
+        $packet['type'] = PacketTypes::FORMAT_RESPONSE;
         $packet['formatId'] = $formatId;
         $packet['format'] = $format;
 
@@ -100,7 +100,7 @@ class PacketBuilder
         string $id,
         string $payload
     ): string {
-        $packet['type'] = "Interaction";
+        $packet['type'] = PacketTypes::INTERACTION;
         $packet['actor'] = $actor;
         $packet['to'] = $to;
         $packet['id'] = $id;
@@ -111,14 +111,14 @@ class PacketBuilder
 
     public static function ack(): string
     {
-        $response['type'] = "ACK";
+        $response['type'] = PacketTypes::ACK;
 
         return self::jsonOrThrow($response);
     }
 
     public static function error(string $error): string
     {
-        $packet['type'] = "Error";
+        $packet['type'] = PacketTypes::ERROR;
         $packet['error'] = $error;
 
         return self::jsonOrThrow($packet);

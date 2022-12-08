@@ -41,7 +41,7 @@ class PacketBuilderTest extends TestCase
     {
         $packet = PacketBuilder::publicKey_request($this->address);
         self::assertEquals(
-            PacketTypes::PUBLICKEY_REQUEST,
+            PacketTypes::PUBLIC_KEY_REQUEST,
             PacketHandler::checkPacket(json_decode($packet))
         );
     }
@@ -50,7 +50,7 @@ class PacketBuilderTest extends TestCase
     {
         $packet = PacketBuilder::publicKey_response($this->address, $this->publicKey);
         $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::PUBLICKEY_RESPONSE, $packetType);
+        self::assertEquals(PacketTypes::PUBLIC_KEY_RESPONSE, $packetType);
     }
 
     public function testNotification(): void
@@ -115,6 +115,6 @@ class PacketBuilderTest extends TestCase
         $packet = PacketBuilder::error($this->error);
         $packetType = PacketHandler::checkPacket(json_decode($packet));
 
-        self::assertEquals(PacketTypes::INVALID, $packetType);
+        self::assertEquals(PacketTypes::ERROR, $packetType);
     }
 }
