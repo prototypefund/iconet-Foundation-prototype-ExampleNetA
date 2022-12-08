@@ -180,19 +180,6 @@ class Processor
         return true;
     }
 
-    //TODO there needs to be an url/address for the format server
-    public function getFormat(string $formatID): string|bool
-    {
-        $message = PacketBuilder::format_request($formatID);
-        $response = $this->transmitter->send(new Address($formatID), $message);
-        $packet = json_decode($response);
-        if($this->packetHandler->checkPacket($packet) !== PacketTypes::FORMAT_RESPONSE) {
-            return false;
-        }
-        return $packet->format;
-    }
-
-
     /**
      * @param string $id
      * @return object

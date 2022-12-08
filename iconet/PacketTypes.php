@@ -11,7 +11,5 @@ enum PacketTypes: string
     case NOTIFICATION = "Notification";
     case CONTENT_REQUEST = "ContentRequest";
     case CONTENT_RESPONSE = "ContentResponse";
-    case FORMAT_REQUEST = "FormatRequest";
-    case FORMAT_RESPONSE = "FormatResponse";
     case INTERACTION = "Interaction";
 }

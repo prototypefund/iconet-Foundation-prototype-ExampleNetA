@@ -84,20 +84,6 @@ class PacketBuilderTest extends TestCase
         self::assertEquals(PacketTypes::CONTENT_RESPONSE, $packetType);
     }
 
-    public function testFormatRequest(): void
-    {
-        $packet = PacketBuilder::format_request($this->formatId);
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::FORMAT_REQUEST, $packetType);
-    }
-
-    public function testFormatResponse(): void
-    {
-        $packet = PacketBuilder::format_response($this->formatId, $this->format);
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::FORMAT_RESPONSE, $packetType);
-    }
-
     public function testInteraction(): void
     {
         $packet = PacketBuilder::interaction(

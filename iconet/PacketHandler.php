@@ -97,38 +97,6 @@ class PacketHandler
                     return PacketTypes::ERROR;
                 }
 
-            case PacketTypes::FORMAT_REQUEST:
-                //check if non-optional variables are set.
-                if(isset($packet->formatId)) {
-                    //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if($packet->formatId) {  //TODO specify syntax for format ids
-                        //all conditions for type request format are met.
-                        return PacketTypes::FORMAT_REQUEST;
-                    } else {
-                        echo "Error - Faulty formatId, can only provide 'post-comments'<br>";
-                        return PacketTypes::ERROR;
-                    }
-                } else {
-                    echo "Error - Missing field 'formatId' in format request <br>";
-                    return PacketTypes::ERROR;
-                }
-
-            case PacketTypes::FORMAT_RESPONSE:
-                //check if non-optional variables are set.
-                if(isset($packet->formatId) && isset($packet->format)) {
-                    //check if non-optional variables are proper (can't check notification content, potentially encrypted)
-                    if($packet->formatId) { //TODO specify syntax for format ids
-                        //all conditions for type request format are met.
-                        return PacketTypes::FORMAT_RESPONSE;
-                    } else {
-                        echo "Error - Faulty format formatId, can only provide 'post-comments' <br>";
-                        return PacketTypes::ERROR;
-                    }
-                } else {
-                    echo "Error - Missing field in format response ('formatId'/'format')<br>";
-                    return PacketTypes::ERROR;
-                }
-
             case PacketTypes::INTERACTION:
                 //check if non-optional variables are set.
                 if(isset($packet->id) && isset($packet->actor) && isset($packet->payload)) {

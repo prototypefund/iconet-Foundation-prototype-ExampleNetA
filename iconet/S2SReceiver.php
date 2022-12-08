@@ -23,9 +23,6 @@ class S2SReceiver
             case PacketTypes::NOTIFICATION:
                 $response = self::processNotification($packet);
                 break;
-            case PacketTypes::FORMAT_REQUEST:
-                $response = self::processFormatRequest($packet);
-                break;
             case PacketTypes::INTERACTION:
                 $response = self::processInteraction($packet);
                 break;
@@ -33,7 +30,7 @@ class S2SReceiver
                 $response = self::processContentRequest($packet);
                 break;
             default:
-                $response = PacketBuilder::error("Can not process this packet");
+                $response = PacketBuilder::error("Can not process this packet type");
         }
 
         return $response;
@@ -58,12 +55,6 @@ class S2SReceiver
         } else {
             return PacketBuilder::ack();
         }
-    }
-
-    private function processFormatRequest(object $packet): string
-    {
-        $format = file_get_contents("./iconet/formats/post-comments.fmfibs");
-        return PacketBuilder::format_response($packet->formatId, $format);
     }
 
     private function processInteraction(object $packet): string

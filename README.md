@@ -88,9 +88,10 @@ Return Pubkey on request.\
 Packets are formatted in JSON.
 
 Request:
+
 ```json
 {
-    "type": "Request PublicKey",
+    "type": "RequestPublicKey",
     "address": %address
 }
 ```
@@ -162,13 +163,6 @@ written in bold lettering.
 |                         | `interactions`                 |                                       | Here, the list of interactions to original content can be attached.                                                                                    |
 |                         | `interactions.sender`          | `"bob@bobnet.net"`                    | Each interaction needs the information about the address of the interaction's sender.                                                                  |
 |                         | `interactions.interaction`     | `"ERt3dsfsdf..."`                     | All interaction contents are symmetrically encrypted with the secret.                                                                                  |
-|                         |                                |                                       |                                                                                                                                                        |
-| **Format Request**      | **`type`**                     | `"FormatRequest"`                     | **Required**                                                                                                                                           |
-|                         | **`formatId`**                 | `"post-comments"`                     | **Required:** The format identifier is a string, specifying the name of the sent format.                                                               |
-|                         |                                |                                       |                                                                                                                                                        |
-| **Format Response**     | **`type`**                     | `"FormatResponse"`                    | **Required**                                                                                                                                           |
-|                         | **`formatId`**                 | `"post-comments"`                     | **Required**                                                                                                                                           |
-|                         | **`format`**                   | `"<i>New Message..."`                 | **Required:** "Format" includes information about the structure of the sent content.                                                                   |
 |                         |                                |                                       |                                                                                                                                                        |
 | **Interaction**         | **`type`**                     | `"Interaction"`                       | **Required**                                                                                                                                           |
 |                         | **`actor`**                    | `"bob@bobnet.net"`                    | **Required:** "Actor" specifies the address of the sender of the interaction content.                                                                  |

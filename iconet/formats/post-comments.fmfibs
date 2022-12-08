@@ -1,5 +1,0 @@
-<div style="padding:10px; border: 2px solid;">
-<i>New Message by: ['sender'] </i>
-<p>['text']</p>
-<small>Sent: ['time']</small>
-</div>

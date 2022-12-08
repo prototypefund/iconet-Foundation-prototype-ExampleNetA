@@ -236,64 +236,6 @@ class PacketHandlerTest extends TestCase
     }
 
 
-    public function testFormatRequest(): void
-    {
-        $packet = (object)[
-            "type" => "FormatRequest",
-            "formatId" => "wrongFormatId"
-        ];
-        $packetType = PacketHandler::checkPacket($packet);
-        self::assertEquals(PacketTypes::FORMAT_REQUEST, $packetType);
-    }
-
-    public function testFormatRequestInvalid(): void
-    {
-        $noType = (object)[
-            "formatId" => "post-comments"
-        ];
-
-        $noId = (object)[
-            "type" => "FormatRequest"
-        ];
-
-        $checkNoType = PacketHandler::checkPacket($noType);
-        $checkNoId = PacketHandler::checkPacket($noId);
-
-        self::assertEquals(PacketTypes::ERROR, $checkNoType);
-        self::assertEquals(PacketTypes::ERROR, $checkNoId);
-    }
-
-
-    public function testFormatResponse(): void
-    {
-        $packet = (object)[
-            "type" => "FormatResponse",
-            "formatId" => "wrongFormatId",
-            "format" => "<i>New Message by: ['sender'] <\/i>\n<p>['text']<\/p>\n<small>Sent: ['time']<\/small>"
-        ];
-
-        $checkRightPacket = PacketHandler::checkPacket($packet);
-        self::assertEquals(PacketTypes::FORMAT_RESPONSE, $checkRightPacket);
-    }
-
-
-    public function testFormatResponseInvalid(): void
-    {
-        $noType = (object)[
-            "formatId" => "post-comments"
-        ];
-        $noId = (object)[
-            "type" => "FormatResponse"
-        ];
-
-        $checkNoType = PacketHandler::checkPacket($noType);
-        $checkNoId = PacketHandler::checkPacket($noId);
-
-        self::assertEquals(PacketTypes::ERROR, $checkNoType);
-        self::assertEquals(PacketTypes::ERROR, $checkNoId);
-    }
-
-
     public function testInteraction(): void
     {
         $packet = (object)[
