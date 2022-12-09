@@ -61,22 +61,32 @@ Download the repository with:
 6. Install composer (`sudo apt install composer`) and run `composer install` in the project folder.
 
 
-7. In your browser visit the site `netA/`. If the page is served without _Forbidden_ or _Not Found_ erros, skip these steps and continue setting up the database in step 11.
+7. In your browser visit the site `http://neta.localhost/`. If the page is served without _Forbidden_ or _Not Found_
+   erros, skip the next steps and continue setting up the database in step 13.
+
 
 8. Check apache2's status for errors with
 
         apachectl -S
 
 
-9. Maybe you need to create the file `/etc/apache2/conf-available/fqdn.conf`. With `sudoedit` paste the following line and activate it with `sudo a2enconf /etc/apache2/conf-available/fqdn.conf`
+9. Error logs are usually located at `/var/log/apache2/error-netA.log`
+
+
+10. Maybe you need to create the file `/etc/apache2/conf-available/fqdn.conf`. With `sudoedit` paste the following line
+    and activate it with `sudo a2enconf /etc/apache2/conf-available/fqdn.conf`
 
         ServerName localhost
 
 
-10. If apache is not running, run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
+11. If apache is not running, run `sudo systemctl start apache2`, check status under `sudo systemctl status apache2`
 
 
-11. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights
+12. If you get a permission denied error, make sure that the apache process can access the project directory. Check the
+    file system permissions.
+
+
+13. If Mysql allows the user root only to be accessed when run by sudo, create an admin account with full rights
 
     In `mysql`:
 
@@ -85,7 +95,7 @@ Download the repository with:
     GRANT ALL ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;
     ```
 
-12. Create the databases (enter your mysql credentials):
+14. Create the databases (enter your mysql credentials):
     ``` bash
     mysql -e "CREATE DATABASE netA;"
     mysql --database=netA < netA.sql
@@ -93,12 +103,11 @@ Download the repository with:
     mysql --database=netAiconet < iconet/iconet.sql
     ```
 
-13. Set the admin credentials in a file named `.env` in the project root. Use `.env.default` as a template. You can skip
+15. Set the admin credentials in a file named `.env` in the project root. Use `.env.default` as a template. You can skip
     this step, if you used the same ones as in the default file.
 
 
-
-14. Start the mysql server with `sudo systemctl start mysql`
+16. Start the mysql server with `sudo systemctl start mysql`
 
 ## Using Docker
 
