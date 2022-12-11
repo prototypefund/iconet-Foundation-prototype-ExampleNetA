@@ -1,0 +1,14 @@
+{
+  "id": "neta/post-like-comment",
+  "version": "1.0",
+  "iconet-version": "1.0",
+  "hash": "104789612847612984716238947",
+  "template": "/iconet/formats/post-like-comment/template.html",
+  "scripts": [
+    "/iconet/formats/tunnel.js"
+  ],
+  "permissions": {
+    "InteractionMessage": true,
+    "ContentRequest": true
+  }
+}

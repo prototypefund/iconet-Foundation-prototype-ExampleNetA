@@ -58,7 +58,7 @@ class _InitializeDatabaseTest extends TestCase
         $bob = \Iconet\User::fromUsername('bob');
 
         $bob->addContact($alice);
-        (new Processor($bob))->createPost("Test Post Content", "/iconet/formats/interaction-button");
+        (new Processor($bob))->createPost("Test Post Content", "/iconet/formats/post-like-comment");
     }
 
     public function test_createAllPostFormats(): void
