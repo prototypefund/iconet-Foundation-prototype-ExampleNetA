@@ -87,22 +87,31 @@ export class EmbeddedExperience extends HTMLElement {
     async #createSrcdoc() {
         const template = await this.#getTemplate()
         const document = new DOMParser().parseFromString(template, "text/html");
-        EmbeddedExperience.#injectCSP(document)
+
+        this.#injectCSP(document)
         EmbeddedExperience.#injectProxyOrigin(document)
         await EmbeddedExperience.#injectScripts(document, this.#manifest.scripts)
         this.#injectContent(document)
+
         return document.documentElement.outerHTML
     }
 
     // This function is part of the srcdoc workaround.
-    static #injectCSP(document) {
+    #injectCSP(document) {
         // Delete all existing CSP meta tags
         document.documentElement.querySelectorAll('meta[http-equiv="Content-Security-Policy"]')
             .forEach(tag => tag.parentNode.removeChild(tag))
 
+
+        let csp = IFRAME_CSP;
+        if (this.#manifest.allowedSources) {
+            const allowedSources = this.#manifest.allowedSources.join(' ')
+            csp = csp.replace("default-src 'none';", `default-src ${allowedSources};`)
+        }
+
         const meta = document.createElement('meta')
         meta.setAttribute('http-equiv', 'Content-Security-Policy')
-        meta.setAttribute('content', IFRAME_CSP)
+        meta.setAttribute('content', csp)
 
         document.head.prepend(meta) // CSP should be first element
     }

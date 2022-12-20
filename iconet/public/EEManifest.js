@@ -20,6 +20,10 @@ export class EEManifest {
         return this.#manifest.scripts ?? []
     }
 
+    get allowedSources() {
+        return this.#manifest.permissions?.AllowedSources ?? []
+    }
+
     constructor(manifest) {
         this.#manifest = manifest
     }
@@ -39,6 +43,7 @@ export class EEManifest {
 
     static #validateManifest(manifestJson) {
         console.log("Validating manifest ", manifestJson)
+        // TODO validate field values
         return this.REQUIRED.every(requiredKey => manifestJson.hasOwnProperty(requiredKey))
     }
 
