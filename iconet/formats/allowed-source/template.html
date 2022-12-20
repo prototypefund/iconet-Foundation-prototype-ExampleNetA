@@ -1,0 +1,20 @@
+<title>Allowed Source</title>
+<body>
+<script>
+    (async function () {
+        const testNode = document.createElement('p')
+        testNode.innerText = "Fetching remote content directly"
+        document.body.appendChild(testNode)
+        document.body.style.backgroundColor = "orange";
+
+        testNode.innerText += "\nWaiting for data"
+        const request = await fetch('https://img.shields.io/badge/Success-This%20content%20was%20fetched%20from%20an%20other%20site-green')
+        const content = await request.blob()
+        const imageNode = document.createElement('img')
+        imageNode.src = URL.createObjectURL(content)
+        document.body.append(imageNode)
+        document.body.style.backgroundColor = "lime";
+
+    })();
+</script>
+</body>

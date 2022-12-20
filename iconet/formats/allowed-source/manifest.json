@@ -1,0 +1,16 @@
+{
+  "id": "neta/allowed-source",
+  "version": "1.0",
+  "iconet-version": "1.0",
+  "hash": "104789612847612984716238947",
+  "template": "/iconet/formats/allowed-source/template.html",
+  "scripts": [
+    "/iconet/formats/tunnel.js"
+  ],
+  "permissions": {
+    "ContentRequest": true,
+    "AllowedSources": [
+      "https://img.shields.io/badge/Success-This%20content%20was%20fetched%20from%20an%20other%20site-green"
+    ]
+  }
+}

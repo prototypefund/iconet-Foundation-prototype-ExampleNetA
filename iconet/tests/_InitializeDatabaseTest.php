@@ -49,6 +49,16 @@ class _InitializeDatabaseTest extends TestCase
             );
         }
         self::assertTrue(Database::singleton()->existsUser('bob'));
+
+        $alice = \Iconet\User::fromUsername('alice');
+        $bob = \Iconet\User::fromUsername('bob');
+        $bob->addContact($alice);
+        $alice->addContact($bob);
+
+        $aliceNative = new User('alice');
+        $bobNative = new User('bob');
+        $aliceNative->sendFriendRequest('bob');
+        $bobNative->acceptFriendRequest($aliceNative);
     }
 
     public function test_createPost(): void
@@ -58,7 +68,7 @@ class _InitializeDatabaseTest extends TestCase
         $bob = \Iconet\User::fromUsername('bob');
 
         $bob->addContact($alice);
-        (new Processor($bob))->createPost("Test Post Content", "/iconet/formats/post-like-comment");
+        (new Processor($bob))->createPost("Test Post Content", "/iconet/formats/allowed-source");
     }
 
     public function test_createAllPostFormats(): void
@@ -104,6 +114,10 @@ class _InitializeDatabaseTest extends TestCase
                 [
                     'content' => 'Resource requested through tunnel',
                     'formatId' => '/iconet/formats/request-resource'
+                ],
+                [
+                    'content' => 'Allowed access to example.net',
+                    'formatId' => '/iconet/formats/allowed-source'
                 ],
                 [
                     'content' => 'Send an interaction',
