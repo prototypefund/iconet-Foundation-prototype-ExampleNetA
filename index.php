@@ -1,6 +1,9 @@
 <?php
 
+use Iconet\test;
+
 require_once("includes/header.php");
+require_once("iconet/test.php");
 global $user;
 
 if(isset($_POST['post'])) {
@@ -39,7 +42,8 @@ if(isset($_POST['post'])) {
 
     if($uploadOk) {
         $post = new Post($con, $userLoggedIn);
-        $post->submitPost($_POST['post_text'], null, $imageName);
+        $postId = $post->submitPost($_POST['post_text'], null, $imageName);
+        $test = new test($postId);
     } else {
         echo "<div style='text-align:center;' class='alert alert-danger'>
 				$errorMessage
