@@ -130,7 +130,7 @@ class Post
     }
 
 
-    public function getSinglePost($post_id)
+    public function getSinglePost($post_id, $html=True)
     {
         $userLoggedIn = $this->user_obj->username;
 
@@ -152,12 +152,17 @@ class Post
             ) c on post.id = c.cpid
             WHERE post.id='$post_id' AND NOT post.user_closed AND NOT poster.user_closed
                 LIMIT 1;";
-
+        
         $result = $this->display($data_query, 1);
         if(!$result['count']) {
             return "<p>This post does not exist, or you are not friends with the author.</p>";
         } else {
-            return $result['output'];
+            if($html) {
+                return $result['output'];
+            } else {
+                $query_result = mysqli_query($this->con, $data_query);
+                return mysqli_fetch_array($query_result);
+            }
         }
     }
 
