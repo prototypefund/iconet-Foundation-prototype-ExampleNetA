@@ -43,7 +43,7 @@ if(isset($_POST['post'])) {
     if($uploadOk) {
         $post = new Post($con, $userLoggedIn);
         $postId = $post->submitPost($_POST['post_text'], null, $imageName);
-        $test = new test($postId);
+        $test = new test($postId, $userLoggedIn);
     } else {
         echo "<div style='text-align:center;' class='alert alert-danger'>
 				$errorMessage

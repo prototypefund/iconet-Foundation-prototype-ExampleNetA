@@ -21,6 +21,10 @@
 <?php
 require 'config/config.php';
 
+if(!isset($_SESSION)) {
+    session_start();
+}
+
 if(isset($_SESSION['username'])) {
     $userLoggedIn = $_SESSION['username'];
     $user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$userLoggedIn'");
@@ -42,7 +46,6 @@ if(isset($_POST['postComment' . $post_id])) {
     $date_time_now = date("Y-m-d H:i:s");
 
     Database::singleton()->createComment($post_id, $post_body, $userLoggedIn, $posted_to, $date_time_now, false);
-
 
     if($posted_to != $userLoggedIn) {
         $notification = new Notification($con, $userLoggedIn);

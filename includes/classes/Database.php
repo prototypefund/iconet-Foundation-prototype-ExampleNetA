@@ -196,4 +196,6 @@ class Database
         $stmt->execute(compact('username', ));
     }
 
+    
+
 }
