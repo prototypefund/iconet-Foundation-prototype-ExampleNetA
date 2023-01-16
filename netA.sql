@@ -15,7 +15,8 @@ CREATE TABLE `comments` (
   `posted_to` varchar(60) NOT NULL,
   `date_added` datetime NOT NULL,
   `removed` tinyint(1) NOT NULL,
-  `post_id` int NOT NULL
+  `post_id` int NOT NULL,
+  `external_url` varchar(255)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `friend_requests` (

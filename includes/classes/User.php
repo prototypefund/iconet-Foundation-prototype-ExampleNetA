@@ -18,7 +18,7 @@ class User
     {
         $userData = Database::singleton()->getUser($username);
         $friends = Database::singleton()->getFriends($username);
-
+        
         $this->friends = $friends;
         $this->firstname = $userData['first_name'];
         $this->lastname = $userData['last_name'];

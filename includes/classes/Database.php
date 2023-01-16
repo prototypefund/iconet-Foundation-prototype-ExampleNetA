@@ -136,12 +136,13 @@ class Database
         string $post_body,
         string $postedByUser,
         string $posted_to,
-        string $date_time_now
+        string $date_time_now,
+        string $external_url = null
     ): int {
         $stmt = $this->db->prepare(
-            "INSERT INTO comments (post_body, posted_by, posted_to, date_added, removed, post_id) VALUES (:post_body, :postedByUser, :posted_to, :date_time_now, false, :post_id)"
+            "INSERT INTO comments (post_body, posted_by, posted_to, date_added, removed, post_id, external_url) VALUES (:post_body, :postedByUser, :posted_to, :date_time_now, false, :post_id, :external_url)"
         );
-        $stmt->execute(compact('post_id', 'post_body', 'postedByUser', 'posted_to', 'date_time_now'));
+        $stmt->execute(compact('post_id', 'post_body', 'postedByUser', 'posted_to', 'date_time_now', 'external_url'));
 
         return $this->db->lastInsertId();
     }
