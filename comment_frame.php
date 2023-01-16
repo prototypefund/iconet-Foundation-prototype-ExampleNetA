@@ -41,7 +41,7 @@ if(isset($_POST['postComment' . $post_id])) {
     $post_body = mysqli_escape_string($con, $post_body);
     $date_time_now = date("Y-m-d H:i:s");
 
-    Database::singleton()->createComment($post_id, $post_body, $userLoggedIn, $posted_to, $date_time_now, false);
+    Database::singleton()->createComment($post_id, $post_body, $userLoggedIn, $posted_to, $date_time_now);
 
 
     if($posted_to != $userLoggedIn) {
@@ -67,10 +67,10 @@ if(isset($_POST['postComment' . $post_id])) {
         }
     }
 
-
     echo "<p>Comment Posted! </p>";
 }
 ?>
+
 <form action="comment_frame.php?post_id=<?= $post_id ?>" id="comment_form" name="postComment<?= $post_id ?>"
       method="POST">
     <textarea name="post_body"></textarea>
@@ -82,40 +82,8 @@ if(isset($_POST['postComment' . $post_id])) {
 $get_comments = mysqli_query($con, "SELECT * FROM comments WHERE post_id='$post_id' ORDER BY id ASC");
 $count = mysqli_num_rows($get_comments);
 
-if($count != 0) {
-    while($comment = mysqli_fetch_array($get_comments)) {
-        $comment_body = $comment['post_body'];
-        $posted_to = $comment['posted_to'];
-        $posted_by = $comment['posted_by'];
-        $date_added = $comment['date_added'];
-        $removed = $comment['removed'];
-
-        $time_message = date("Y-m-d H:i:s");
-
-        $user_obj = new User($posted_by);
-
-
-        ?>
-        <div class="comment_section">
-            <a href=./profile.php?profile_username=<?= $posted_by ?> target="_parent">
-                <img src="<?= $user_obj->profilePicture ?>" title="<?= $posted_by ?>" style="float:left;" height="30">
-            </a>
-            <a href=./profile.php?profile_username=<?php
-            echo $posted_by ?> target="_parent"> <b> <?= $user_obj->getFirstAndLastName() ?> </b></a>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <?= $time_message ?>
-            <br>
-            <?= $comment_body ?>
-            <hr>
-        </div>
-        <?php
-    }
-} else {
-    echo "<br><br>No Comments to Show!";
-}
-
+include "print_comments.php"
 ?>
-
 
 </body>
 </html>
