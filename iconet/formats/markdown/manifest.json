@@ -1,0 +1,16 @@
+{
+  "id": "neta/markdown",
+  "version": "1.0",
+  "iconet-version": "1.0",
+  "hash": "104789612847612984716238947",
+  "template": "/iconet/formats/markdown/template.html",
+  "scripts": [
+    "/iconet/formats/marked.min.js",
+    "/iconet/formats/purify.min.js",
+    "/iconet/formats/highlight.min.js",
+    "/iconet/formats/tunnel.js"
+  ],
+  "permissions": {
+    "content": true
+  }
+}
