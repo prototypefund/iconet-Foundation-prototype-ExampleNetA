@@ -60,7 +60,7 @@ CREATE TABLE `posts`
     `username` varchar(100) NOT NULL,
     `secret`   varchar(200) NOT NULL,
     `formatId` varchar(100) NOT NULL,
-    `content`  varchar(200) NOT NULL
+    `content`  text NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
