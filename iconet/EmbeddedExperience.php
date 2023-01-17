@@ -8,7 +8,7 @@ class EmbeddedExperience
 
     public function __construct(mixed $contentData)
     {
-        $this->contentData = json_encode($contentData);
+        $this->contentData = htmlentities(json_encode($contentData));
     }
 
     public function render(): string
