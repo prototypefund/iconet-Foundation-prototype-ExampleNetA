@@ -37,7 +37,7 @@ export class EEManifest {
     static async #fetchManifest(format) {
         const url = `${format}/${MANIFEST_PATH}`
         console.log('Fetching manifest ', url)
-        const response = await fetch(url, {headers: {mode: 'no-cors'}})
+        const response = await fetch(url)
         return await response.json()
     }
 
