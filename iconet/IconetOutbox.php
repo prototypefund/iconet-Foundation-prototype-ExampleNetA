@@ -63,7 +63,6 @@ class IconetOutbox
             );
             // TODO Check response
             $response = $this->transmitter->send($contact->address, $notifPacket);
-            echo $response;
         }
     }
 }
