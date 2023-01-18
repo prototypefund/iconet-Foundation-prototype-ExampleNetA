@@ -31,9 +31,10 @@ class PacketHandlerTest extends TestCase
 
     public function testNotificationInvalid(): void
     {
-        $noType = (object)[
+        $noContext = (object)[
             "actor" => "alice@alicenet.net",
             "to" => "bob@bobnet.org",
+            "id" => "42",
             "encryptedSecret" => "jtqgp5D2Z4...",
             "predata" => "RXh...Ho=",
             "interoperability" => [
@@ -42,9 +43,10 @@ class PacketHandlerTest extends TestCase
             ]
         ];
         $wrongAddress1 = (object)[
-            "type" => "Notification",
+            "@context" => "iconet Notification",
             "actor" => "wrongAddress",
             "to" => "bob@bobnet.org",
+            "id" => "42",
             "encryptedSecret" => "jtqgp5D2Z4...",
             "predata" => "RXh...Ho=",
             "interoperability" => [
@@ -53,9 +55,10 @@ class PacketHandlerTest extends TestCase
             ]
         ];
         $wrongAddress2 = (object)[
-            "type" => "Notification",
+            "@context" => "iconet Notification",
             "actor" => "alice@alicenet.net",
             "to" => "wrongAddress",
+            "id" => "42",
             "encryptedSecret" => "jtqgp5D2Z4...",
             "predata" => "RXh...Ho=",
             "interoperability" => [
@@ -63,8 +66,8 @@ class PacketHandlerTest extends TestCase
                 "contentType" => "Posting"
             ]
         ];
-        $missingField = (object)[
-            "type" => "Notification",
+        $missingId = (object)[
+            "@context" => "iconet Notification",
             "actor" => "alice@alicenet.net",
             "to" => "bob@bobnet.org",
             "predata" => "RXh...Ho=",
@@ -74,14 +77,14 @@ class PacketHandlerTest extends TestCase
             ]
         ];
 
-        $checkNoType = PacketHandler::checkPacket($noType);
+        $checkNoContext = PacketHandler::checkPacket($noContext);
         $checkWrongAddress1 = PacketHandler::checkPacket($wrongAddress1);
         $checkWrongAddress2 = PacketHandler::checkPacket($wrongAddress2);
-        $checkMissingField = PacketHandler::checkPacket($missingField);
+        $checkMissingId = PacketHandler::checkPacket($missingId);
 
-        self::assertEquals(false, $checkNoType);
+        self::assertEquals(false, $checkNoContext);
         self::assertEquals(false, $checkWrongAddress1);
         self::assertEquals(false, $checkWrongAddress2);
-        self::assertEquals(false, $checkMissingField);
+        self::assertEquals(false, $checkMissingId);
     }
 }
