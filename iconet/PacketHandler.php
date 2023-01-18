@@ -16,12 +16,12 @@ class PacketHandler
     {
         // Check if non-optional variables are set.
         if(isset($packet->{'@context'}) &&
-           isset($packet->{'id'}) &&
-           isset($packet->{'actor'}) && 
-           isset($packet->{'to'}) &&
-           isset($packet->{'encryptedSecret'}) &&
-           isset($packet->{'encryptedContent'}) &&
-           isset($packet->{'encryptedFormatId'})
+            isset($packet->{'id'}) &&
+            isset($packet->{'actor'}) &&
+            isset($packet->{'to'}) &&
+            isset($packet->{'encryptedSecret'}) &&
+            isset($packet->{'encryptedPayload'}) &&
+            isset($packet->{'encryptedFormatId'})
            ) {
             // Check if non-optional variables are proper (can't check notification content, potentially encrypted)
             if(Address::validate($packet->actor) && Address::validate($packet->to)) {

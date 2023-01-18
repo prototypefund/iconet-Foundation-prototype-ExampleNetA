@@ -27,15 +27,15 @@ class IconetInbox
         $id = $packet->id;
         $actor = $packet->actor;
         $encryptedSecret = $packet->encryptedSecret;
-        $encryptedContent = $packet->encryptedContent;
+        $encryptedPayload = $packet->encryptedPayload;
         $encryptedFormatId = $packet->encryptedFormatId;
         $privateKey = $this->user->privateKey;
         $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
 
-        $content = json_decode($this->crypto->decSym($encryptedContent, $secret));
+        $payload = json_decode($this->crypto->decSym($encryptedPayload, $secret));
         $formatId = json_decode($this->crypto->decSym($encryptedFormatId, $secret));
 
-        $this->database->addNotification($id, $this->user->username, $actor, $secret, $content);
+        $this->database->addNotification($id, $this->user->username, $actor, $secret, $payload, $formatId);
         //todo check for errors
         return true;
     }
