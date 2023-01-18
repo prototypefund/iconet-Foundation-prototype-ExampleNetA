@@ -36,26 +36,29 @@ class PacketBuilderTest extends TestCase
         $this->content = "TestContent";
     }
 
-    //todo
     public function testNotification(): void
     {
         $packet = PacketBuilder::notification(
+            $this->id,
             $this->actor,
             $this->to,
             $this->encryptedSecret,
-            $this->encryptedPredata
+            $this->encryptedPredata,
+            $this->formatId
         );
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(true, $packetType);
+
+        $response = PacketHandler::checkPacket(json_decode($packet));
+        echo "RESPONSE";
+        echo $response;
+        self::assertTrue($response);
     }
 
 
-    //todo
     public function testError(): void
     {
         $packet = PacketBuilder::error($this->error);
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
+        $response = PacketHandler::checkPacket(json_decode($packet));
 
-        self::assertEquals(false, $packetType);
+        self::assertFalse($response);
     }
 }
