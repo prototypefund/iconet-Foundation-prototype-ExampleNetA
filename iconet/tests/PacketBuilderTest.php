@@ -48,8 +48,6 @@ class PacketBuilderTest extends TestCase
         );
 
         $response = PacketHandler::checkPacket(json_decode($packet));
-        echo "RESPONSE";
-        echo $response;
         self::assertTrue($response);
     }
 
