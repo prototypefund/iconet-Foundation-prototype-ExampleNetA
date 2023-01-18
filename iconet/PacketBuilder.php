@@ -19,7 +19,7 @@ class PacketBuilder
         string $actorAddress,
         string $toAddress,
         string $encryptedSecret,
-        string $encryptedContent,
+        string $encryptedPayload,
         string $encryptedFormatId
     ): string {
         $packet['@context'] = "iconet Notification"; //FIX should not be hardcoded, should be proper json ld
@@ -27,8 +27,9 @@ class PacketBuilder
         $packet['actor'] = $actorAddress;
         $packet['to'] = $toAddress;
         $packet['encryptedSecret'] = $encryptedSecret;
-        $packet['encryptedContent'] = $encryptedContent;
+        $packet['encryptedPayload'] = $encryptedPayload;
         $packet['encryptedFormatId'] = $encryptedFormatId;
+
 
         //optional interoperability-header
         $interoperability['protocol'] = "ExampleNetA";

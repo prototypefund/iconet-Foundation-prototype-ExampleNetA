@@ -12,7 +12,7 @@ class S2SReceiver
         if(!$packet) {
             return PacketBuilder::error("Invalid json");
         }
-
+        var_dump($packet);
         $type = PacketHandler::checkPacket($packet);
 
         $response = self::processNotification($packet);

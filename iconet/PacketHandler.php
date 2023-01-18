@@ -1,7 +1,6 @@
 <?php
 namespace Iconet;
 
-
 class PacketHandler
 {
     //TODO split this into getType and validation logic
@@ -15,14 +14,19 @@ class PacketHandler
     public static function checkPacket(mixed $packet): bool
     {
         // Check if non-optional variables are set.
-        if(isset($packet->{'@context'}) &&
+        var_dump($packet);
+        if(!isset($packet->{'@context'})) {
+            echo "Error - no context set in Json-LD";
+            return false;
+        }
+        if(
             isset($packet->{'id'}) &&
             isset($packet->{'actor'}) &&
             isset($packet->{'to'}) &&
             isset($packet->{'encryptedSecret'}) &&
             isset($packet->{'encryptedPayload'}) &&
             isset($packet->{'encryptedFormatId'})
-           ) {
+        ) {
             // Check if non-optional variables are proper (can't check notification content, potentially encrypted)
             if(Address::validate($packet->actor) && Address::validate($packet->to)) {
                 // All conditions for type send notification are met.
@@ -32,9 +36,8 @@ class PacketHandler
                 return false;
             }
         } else {
-            echo "Error - Missing field ('@context'/'id'/'actor'/'to'/'ecryptedSecret'/'encryptedPayload'/'encryptedFormatId) <br>";
+            echo "Error - Missing field ('id'/'actor'/'to'/'ecryptedSecret'/'encryptedPayload'/'encryptedFormatId) <br>";
             return false;
         }
     }
-
 }
