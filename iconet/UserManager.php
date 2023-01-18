@@ -8,6 +8,7 @@ use RuntimeException;
  * Interface for the native plattform to manage iconet objects
  */
 class UserManager
+//todo
 {
 
     /**
@@ -44,7 +45,7 @@ class UserManager
     public static function addContact(User $to, Address $address): bool
     {
         try {
-            $publicKey = (new Processor($to))->getExternalPublicKey($address);
+            $publicKey = (new ArchivedProcessor($to))->getExternalPublicKey($address);
         } catch(RuntimeException $e) {
             echo $e->getMessage() . "\n" . $e->getPrevious()?->getMessage();
             return false;

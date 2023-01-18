@@ -44,7 +44,7 @@ if(isset($_POST['post'])) {
         $post = new Post($con, $userLoggedIn);
         $postId = $post->submitPost($_POST['post_text'], null, $imageName);
 
-        $payload = array('content'=>$_POST['post_text'], '$username'=>$userLoggedIn);
+        $payload = array('content' => $_POST['post_text'], 'username' => $userLoggedIn);
 
         $iconetOutbox = new iconet\IconetOutbox($iconetUser);
         $iconetOutbox->createPost($payload, "test");

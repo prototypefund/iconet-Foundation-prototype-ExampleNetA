@@ -5,11 +5,11 @@ namespace Iconet;
 class InboxController
 {
 
-    private Processor $proc;
+    private ArchivedProcessor $proc;
 
     public function __construct(User $user)
     {
-        $this->proc = new Processor($user);
+        $this->proc = new ArchivedProcessor($user);
     }
 
     public function renderInbox(): void

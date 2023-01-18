@@ -3,7 +3,7 @@
 require_once "config/config.php";
 
 
-use Iconet\Processor;
+use Iconet\ArchivedProcessor;
 use Iconet\UserManager;
 use PHPUnit\Framework\TestCase;
 
@@ -68,7 +68,8 @@ class _InitializeDatabaseTest extends TestCase
         $bob = \Iconet\User::fromUsername('bob');
 
         $bob->addContact($alice);
-        (new Processor($bob))->createPost("Test Post Content", "/iconet/formats/allowed-source");
+        (new IconetOutbox($bob))->createPost(array('content' => "Content by UnitTest", '$username' => "alice"),
+            "/iconet/formats/allowed-source");
     }
 
     public function test_createAllPostFormats(): void
@@ -78,7 +79,7 @@ class _InitializeDatabaseTest extends TestCase
         $bob = \Iconet\User::fromUsername('bob');
         $bob->addContact($alice);
 
-        array_map(fn($post) => (new Processor($bob))->createPost($post['content'], $post['formatId']), [
+        array_map(fn($post) => (new ArchivedProcessor($bob))->createPost($post['content'], $post['formatId']), [
                 [
                     'content' => 'This content will not be seen by the template',
                     'formatId' => '/iconet/formats/empty'
