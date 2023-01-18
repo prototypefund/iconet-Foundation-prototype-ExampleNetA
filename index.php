@@ -43,8 +43,11 @@ if(isset($_POST['post'])) {
     if($uploadOk) {
         $post = new Post($con, $userLoggedIn);
         $postId = $post->submitPost($_POST['post_text'], null, $imageName);
-        $iconetSender = new iconet\IconetOutbox($iconetUser);
-        $iconetSender->createPost($_POST['post_text'], "test");
+
+        $payload = array('content'=>$_POST['post_text'], '$username'=>$userLoggedIn);
+
+        $iconetOutbox = new iconet\IconetOutbox($iconetUser);
+        $iconetOutbox->createPost($payload, "test");
     } else {
         echo "<div style='text-align:center;' class='alert alert-danger'>
 				$errorMessage

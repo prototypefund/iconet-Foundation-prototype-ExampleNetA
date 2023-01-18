@@ -31,11 +31,11 @@ class IconetOutbox
      */
 
     // $content = {username,id}
-    public function createPost(string $content, string $formatId): void
+    public function createPost(array $payload, string $formatId): void
     {
         //encrypt notification & content
         $secret = $this->crypto->genSymKey();
-        $encryptedContent = $this->crypto->encSym($content, $secret);
+        $encryptedContent = $this->crypto->encSym(json_encode($payload), $secret);
         $encryptedFormatId = $this->crypto->encSym($formatId, $secret);
 
         //save post in db
