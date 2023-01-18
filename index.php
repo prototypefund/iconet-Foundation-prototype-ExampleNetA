@@ -1,7 +1,7 @@
 <?php
 
 require_once("includes/header.php");
-require_once("iconet/IconetSender.php");
+require_once("iconet/IconetOutbox.php");
 
 global $user;
 global $iconetUser;
@@ -43,7 +43,7 @@ if(isset($_POST['post'])) {
     if($uploadOk) {
         $post = new Post($con, $userLoggedIn);
         $postId = $post->submitPost($_POST['post_text'], null, $imageName);
-        $iconetSender = new iconet\IconetSender($iconetUser);
+        $iconetSender = new iconet\IconetOutbox($iconetUser);
         $iconetSender->createPost($_POST['post_text'], "test");
     } else {
         echo "<div style='text-align:center;' class='alert alert-danger'>

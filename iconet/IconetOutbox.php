@@ -2,7 +2,7 @@
 
 namespace Iconet;
 
-class IconetSender
+class IconetOutbox
 {
     //logged in user
     private User $user;
@@ -63,6 +63,7 @@ class IconetSender
             );
             // TODO Check response
             $response = $this->transmitter->send($contact->address, $notifPacket);
+            echo $response;
         }
     }
 }
