@@ -44,7 +44,8 @@ CREATE TABLE `notifications`
     `username`   varchar(100) NOT NULL,
     `sender`     varchar(60)  NOT NULL,
     `secret`     varchar(200) NOT NULL,
-    `subject`    text         NOT NULL
+    `payload`    text         NOT NULL,
+    `formatId`   varchar(150) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -76,20 +77,6 @@ CREATE TABLE `users`
     `address`    varchar(60)   NOT NULL,
     `publickey`  varchar(500)  NOT NULL,
     `privatekey` varchar(2000) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
-
---
--- Table structure for table `interactions`
---
-
-CREATE TABLE `interactions`
-(
-    `id`         int          NOT NULL primary key auto_increment,
-    `content_id` varchar(100) NOT NULL,
-    `username`   varchar(60)  NOT NULL,
-    `sender`     varchar(100) NOT NULL,
-    `payload`    text         NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

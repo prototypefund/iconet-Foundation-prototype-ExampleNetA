@@ -35,7 +35,7 @@ class IconetOutbox
     {
         //encrypt notification & content
         $secret = $this->crypto->genSymKey();
-        $encryptedContent = $this->crypto->encSym(json_encode($payload), $secret);
+        $encryptedPayload = $this->crypto->encSym(json_encode($payload), $secret);
         $encryptedFormatId = $this->crypto->encSym($formatId, $secret);
 
         //save post in db
@@ -43,7 +43,7 @@ class IconetOutbox
             $this->user->username,
             $secret,
             $encryptedFormatId,
-            $encryptedContent
+            $encryptedPayload
         );
         //generate and send notifications
         $contacts = $this->database->getContacts($this->user->username);
@@ -58,7 +58,7 @@ class IconetOutbox
                 $this->user->address,
                 $contact->address,
                 $encryptedSecret,
-                $encryptedContent,
+                $encryptedPayload,
                 $encryptedFormatId
             );
             // TODO Check response
