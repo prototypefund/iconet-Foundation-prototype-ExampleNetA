@@ -1,10 +1,6 @@
 <?php
 namespace Iconet;
 
-use Iconet\Crypto;
-use Iconet\Database;
-use Iconet\User;
-
 
 class IconetInbox
 {
@@ -25,7 +21,7 @@ class IconetInbox
     }
 
     public function saveNotification(object $packet): bool
-    {           
+    {
         $id = $packet->id;
         $actor = $packet->actor;
         $encryptedSecret = $packet->encryptedSecret;
@@ -34,15 +30,14 @@ class IconetInbox
         $privateKey = $this->user->privateKey;
         $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
 
-        $content =  $this->crypto->decSym($encryptedContent, $secret);
-        $formatId = json_decode($this->crypto->decSym($encryptedFormatId, $secret));
+        $payload = $this->crypto->decSym($encryptedContent, $secret);
+        $formatId = $this->crypto->decSym($encryptedFormatId, $secret);
 
-        if(!$content)
-        {
-            $content = "Decryption Error.";
+        if(!$payload) {
+            $payload = "Decryption Error.";
         }
 
-        $this->database->addNotification($id, $this->user->username, $actor, $secret, $content);
+        $this->database->addNotification($id, $this->user->username, $actor, $secret, $payload, $formatId);
         //todo check for errors
         return true;
     }

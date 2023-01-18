@@ -171,11 +171,12 @@ class Database
         string $username,
         string $sender,
         string $secret,
-        string $subject
+        string $payload,
+        string $formatId
     ): bool {
         $query = mysqli_query(
             $this->database,
-            "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$subject')"
+            "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$payload', '$formatId')"
         );
         if(mysqli_connect_errno()) {
             echo "Failed to add notification: " . mysqli_connect_errno();
@@ -184,22 +185,6 @@ class Database
         return true;
     }
 
-    public function addInteraction(
-        string $content_id,
-        string $username,
-        string $sender,
-        string $payload
-    ): bool {
-        $query = mysqli_query(
-            $this->database,
-            "INSERT INTO interactions VALUES (null,'$content_id', '$username', '$sender', '$payload')"
-        );
-        if(mysqli_connect_errno()) {
-            echo "Failed to add interaction: " . mysqli_connect_errno();
-            return false;
-        }
-        return true;
-    }
 
     public function clearTables(): void
     {
@@ -207,7 +192,6 @@ class Database
         mysqli_query($this->database, "DELETE FROM contacts");
         mysqli_query($this->database, "DELETE FROM notifications");
         mysqli_query($this->database, "DELETE FROM posts");
-        mysqli_query($this->database, "DELETE FROM interactions");
     }
 
     public function getNotifications(string $username): ?array
@@ -225,20 +209,6 @@ class Database
         }
     }
 
-    public function getInteractionsByContentId(string $content_id): ?array
-    {
-        $query = mysqli_query($this->database, "SELECT * FROM interactions WHERE content_id='$content_id'");
-        if(mysqli_num_rows($query) == 0) {
-            return null;
-        } else {
-            $i = 0;
-            while($row = mysqli_fetch_array($query)) {
-                $rows[$i] = $row;
-                $i++;
-            }
-            return $rows;
-        }
-    }
 
 
 }
