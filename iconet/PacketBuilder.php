@@ -115,17 +115,12 @@ class PacketBuilder
 
     public static function ack(): string
     {
-        $response['type'] = PacketTypes::ACK;
-
-        return self::jsonOrThrow($response);
+        return "ACK";
     }
 
     public static function error(string $error): string
     {
-        $packet['type'] = PacketTypes::ERROR;
-        $packet['error'] = $error;
-
-        return self::jsonOrThrow($packet);
+        return $error;
     }
 
     /**
