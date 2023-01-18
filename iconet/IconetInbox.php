@@ -34,10 +34,10 @@ class IconetInbox
         $privateKey = $this->user->privateKey;
         $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
 
-        $content = json_decode($this->crypto->decSym($encryptedContent, $secret));
+        $content =  $this->crypto->decSym($encryptedContent, $secret);
         $formatId = json_decode($this->crypto->decSym($encryptedFormatId, $secret));
 
-        if(!$content) 
+        if(!$content)
         {
             $content = "Decryption Error.";
         }
