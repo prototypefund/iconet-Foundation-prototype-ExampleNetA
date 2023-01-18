@@ -32,18 +32,22 @@ class PacketBuilder
      * @param string $predata
      * @return string
      */
+
     public static function notification(
-        string $actor,
+        string $packetID,
+        string $actorAddress,
         string $toAddress,
         string $encryptedSecret,
-        string $encryptedPredata
+        string $encryptedContent,
+        string $encryptedFormatId
     ): string {
-        $packet['type'] = PacketTypes::NOTIFICATION;
-        $packet['actor'] = $actor;
+        $packet['@context'] = "iconet Notification"; //FIX should not be hardcoded
+        $packet['id'] = $packetID;
+        $packet['actor'] = $actorAddress;
         $packet['to'] = $toAddress;
         $packet['encryptedSecret'] = $encryptedSecret;
-
-        $packet['predata'] = $encryptedPredata;
+        $packet['encryptedContent'] = $encryptedContent;
+        $packet['encryptedFormatId'] = $encryptedFormatId;
 
         //optional interoperability-header
         $interoperability['protocol'] = "ExampleNetA";
