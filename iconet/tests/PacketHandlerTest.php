@@ -36,6 +36,8 @@ class PacketHandlerTest extends TestCase
             "to" => "bob@bobnet.org",
             "id" => "42",
             "encryptedSecret" => "jtqgp5D2Z4...",
+            "encryptedFormatId" => "jtqgp5D2Z3..",
+            "encryptedPayload" => "jtqgp5D2Z2..",
             "predata" => "RXh...Ho=",
             "interoperability" => [
                 "protocol" => "ExampleNetA",
@@ -48,6 +50,8 @@ class PacketHandlerTest extends TestCase
             "to" => "bob@bobnet.org",
             "id" => "42",
             "encryptedSecret" => "jtqgp5D2Z4...",
+            "encryptedFormatId" => "jtqgp5D2Z3..",
+            "encryptedPayload" => "jtqgp5D2Z2..",
             "predata" => "RXh...Ho=",
             "interoperability" => [
                 "protocol" => "ExampleNetA",
@@ -60,6 +64,8 @@ class PacketHandlerTest extends TestCase
             "to" => "wrongAddress",
             "id" => "42",
             "encryptedSecret" => "jtqgp5D2Z4...",
+            "encryptedFormatId" => "jtqgp5D2Z3..",
+            "encryptedPayload" => "jtqgp5D2Z2..",
             "predata" => "RXh...Ho=",
             "interoperability" => [
                 "protocol" => "ExampleNetA",
@@ -71,6 +77,9 @@ class PacketHandlerTest extends TestCase
             "actor" => "alice@alicenet.net",
             "to" => "bob@bobnet.org",
             "predata" => "RXh...Ho=",
+            "encryptedSecret" => "jtqgp5D2Z4...",
+            "encryptedFormatId" => "jtqgp5D2Z3..",
+            "encryptedPayload" => "jtqgp5D2Z2..",
             "interoperability" => [
                 "protocol" => "ExampleNetA",
                 "contentType" => "Posting"
