@@ -3,7 +3,7 @@
 require_once "config/config.php";
 
 
-use Iconet\ArchivedProcessor;
+use Iconet\IconetOutbox;
 use Iconet\UserManager;
 use PHPUnit\Framework\TestCase;
 
@@ -79,7 +79,12 @@ class _InitializeDatabaseTest extends TestCase
         $bob = \Iconet\User::fromUsername('bob');
         $bob->addContact($alice);
 
-        array_map(fn($post) => (new ArchivedProcessor($bob))->createPost($post['content'], $post['formatId']), [
+        array_map(
+            fn($post) => (new IconetOutbox($bob))->createPost(
+                array('content' => $post['content'], 'username' => 'alice'),
+                $post['formatId']
+            ),
+            [
                 [
                     'content' => 'This content will not be seen by the template',
                     'formatId' => '/iconet/formats/empty'
