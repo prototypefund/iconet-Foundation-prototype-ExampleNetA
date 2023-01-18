@@ -2,7 +2,6 @@
 
 
 use Iconet\PacketHandler;
-use Iconet\PacketTypes;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,11 +11,6 @@ use PHPUnit\Framework\TestCase;
 class PacketHandlerTest extends TestCase
 {
 
-
-
-
-
-    //todo
     public function testNotification(): void
     {
         $packet = (object)[
@@ -30,10 +24,9 @@ class PacketHandlerTest extends TestCase
                 "contentType" => "Posting"
             ]
         ];
-        self::assertEquals(PacketTypes::NOTIFICATION, PacketHandler::checkPacket($packet));
+        self::assertEquals(true, PacketHandler::checkPacket($packet));
     }
 
-    //todo
     public function testNotificationInvalid(): void
     {
         $noType = (object)[
@@ -84,21 +77,9 @@ class PacketHandlerTest extends TestCase
         $checkWrongAddress2 = PacketHandler::checkPacket($wrongAddress2);
         $checkMissingField = PacketHandler::checkPacket($missingField);
 
-        self::assertEquals(PacketTypes::ERROR, $checkNoType);
-        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress1);
-        self::assertEquals(PacketTypes::ERROR, $checkWrongAddress2);
-        self::assertEquals(PacketTypes::ERROR, $checkMissingField);
-    }
-
-    //todo
-    public function testError(): void
-    {
-        $packet = (object)[
-            'type' => 'error',
-            'error' => "Error message."
-        ];
-        $packetType = PacketHandler::checkPacket($packet);
-
-        self::assertEquals(PacketTypes::ERROR, $packetType);
+        self::assertEquals(false, $checkNoType);
+        self::assertEquals(false, $checkWrongAddress1);
+        self::assertEquals(false, $checkWrongAddress2);
+        self::assertEquals(false, $checkMissingField);
     }
 }
