@@ -26,7 +26,7 @@ class PacketHandlerTest extends TestCase
                 "contentType" => "Posting"
             ]
         ];
-        self::assertEquals(true, PacketHandler::checkPacket($packet));
+        self::assertTrue(PacketHandler::checkPacket($packet));
     }
 
     public function testNotificationInvalid(): void
@@ -91,9 +91,9 @@ class PacketHandlerTest extends TestCase
         $checkWrongAddress2 = PacketHandler::checkPacket($wrongAddress2);
         $checkMissingId = PacketHandler::checkPacket($missingId);
 
-        self::assertEquals(false, $checkNoContext);
-        self::assertEquals(false, $checkWrongAddress1);
-        self::assertEquals(false, $checkWrongAddress2);
-        self::assertEquals(false, $checkMissingId);
+        self::assertFalse($checkNoContext);
+        self::assertFalse($checkWrongAddress1);
+        self::assertFalse($checkWrongAddress2);
+        self::assertFalse($checkMissingId);
     }
 }
