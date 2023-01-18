@@ -140,7 +140,8 @@ class Database
         string $external_url = null
     ): int {
         $stmt = $this->db->prepare(
-            "INSERT INTO comments (post_body, posted_by, posted_to, date_added, removed, post_id, external_url) VALUES (:post_body, :postedByUser, :posted_to, :date_time_now, false, :post_id, :external_url)"
+            "INSERT INTO comments (post_body, posted_by, posted_to, date_added, removed, post_id, external_url) 
+            VALUES (:post_body, :postedByUser, :posted_to, :date_time_now, false, :post_id, :external_url)"
         );
         $stmt->execute(compact('post_id', 'post_body', 'postedByUser', 'posted_to', 'date_time_now', 'external_url'));
 

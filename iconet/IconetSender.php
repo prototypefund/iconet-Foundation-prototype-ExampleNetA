@@ -24,7 +24,7 @@ class IconetSender
 
 
 
-// newPost (Id, username)
+    // newPost (Id, username)
     /*//create secret, fetch target addresses, create tokens & encrypt
      * add post and data to database
      * create and send packet

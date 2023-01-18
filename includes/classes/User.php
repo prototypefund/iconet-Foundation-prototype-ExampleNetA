@@ -125,7 +125,6 @@ class User
         return Database::singleton()->existsUser($username);
     }
 
-
 }
 
 ?>

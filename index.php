@@ -1,10 +1,10 @@
 <?php
 
-use Iconet\test;
-
 require_once("includes/header.php");
-require_once("iconet/test.php");
+require_once("iconet/IconetSender.php");
+
 global $user;
+global $iconetUser;
 
 if(isset($_POST['post'])) {
     $uploadOk = 1;
@@ -43,16 +43,16 @@ if(isset($_POST['post'])) {
     if($uploadOk) {
         $post = new Post($con, $userLoggedIn);
         $postId = $post->submitPost($_POST['post_text'], null, $imageName);
-        $test = new test($postId, $userLoggedIn);
+        $iconetSender = new iconet\IconetSender($iconetUser);
+        $iconetSender->createPost($_POST['post_text'], "test");
     } else {
         echo "<div style='text-align:center;' class='alert alert-danger'>
 				$errorMessage
 			</div>";
     }
 }
-
-
 ?>
+
 <div class="user_details column">
     <a href=./profile.php?profile_username=<?= $user->username ?>>
         <img src="<?= $user->profilePicture ?>">

@@ -1,11 +1,12 @@
 <?php
 
 require_once 'config/config.php';
-
+require_once 'iconet/User.php';
 
 if(isset($_SESSION['username'])) {
     $userLoggedIn = $_SESSION['username'];
     $user = new User($userLoggedIn);
+    $iconetUser = iconet\User::fromUsername($userLoggedIn);
 } else {
     header("Location: register.php");
     exit();
