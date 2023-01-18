@@ -14,11 +14,13 @@ class PacketHandlerTest extends TestCase
     public function testNotification(): void
     {
         $packet = (object)[
-            "type" => "Notification",
+            "@context" => "iconet Notification",
+            "id" => "2",
             "actor" => "alice@net.org",
             "to" => "bob@bobnet.org",
             "encryptedSecret" => "jtqgp5D2Z4...",
-            "predata" => "RXh...Ho=",
+            "encryptedPayload" => "RXh...Ho=",
+            "encryptedFormatId" => "fs..W",
             "interoperability" => [
                 "protocol" => "ExampleNetA",
                 "contentType" => "Posting"

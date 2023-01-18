@@ -25,12 +25,12 @@ class IconetInbox
         $id = $packet->id;
         $actor = $packet->actor;
         $encryptedSecret = $packet->encryptedSecret;
-        $encryptedContent = $packet->encryptedContent;
+        $encryptedPayload = $packet->encryptedPayload;
         $encryptedFormatId = $packet->encryptedFormatId;
         $privateKey = $this->user->privateKey;
         $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
 
-        $payload = $this->crypto->decSym($encryptedContent, $secret);
+        $payload = $this->crypto->decSym($encryptedPayload, $secret);
         $formatId = $this->crypto->decSym($encryptedFormatId, $secret);
 
         if(!$payload) {
