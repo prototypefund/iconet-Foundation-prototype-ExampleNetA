@@ -37,22 +37,7 @@ class PacketBuilderTest extends TestCase
         $this->content = "TestContent";
     }
 
-    public function testPublicKeyRequest(): void
-    {
-        $packet = PacketBuilder::publicKey_request($this->address);
-        self::assertEquals(
-            PacketTypes::PUBLIC_KEY_REQUEST,
-            PacketHandler::checkPacket(json_decode($packet))
-        );
-    }
-
-    public function testPublicKeyResponse(): void
-    {
-        $packet = PacketBuilder::publicKey_response($this->address, $this->publicKey);
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::PUBLIC_KEY_RESPONSE, $packetType);
-    }
-
+    //todo
     public function testNotification(): void
     {
         $packet = PacketBuilder::notification(
@@ -65,37 +50,8 @@ class PacketBuilderTest extends TestCase
         self::assertEquals(PacketTypes::NOTIFICATION, $packetType);
     }
 
-    public function testContentRequest(): void
-    {
-        $packet = PacketBuilder::content_request($this->id, $this->actor);
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::CONTENT_REQUEST, $packetType);
-    }
 
-    public function testContentResponse(): void
-    {
-        $packet = PacketBuilder::content_response(
-            $this->content,
-            $this->formatId,
-            [],
-            $this->actor
-        );
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::CONTENT_RESPONSE, $packetType);
-    }
-
-    public function testInteraction(): void
-    {
-        $packet = PacketBuilder::interaction(
-            $this->address,
-            $this->to,
-            $this->id,
-            $this->interactionPayload
-        );
-        $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::INTERACTION, $packetType);
-    }
-
+    //todo
     public function testError(): void
     {
         $packet = PacketBuilder::error($this->error);

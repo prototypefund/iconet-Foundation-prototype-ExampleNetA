@@ -4,7 +4,7 @@ namespace Iconet;
 
 use RuntimeException;
 
-class Processor
+class ArchivedProcessor
 {
     //logged in user
     private User $user;

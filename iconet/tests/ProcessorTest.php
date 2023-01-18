@@ -3,15 +3,15 @@
 require_once "config/config.php";
 
 use Iconet\Address;
+use Iconet\ArchivedProcessor;
 use Iconet\Database;
-use Iconet\Processor;
 use Iconet\User;
 use Iconet\UserManager;
 use PHPUnit\Framework\TestCase;
 
 class ProcessorTest extends TestCase
 {
-    private Processor $procA;
+    private ArchivedProcessor $procA;
     private Database $db;
     private object $contentPacket;
     private object $contentPacketWithInter;
@@ -37,8 +37,8 @@ class ProcessorTest extends TestCase
         $this->alice->addContact($this->bob);
         $this->alice->addContact($this->claire);
 
-        $this->procA = new Processor($this->alice);
-        $this->procB = new Processor($this->bob);
+        $this->procA = new ArchivedProcessor($this->alice);
+        $this->procB = new ArchivedProcessor($this->bob);
 
         // Alice creates content
         $this->expectedContent = "Hello World! Test Content";

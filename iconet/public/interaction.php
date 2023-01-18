@@ -41,7 +41,7 @@ if(!$packet) {
 // TODO Validate $packet input
 
 if(isset($packet->payload)) {
-    (new Processor($user))->postInteraction(
+    (new ArchivedProcessor($user))->postInteraction(
         $packet->payload,
         $packet->contentId,
         $user->address,

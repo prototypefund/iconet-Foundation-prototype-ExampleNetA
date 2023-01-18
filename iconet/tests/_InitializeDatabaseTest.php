@@ -3,7 +3,8 @@
 require_once "config/config.php";
 
 
-use Iconet\Processor;
+use Iconet\ArchivedProcessor;
+use Iconet\IconetOutbox;
 use Iconet\UserManager;
 use PHPUnit\Framework\TestCase;
 
@@ -12,11 +13,6 @@ use PHPUnit\Framework\TestCase;
  */
 class _InitializeDatabaseTest extends TestCase
 {
-    private \Iconet\User $alice;
-    private \Iconet\User $bob;
-    private User $aliceNative;
-    private User $bobNative;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -55,28 +51,29 @@ class _InitializeDatabaseTest extends TestCase
         }
         self::assertTrue(Database::singleton()->existsUser('bob'));
 
-        $this->alice = \Iconet\User::fromUsername('alice');
-        $this->bob = \Iconet\User::fromUsername('bob');
-        $this->bob->addContact($this->alice);
-        $this->alice->addContact($this->bob);
+        $alice = \Iconet\User::fromUsername('alice');
+        $bob = \Iconet\User::fromUsername('bob');
+        $bob->addContact($alice);
+        $alice->addContact($bob);
 
-        $this->aliceNative = new User('alice');
-        $this->bobNative = new User('bob');
-        $this->aliceNative->sendFriendRequest('bob');
-        $this->bobNative->acceptFriendRequest($this->aliceNative);
+        $aliceNative = new User('alice');
+        $bobNative = new User('bob');
+        $aliceNative->sendFriendRequest('bob');
+        $bobNative->acceptFriendRequest($aliceNative);
     }
 
     public function test_createPost(): void
     {
         $this->test_initialize();
-        (new Processor($this->bob))->createPost("Test Post Content", "/iconet/formats/markdown/manifest.json");
+        (new IconetOutbox($bob))->createPost(['content' => "Content by UnitTest", '$username' => "alice"],
+            "/iconet/formats/markdown/manifest.json");
     }
 
     public function test_createAllPostFormats(): void
     {
         $this->test_initialize();
 
-        array_map(fn($post) => (new Processor($this->bob))->createPost($post['content'], $post['formatId']), [
+        array_map(fn($post) => (new ArchivedProcessor($bob))->createPost($post['content'], $post['formatId']), [
                 [
                     'content' => 'This content will not be seen by the template',
                     'formatId' => '/iconet/formats/empty/manifest.json'
