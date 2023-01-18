@@ -41,7 +41,7 @@ class PacketBuilder
         string $encryptedContent,
         string $encryptedFormatId
     ): string {
-        $packet['@context'] = "iconet Notification"; //FIX should not be hardcoded
+        $packet['@context'] = "iconet Notification"; //FIX should not be hardcoded, should be proper json ld
         $packet['id'] = $packetID;
         $packet['actor'] = $actorAddress;
         $packet['to'] = $toAddress;
