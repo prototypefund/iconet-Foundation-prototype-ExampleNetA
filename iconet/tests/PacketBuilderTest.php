@@ -3,7 +3,6 @@
 
 use Iconet\PacketBuilder;
 use Iconet\PacketHandler;
-use Iconet\PacketTypes;
 use PHPUnit\Framework\TestCase;
 
 class PacketBuilderTest extends TestCase
@@ -47,7 +46,7 @@ class PacketBuilderTest extends TestCase
             $this->encryptedPredata
         );
         $packetType = PacketHandler::checkPacket(json_decode($packet));
-        self::assertEquals(PacketTypes::NOTIFICATION, $packetType);
+        self::assertEquals(true, $packetType);
     }
 
 
@@ -57,6 +56,6 @@ class PacketBuilderTest extends TestCase
         $packet = PacketBuilder::error($this->error);
         $packetType = PacketHandler::checkPacket(json_decode($packet));
 
-        self::assertEquals(PacketTypes::ERROR, $packetType);
+        self::assertEquals(false, $packetType);
     }
 }

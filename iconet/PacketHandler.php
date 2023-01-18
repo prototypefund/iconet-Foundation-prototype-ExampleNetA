@@ -32,7 +32,7 @@ class PacketHandler
                 return false;
             }
         } else {
-            echo "Error - Missing field ('actor'/'predata'/'ecryptedSecret'/'to') <br>";
+            echo "Error - Missing field ('@context'/'id'/'actor'/'to'/'ecryptedSecret'/'encryptedPayload'/'encryptedFormatId) <br>";
             return false;
         }
     }
