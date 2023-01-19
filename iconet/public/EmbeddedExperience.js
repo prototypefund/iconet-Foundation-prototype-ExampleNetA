@@ -1,4 +1,4 @@
-import {EEManifest} from "./EEManifest.js";
+import EEManifest from './EEManifest';
 
 // The sandbox does not have an origin (it's a unique origin that equals only '*')
 const ALLOWED_POST_MSG_ORIGIN = "*";

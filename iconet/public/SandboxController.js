@@ -1,4 +1,4 @@
-import {EmbeddedExperience} from "./EmbeddedExperience.js";
+import EmbeddedExperience from './EmbeddedExperience';
 
 /**
  * Listens for requests from sandboxes, checks validity and

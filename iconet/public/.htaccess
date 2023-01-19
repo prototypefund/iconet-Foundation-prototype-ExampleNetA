@@ -14,6 +14,12 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} (.+)/$
 RewriteRule ^ %1 [L,R=301]
 
+
+# Hack to allow for javascript import statements in webpack style without the .js-file-extension.
+# This rule appends .js if the file exists
+RewriteCond %{REQUEST_FILENAME}.js -f
+RewriteRule ^(.+?)/?$ $1.js [L]
+
 # Send All Requests To Front Controller...
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

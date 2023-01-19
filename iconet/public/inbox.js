@@ -1,4 +1,4 @@
-import {SandboxController} from "./SandboxController.js";
+import SandboxController from "./SandboxController";
 
 
 (async function () {
