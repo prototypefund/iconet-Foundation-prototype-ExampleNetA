@@ -32,8 +32,10 @@ export class SandboxController {
     }
 
     static async initialize() {
-        window.sandboxController = new SandboxController()
-        await window.sandboxController.#initialize()
+        if (!window.sandboxController) {
+            window.sandboxController = new SandboxController();
+            await window.sandboxController.#initialize();
+        }
     }
 
 
