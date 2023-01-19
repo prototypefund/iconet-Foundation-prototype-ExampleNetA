@@ -1,8 +1,14 @@
 {
-  "id": "neta/empty-skeleton",
-  "version": "1.0",
-  "iconet-version": "1.0",
-  "hash": "104789612847612984716238947",
-  "template": "/iconet/formats/empty-skeleton/template.html",
-  "permissions": {}
+  "@context": "https://iconet-foundation.org/ns#",
+  "@type": "InterpreterManifest",
+  "@id": "/iconet/formats/empty-skeleton/manifest.json",
+  "interpreters": [
+    {
+      "@id": "/iconet/formats/empty-skeleton/template.html",
+      "sourceType": "application/neta+json",
+      "targetType": "application/iconet+html",
+      "sha-512": "<sha-512 hash>",
+      "permissions": {}
+    }
+  ]
 }

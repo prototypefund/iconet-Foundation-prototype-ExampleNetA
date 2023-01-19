@@ -1,11 +1,17 @@
 {
-  "id": "neta/evil-inbox",
-  "version": "1.0",
-  "iconet-version": "1.0",
-  "hash": "104789612847612984716238947",
-  "template": "/iconet/",
-  "scripts": [
-    "/iconet/formats/evil-inbox/evil.js"
-  ],
-  "permissions": {}
+  "@context": "https://iconet-foundation.org/ns#",
+  "@type": "InterpreterManifest",
+  "@id": "/iconet/formats/evil-inbox/manifest.json",
+  "interpreters": [
+    {
+      "@id": "/iconet",
+      "sourceType": "application/neta+json",
+      "targetType": "application/iconet+html",
+      "sha-512": "<sha-512 hash>",
+      "scripts": [
+        "/iconet/formats/evil-inbox/evil.js"
+      ],
+      "permissions": {}
+    }
+  ]
 }

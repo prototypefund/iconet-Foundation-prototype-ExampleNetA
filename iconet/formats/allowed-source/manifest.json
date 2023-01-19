@@ -1,16 +1,22 @@
 {
-  "id": "neta/allowed-source",
-  "version": "1.0",
-  "iconet-version": "1.0",
-  "hash": "104789612847612984716238947",
-  "template": "/iconet/formats/allowed-source/template.html",
-  "scripts": [
-    "/iconet/formats/tunnel.js"
-  ],
-  "permissions": {
-    "ContentRequest": true,
-    "AllowedSources": [
-      "https://img.shields.io/badge/Success-This%20content%20was%20fetched%20from%20an%20other%20site-green"
-    ]
-  }
+  "@context": "https://iconet-foundation.org/ns#",
+  "@type": "InterpreterManifest",
+  "@id": "/iconet/formats/allowed-source/manifest.json",
+  "interpreters": [
+    {
+      "@id": "/iconet/formats/allowed-source/template.html",
+      "sourceType": "application/neta+json",
+      "targetType": "application/iconet+html",
+      "sha-512": "<sha-512 hash>",
+      "scripts": [
+        "/iconet/formats/tunnel.js"
+      ],
+      "permissions": {
+        "allowContentRequest": true,
+        "allowedSources": [
+          "https://img.shields.io/badge/Success-This%20content%20was%20fetched%20from%20an%20other%20site-green"
+        ]
+      }
+    }
+  ]
 }

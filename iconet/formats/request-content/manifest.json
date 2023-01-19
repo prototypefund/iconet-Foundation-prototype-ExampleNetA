@@ -1,13 +1,19 @@
 {
-  "id": "neta/request-content",
-  "version": "1.0",
-  "iconet-version": "1.0",
-  "hash": "104789612847612984716238947",
-  "template": "/iconet/formats/request-content/template.html",
-  "scripts": [
-    "/iconet/formats/tunnel.js"
-  ],
-  "permissions": {
-    "ContentRequest": true
-  }
+  "@context": "https://iconet-foundation.org/ns#",
+  "@type": "InterpreterManifest",
+  "@id": "/iconet/formats/request-content/manifest.json",
+  "interpreters": [
+    {
+      "@id": "/iconet/formats/request-content/template.html",
+      "sourceType": "application/neta+json",
+      "targetType": "application/iconet+html",
+      "sha-512": "<sha-512 hash>",
+      "scripts": [
+        "/iconet/formats/tunnel.js"
+      ],
+      "permissions": {
+        "allowContentRequest": true
+      }
+    }
+  ]
 }
