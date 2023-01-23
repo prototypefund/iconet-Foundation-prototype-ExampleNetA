@@ -5,11 +5,15 @@ namespace Iconet;
 class InboxController
 {
 
-    private ArchivedProcessor $proc;
+    private User $user;
+    private IconetInbox $inbox;
+    private Database $database;
 
     public function __construct(User $user)
     {
-        $this->proc = new ArchivedProcessor($user);
+        $this->user = $user;
+        $this->inbox = new IconetInbox($user);
+        $this->database = new Database();
     }
 
     public function renderInbox(): void
@@ -25,28 +29,7 @@ class InboxController
      */
     public function inboxContents(): array
     {
-        return array_map(fn($notif) => $this->prepareContentDataForClient(
-            $notif['content_id'],
-            new Address($notif['sender']),
-            $notif['secret']
-        ),
-            $this->proc->getNotifications());
+        return $this->database->getNotifications($this->user->username);
     }
 
-    /**
-     * For a given notification's contentId, fetch the notifications content from the sender and decrypt it.
-     * This is a helper function, since our client can't do decryption.
-     * @param string $contentId
-     * @param Address $actor
-     * @param string $secret
-     * @return object The decrypted content packet (with secret and content_id appended)
-     */
-    public function prepareContentDataForClient(string $contentId, Address $actor, string $secret): object
-    {
-        $encPacket = $this->proc->requestContent($contentId, $actor);
-        $contentData = $this->proc->decryptContentPacket($encPacket, $secret);
-        $contentData->secret = $secret;
-        $contentData->contentId = $contentId; // TODO Would be nice if the content response packet already had this.
-        return $contentData;
-    }
 }
