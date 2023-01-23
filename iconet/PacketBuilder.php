@@ -39,6 +39,13 @@ class PacketBuilder
         return json_encode($packet);
     }
 
+    public static function publicKeyRequest(string $address)
+    {
+        $packet['@context'] = "iconet PublicKey Request";
+        $packet['address'] = $address;
+        return json_encode($packet);
+    }
+
     public static function ack(): string
     {
         return "ACK";

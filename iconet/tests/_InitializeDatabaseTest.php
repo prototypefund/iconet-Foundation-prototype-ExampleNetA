@@ -133,7 +133,11 @@ class _InitializeDatabaseTest extends TestCase
                 [
                     'content' => "\n## Title\n**bold** ~~deleted~~\n\n> Quote\n\n```js\nimport { marked } from 'marked';\nimport { parentPort } from 'worker_threads';\n\nparentPort.on('message', (markdownString) =\u003e {\n  parentPort.postMessage(marked.parse(markdownString));\n});\n```\n\n- Item 1\n   - Item 1.1\n   - Item 1.2\n- Item 2\n- Item 3\n\n| Item         | Price     | # In stock |\n|--------------|-----------|------------|\n| Juicy Apples | 1.99      | 7          |\n| Bananas      | 1.89      | 5234       |\n",
                     'formatId' => '/iconet/formats/markdown/manifest.json'
-                ]
+                ],
+                [
+                    'content' => 'You may comment this post',
+                    'formatId' => '/iconet/formats/post-like-comment/manifest.json'
+                ],
             ]
         );
     }
