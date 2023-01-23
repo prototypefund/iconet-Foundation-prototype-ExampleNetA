@@ -156,6 +156,10 @@ class _InitializeDatabaseTest extends TestCase
                 [
                     'content' => 'This content is handed to the template',
                     'formatId' => '/iconet/formats/evil-inbox'
+                ],
+                [
+                    'content' => 'You may comment this post',
+                    'formatId' => '/iconet/formats/post-like-comment'
                 ]
             ]
         );

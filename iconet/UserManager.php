@@ -51,7 +51,6 @@ class UserManager
             return false;
         }
 
-        global $iconetDB;
         $success = $to->addContact(new Contact($address, $publicKey));
         if(!$success) {
             echo "Failed to add " . $address;

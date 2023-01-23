@@ -40,6 +40,7 @@ if(isset($post_id, $commentingUsername, $commentingUserURL, $commentingMsg)) {
     echo "<p>Inserted Post in DB! </p>";
 }
 
+
 include "print_comments.php"
 ?>
 
