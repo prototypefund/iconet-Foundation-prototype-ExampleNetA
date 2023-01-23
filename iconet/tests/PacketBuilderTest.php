@@ -32,7 +32,8 @@ class PacketBuilderTest extends TestCase
         $this->interactionPayload = "bCsyRG5xRlF...";
         $this->error = "error";
         $this->encryptedSecret = "jtqgp5D2Z4...";
-        $this->encryptedPredata = "as8d98d7fz";
+        $this->encryptedPayload = "as8d98d7fz";
+        $this->encryptedFormatId = "sdffasfa";
         $this->content = "TestContent";
     }
 
@@ -43,8 +44,8 @@ class PacketBuilderTest extends TestCase
             $this->actor,
             $this->to,
             $this->encryptedSecret,
-            $this->encryptedPredata,
-            $this->formatId
+            $this->encryptedPayload,
+            $this->encryptedFormatId
         );
 
         $response = PacketHandler::checkPacket(json_decode($packet));
