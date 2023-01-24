@@ -6,7 +6,7 @@ import EmbeddedExperience from './EmbeddedExperience';
  */
 export default class SandboxController {
 
-    #sandboxes = new Map(); // Maps postMessage sources onto EmbeddedExperiences that are waiting for a port
+  #sandboxes = new Map(); // Maps postMessage sources onto EmbeddedExperiences that are waiting for a port
 
   constructor() {
     window.addEventListener('message', async (event) => {
@@ -15,36 +15,37 @@ export default class SandboxController {
       const ee = this.#sandboxes.get(event.source);
       const port = event.ports[0];
 
-            if (!ee) {
-                console.warn('SandboxController got unauthenticated message');
-                return;
-            }
-            if (!port) {
-                console.warn('SandboxController got initialization message without port');
-                return;
-            }
+      if (!ee) {
+        console.warn('SandboxController got unauthenticated message');
+        return;
+      }
+      if (!port) {
+        console.warn('SandboxController got initialization message without port');
+        return;
+      }
 
-            // Let the EmbeddedExperience object handle all further communication over the port
-            ee.setPort(port);
-            this.#sandboxes.delete(event.source);
-        });
-    }
+      // Let the EmbeddedExperience object handle all further communication over the port
+      ee.setPort(port);
+      this.#sandboxes.delete(event.source);
+    });
+  }
 
-    static async initialize() {
-        if (!window.sandboxController) {
-            window.sandboxController = new SandboxController();
-            await window.sandboxController.#initialize();
-        }
+  static async initialize() {
+    if (!window.sandboxController) {
+      window.sandboxController = new SandboxController();
+      await window.sandboxController.#initialize();
     }
+  }
 
-    async #initialize() {
-        // Define the embedded-experience html component
-        customElements.define('embedded-experience', EmbeddedExperience);
-        console.log('Proxy is initializing sandboxes');
-        await Promise.all(Array.from(this.#sandboxes.values(), embEx => embEx.initialize()));
-    }
+  async #initialize() {
+    // Define the embedded-experience html component
+    customElements.define('embedded-experience', EmbeddedExperience);
+    console.log('Proxy is initializing sandboxes');
+    await Promise.all(Array.from(this.#sandboxes.values(), embEx => embEx.initialize()));
+  }
 
-    register(source, embEx) {
-        this.#sandboxes.set(source, embEx);
-    }
+  register(source, embEx) {
+    this.#sandboxes.set(source, embEx);
+  }
+
 }
