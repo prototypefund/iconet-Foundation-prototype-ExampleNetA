@@ -1,38 +1,54 @@
 // TODO this can be a default API for the sandbox,
 //  so that format developers dont have to implement the postMessage tunnel
-console.log('Tool script running')
+console.log('Tool script running');
 
-class Tunnel {
+const INITIAL_TARGET_ORIGIN = "*";
+
+
+class Tunnel extends EventTarget {
     TIME_OUT = 3000;
 
     // TODO Maybe its better to store the reject handler as well
-    #openRequests = new Map() // Maps request ids onto promise resolve functions
+    #openRequests = new Map(); // Maps request ids onto promise resolve functions
     #requestCounter = 0;
-    #proxyOrigin = null;
+    #port;
 
+    #initialContent;
+
+    get initialContent() {
+        return this.#initialContent;
+    }
 
     constructor() {
-        this.#proxyOrigin = document.querySelector('meta[id="proxyOrigin"]').content;
+        super();
+        // Create a message channel for the future communication with the parent.
+        let messageChannel = new MessageChannel();
+        this.#port = messageChannel.port1;
+        this.#port.onmessage = event => this.#handleMessage(event.data);
 
-        window.addEventListener('message', async (event) => {
-            console.log(`Sandbox got message from ${event.origin}: ${JSON.stringify(event.data)}`)
-            const message = event.data
-            if (!Tunnel.#isAuthenticated(event)) {
-                console.error(`Frame got unauthenticated message from`, event.source)
-                return
-            }
-            // TODO Validate packet structure
-            if (message.hasOwnProperty('content') && message.hasOwnProperty('id')) {
-                this.#resolveRequest(message.id, message.content)
-            }
-        }, false);
+        // Send initial message to parent, transferring the message port.
+        parent.postMessage({
+                "@context": "https://iconet-foundation.org/ns#",
+                "@type": "IframeReady",
+            },
+            INITIAL_TARGET_ORIGIN,
+            [messageChannel.port2],
+        );
 
-        console.log('Frame is listening')
+        console.log('Frame is listening');
     }
 
 
-    static #isAuthenticated(event) {
-        return parent === event.source
+    #handleMessage(message) {
+        if (!this.#initialContent) {
+            this.#initialContent = message;
+            this.dispatchEvent(new Event("initialized"));
+            console.log("Frame received initial content");
+            return;
+        }
+        if (message.hasOwnProperty('content') && message.hasOwnProperty('id')) {
+            this.#resolveAsyncRequest(message.id, message.content);
+        }
     }
 
     /**
@@ -40,11 +56,11 @@ class Tunnel {
      * @returns {Promise<object>} The current state of the content
      */
     async getContent() {
-        console.log("Requesting content")
-        return this.#makeRequest({
+        console.log("Requesting content");
+        return this.#makeRequestAfterInitialization({
             "@context": "https://iconet-foundation.org/ns#",
-            "@type": "ContentRequest"
-        })
+            "@type": "ContentRequest",
+        });
     }
 
 
@@ -54,15 +70,21 @@ class Tunnel {
      * @returns {Promise<object>} The current state of the content
      */
     async sendInteraction(payload) {
-        console.log("Frame is sending interaction:", payload)
+        console.log("Frame is sending interaction:", payload);
 
-        return this.#makeRequest({
+        return this.#makeRequestAfterInitialization({
             "@context": "https://iconet-foundation.org/ns#",
             "@type": "InteractionMessage",
-            payload
-        })
+            payload,
+        });
     }
 
+    async #makeRequestAfterInitialization(request) {
+        if (!this.#initialContent) {
+            await new Promise(resolve => this.addEventListener("initialized", resolve));
+        }
+        return this.#makeRequest(request);
+    }
 
     /**
      * Send and store the request as pending, so that it can
@@ -71,22 +93,23 @@ class Tunnel {
      */
     #makeRequest(request) {
         return new Promise((resolve, reject) => {
-            request.id = this.#requestCounter++
-            this.#openRequests.set(request.id, resolve)
-            parent.postMessage(request, this.#proxyOrigin)
-            setTimeout(() => reject(`Tunnel request timed out after ${this.TIME_OUT}ms`), this.TIME_OUT)
-        })
+            request.id = this.#requestCounter++;
+            this.#openRequests.set(request.id, resolve);
+            console.log('Tunnel sending request', request);
+            this.#port.postMessage(request);
+            setTimeout(() => reject(`Tunnel request timed out after ${this.TIME_OUT}ms`), this.TIME_OUT);
+        });
     }
 
-    #resolveRequest(id, response) {
-        const requestResolver = this.#openRequests.get(id)
+    #resolveAsyncRequest(id, response) {
+        const requestResolver = this.#openRequests.get(id);
         if (!requestResolver) {
-            console.error(`Got unexpected response with id ${id}`)
-            return
+            console.error(`Got unexpected response with id ${id}`);
+            return;
         }
-        this.#openRequests.delete(id)
-        console.log("Resolving Request", id)
-        requestResolver(response)
+        this.#openRequests.delete(id);
+        console.log("Resolving Request", id);
+        requestResolver(response);
     }
 
 }

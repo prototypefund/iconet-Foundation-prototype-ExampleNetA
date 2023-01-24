@@ -1,34 +1,33 @@
 import EmbeddedExperience from './EmbeddedExperience';
 
 /**
- * Listens for requests from sandboxes, checks validity and
- * delegates the sending of responses to the corresponding EmbeddedExperience element.
+ * Listens for the IframeReady-message from sandboxes
+ * Once a message is received, the port is extracted and handed over to the EmbeddedExperience object.
  */
-export class SandboxController {
-    #sandboxes = new Map() // Maps postMessage sources onto EmbeddedExperiences to which this sandboxController is connected
+export default class SandboxController {
 
-    constructor() {
-        window.addEventListener('message', async (event) => {
-            console.log(`Proxy got message from ${event.origin}: ${JSON.stringify(event.data)}`, " of ", event.source)
-            const ee = this.#authentifiedEE(event)
+    #sandboxes = new Map(); // Maps postMessage sources onto EmbeddedExperiences that are waiting for a port
+
+  constructor() {
+    window.addEventListener('message', async (event) => {
+      console.log(`SandboxController got message from ${event.origin}: ${JSON.stringify(event.data)}`, ' of ', event.source, event.lastEventId);
+      // TODO Validate packet syntax
+      const ee = this.#sandboxes.get(event.source);
+      const port = event.ports[0];
+
             if (!ee) {
-                console.warn(`Proxy got unauthenticated message`)
-                return
+                console.warn('SandboxController got unauthenticated message');
+                return;
             }
-            // TODO validate packet structure
-            if (!event.data.hasOwnProperty('@type')) {
-                console.warn(`Proxy got unknown message`, event.data)
-            }
-            switch (event.data['@type']) {
-                case "ContentRequest":
-                    ee.sendContent(event.data.id)
-                    break
-                case "InteractionMessage":
-                    ee.sendInteraction(event.data.id, event.data.payload)
-                    break
+            if (!port) {
+                console.warn('SandboxController got initialization message without port');
+                return;
             }
 
-        }, false);
+            // Let the EmbeddedExperience object handle all further communication over the port
+            ee.setPort(port);
+            this.#sandboxes.delete(event.source);
+        });
     }
 
     static async initialize() {
@@ -38,27 +37,14 @@ export class SandboxController {
         }
     }
 
-
     async #initialize() {
         // Define the embedded-experience html component
-        customElements.define('embedded-experience', EmbeddedExperience)
-        console.log('Proxy is initializing sandboxes')
-        await Promise.all(Array.from(this.#sandboxes.values(), embEx => embEx.initialize()))
+        customElements.define('embedded-experience', EmbeddedExperience);
+        console.log('Proxy is initializing sandboxes');
+        await Promise.all(Array.from(this.#sandboxes.values(), embEx => embEx.initialize()));
     }
-
 
     register(source, embEx) {
-        this.#sandboxes.set(source, embEx)
-    }
-
-    /**
-     *
-     * @param event The postMessage event
-     * @returns {EmbeddedExperience|null} Returns the EmbeddedExperience that sent this message, or null
-     */
-    #authentifiedEE(event) {
-        const ee = this.#sandboxes.get(event.source);
-        const isAuthentified = ee?.isAuthentified(event)
-        return isAuthentified ? ee : null;
+        this.#sandboxes.set(source, embEx);
     }
 }

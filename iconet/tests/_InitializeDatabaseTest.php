@@ -12,6 +12,11 @@ use PHPUnit\Framework\TestCase;
  */
 class _InitializeDatabaseTest extends TestCase
 {
+    private \Iconet\User $alice;
+    private \Iconet\User $bob;
+    private User $aliceNative;
+    private User $bobNative;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -50,15 +55,15 @@ class _InitializeDatabaseTest extends TestCase
         }
         self::assertTrue(Database::singleton()->existsUser('bob'));
 
-        $alice = \Iconet\User::fromUsername('alice');
-        $bob = \Iconet\User::fromUsername('bob');
-        $bob->addContact($alice);
-        $alice->addContact($bob);
+        $this->alice = \Iconet\User::fromUsername('alice');
+        $this->bob = \Iconet\User::fromUsername('bob');
+        $this->bob->addContact($this->alice);
+        $this->alice->addContact($this->bob);
 
-        $aliceNative = new User('alice');
-        $bobNative = new User('bob');
-        $aliceNative->sendFriendRequest('bob');
-        $bobNative->acceptFriendRequest($aliceNative);
+        $this->aliceNative = new User('alice');
+        $this->bobNative = new User('bob');
+        $this->aliceNative->sendFriendRequest('bob');
+        $this->bobNative->acceptFriendRequest($this->aliceNative);
     }
 
     public function test_createPost(): void
