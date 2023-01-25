@@ -52,8 +52,9 @@ class Tunnel extends EventTarget {
     }
 
     /**
-     * Requests content from the client.
+     * Experimental: Requests content from the client.
      * @returns {Promise<object>} The current state of the content
+     * @deprecated Use the `initialContent` property or `allowedSources` instead.
      */
     async getContent() {
         console.log("Requesting content");

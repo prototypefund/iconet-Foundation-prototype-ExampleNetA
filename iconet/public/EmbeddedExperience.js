@@ -1,7 +1,7 @@
 import EEManifest from './EEManifest';
 
-// The sandbox does not have an origin (it's a unique origin that equals only '*')
-const IFRAME_CSP = 'default-src \'none\'; style-src \'unsafe-inline\'; script-src \'unsafe-inline\'; img-src data: blob:;';
+// CSP that is injected as meta tag into the iframe's srcdoc. The 'default-src' is set dynamically.
+const INLINE_CSP = `style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:; `;
 const INTERACTION_ENDPOINT = '/iconet/public/interaction.php';
 
 
@@ -15,6 +15,7 @@ export default class EmbeddedExperience extends HTMLElement {
   #iframe;
   #info;
   #manifest;
+  #interpreter;
   #port;
 
   #manifestUrl;
@@ -28,7 +29,6 @@ export default class EmbeddedExperience extends HTMLElement {
     // TODO maybe fetch this only on demand
     const contentDataJson = this.getAttribute('contentData');
     const contentData = JSON.parse(contentDataJson);
-    // For E2EE we would need to decrypt first.
     this.#content = contentData.content;
     this.#id = contentData.contentId;
     this.#manifestUrl = contentData.formatId;
@@ -45,6 +45,8 @@ export default class EmbeddedExperience extends HTMLElement {
     try {
       const manifestJson = await this.#fetchResource(this.#manifestUrl, true);
       this.#manifest = EEManifest.fromJson(manifestJson);
+      this.#interpreter = this.#manifest.interpreter("application/iconet+html");
+      if (!this.#interpreter) throw "No interpreters of targetType 'application/iconet+html' found.";
     } catch (e) {
       console.error('Could not load manifest', e);
       return;
@@ -57,7 +59,7 @@ export default class EmbeddedExperience extends HTMLElement {
     this.#shadow = this.attachShadow({ mode: 'open' });
 
     this.#info = document.createElement('pre');
-    this.#info.textContent = `Format: ${this.#manifestUrl}`;
+    this.#info.textContent = `manifestUrl: ${this.#manifestUrl}`;
 
     this.#iframe = document.createElement('iframe');
     this.#iframe.sandbox = 'allow-scripts';
@@ -86,11 +88,12 @@ export default class EmbeddedExperience extends HTMLElement {
   }
 
   async #createSrcdoc() {
-    const interpreter = await this.#fetchResource(this.#manifest.interpreter);
-    const document = new DOMParser().parseFromString(interpreter, 'text/html');
+    const interpreterUrl = this.#interpreter.id;
+    const interpreterSrc = await this.#fetchResource(interpreterUrl);
+    const document = new DOMParser().parseFromString(interpreterSrc, 'text/html');
 
     this.#injectCSP(document);
-    await this.#injectScripts(document, this.#manifest.scripts);
+    await this.#injectScripts(document, this.#interpreter.scripts);
     this.#injectContent(document);
 
     return document.documentElement.outerHTML;
@@ -103,20 +106,31 @@ export default class EmbeddedExperience extends HTMLElement {
     document.documentElement.querySelectorAll('meta[http-equiv="Content-Security-Policy"]')
       .forEach(tag => tag.parentNode.removeChild(tag));
 
-    let csp = IFRAME_CSP;
-    if (this.#manifest.allowedSources) {
-      const allowedSources = this.#manifest.allowedSources.join(' ');
-      csp = csp.replace('default-src \'none\';', `default-src ${allowedSources};`);
+    let defaultSrcCsp;
+    if (this.#interpreter.allowedSources.length) {
+      const allowedSources = this.#interpreter.allowedSources.join(' ');
+      defaultSrcCsp = `default-src ${allowedSources};`;
+    } else {
+      defaultSrcCsp = `default-src 'none';`
     }
+    const csp = INLINE_CSP + defaultSrcCsp;
+
 
     const meta = document.createElement('meta');
     meta.setAttribute('http-equiv', 'Content-Security-Policy');
     meta.setAttribute('content', csp);
 
-    document.head.prepend(meta); // CSP should be first element
+    document.head.prepend(meta); // CSP must be first element
   }
 
-  // This function is only for debugging convenience.
+  /**
+   * This function is only for debugging convenience and works only for the srcdoc workaround.
+   * Instead of embedding frequently used scripts into every interpreter,
+   * they can be injected here into the iframes srcdoc.
+   * @deprecated
+   * @param document that will be the srcdoc of the iframe
+   * @param scriptUrls array of script source URLs
+   */
   async #injectScripts(document, scriptUrls) {
     for (const scriptUrl of scriptUrls) {
       const scriptNode = document.createElement('script');
@@ -125,8 +139,16 @@ export default class EmbeddedExperience extends HTMLElement {
     }
   }
 
+
+  /**
+   * This function is only for debugging convenience and works only for the srcdoc workaround.
+   * Instead of waiting for the MessagePorts to be exchanged,
+   * the content is already set in one of iframes html meta tags.
+   * @deprecated
+   * @param document that will be the srcdoc of the iframe
+   */
   #injectContent(document) {
-    if (this.#manifest.hasPermission('content')) {
+    if (this.#interpreter.hasPermission('content')) {
       const meta = document.createElement('meta');
       meta.id = 'content';
       meta.content = this.#content;
@@ -138,7 +160,7 @@ export default class EmbeddedExperience extends HTMLElement {
 
   // The sandbox is waiting for a request with that id.
   async #sendContent(id) {
-    if (!this.#manifest.hasPermission('ContentRequest')) {
+    if (!this.#interpreter.hasPermission('allowContentRequest')) {
       console.error('Proxy got not permitted content request');
       return;
     }
@@ -149,8 +171,8 @@ export default class EmbeddedExperience extends HTMLElement {
   }
 
 
-  async #sendInteraction(id, payload) {
-    if (!this.#manifest.hasPermission('InteractionMessage')) {
+  async #sendInteractionToIframe(id, payload) {
+    if (!this.#interpreter.hasPermission('allowInteractions')) {
       console.error('Proxy got not permitted interaction request');
       return;
     }
@@ -164,31 +186,38 @@ export default class EmbeddedExperience extends HTMLElement {
   }
 
 
+  /**
+   * Make a request to INTERACTION_ENDPOINT and forward the result to the iframe.
+   * This is useful for posting interactions or pulling updated content.
+   *
+   * @param id The id of the iframes original request. Will be used in the response.
+   * @param request The request payload, that is posted to the INTERACTION_ENDPOINT
+   * @return {Promise<void>}
+   */
   async #sendResponseFromHomeServer(id, request) {
     console.log('Client -> Server', request);
     let response = await fetch(INTERACTION_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify(request),
     });
-    let status = response.status;
+    const status = response.status;
 
     if (response.status !== 200) {
-      this.#sendMessage({ id, status });
+      this.#sendMessageToIframe({ id, status });
       return;
     }
 
-    let content, json;
+    let content;
     try {
-      json = (await response.text());
-      content = JSON.parse(json);
+      content = await response.json();
     } catch (e) {
-      console.error(e, json);
+      console.error("Received invalid json from server", e);
     }
 
-    this.#sendMessage({ id, content });
+    this.#sendMessageToIframe({ id, content });
   }
 
-  #sendMessage(message) {
+  #sendMessageToIframe(message) {
     this.#port.postMessage(message);
     console.log(`EE sent message to frame ${this.#manifestUrl}, message: `, message);
   }
@@ -201,6 +230,7 @@ export default class EmbeddedExperience extends HTMLElement {
       const baseURL = this.#manifestUrl.startsWith('/') ? window.location : this.#manifestUrl;
       url = new URL(url, baseURL).toString();
     }
+    // TODO remove this after using the correct content packet
     if (!['.js', '.json', '.html'].some(ext => url.endsWith(ext))) {
       url += '/manifest.json';
     }
@@ -216,12 +246,12 @@ export default class EmbeddedExperience extends HTMLElement {
 
   setPort(port) {
     this.#port = port;
-    port.onmessage = event => this.#handleMessage(event.data);
+    port.onmessage = event => this.#handleMessageFromIframe(event.data);
     console.log('EE is now listening via port');
-    this.#sendMessage(this.#content);
+    this.#sendMessageToIframe(this.#content);
   }
 
-  #handleMessage(message) {
+  #handleMessageFromIframe(message) {
     console.log('EE received message', message);
     // TODO validate packet structure
     switch (message['@type']) {
@@ -229,7 +259,7 @@ export default class EmbeddedExperience extends HTMLElement {
         this.#sendContent(message.id);
         break;
       case 'InteractionMessage':
-        this.#sendInteraction(message.id, message.payload);
+        this.#sendInteractionToIframe(message.id, message.payload);
         break;
       default:
         console.warn('Proxy got unknown message', message);
