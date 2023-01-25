@@ -29,7 +29,25 @@ class InboxController
      */
     public function inboxContents(): array
     {
-        return $this->database->getNotifications($this->user->username);
+        $notifications = $this->database->getNotifications($this->user->username);
+        return $this->prepareContentDataForClient($notifications);
+    }
+
+    public function prepareContentDataForClient(array $notifications): array
+    {
+        $contentDatastack = array();
+        $i = 0;
+        foreach($notifications as $n) {
+            $contentData = (object)[];
+            $contentData->content = $n['payload'];
+            $contentData->formatId = $n['formatId'];
+            $contentData->actor = $n['sender'];
+            $contentData->contentId = $n['content_id']; //todo inconsistent db naming
+            $contentDatastack[$i] = $contentData;
+            $i++;
+        }
+
+        return $contentDatastack;
     }
 
 }
