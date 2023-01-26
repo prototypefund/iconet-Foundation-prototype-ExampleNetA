@@ -49,6 +49,6 @@ export class EEManifest {
 
     // Check if ths EE is permitted to make this kind of request/action.
     hasPermission(action) {
-        return this.permissions.hasOwnProperty(action)
+        return this.permissions[action];
     }
 }
