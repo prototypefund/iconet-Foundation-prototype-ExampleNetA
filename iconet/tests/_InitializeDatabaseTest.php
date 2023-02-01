@@ -69,7 +69,7 @@ class _InitializeDatabaseTest extends TestCase
     public function test_createPost(): void
     {
         $this->test_initialize();
-        (new Processor($this->bob))->createPost("Test Post Content", "/iconet/formats/allowed-source");
+        (new Processor($this->bob))->createPost("Test Post Content", "/iconet/formats/markdown/manifest.json");
     }
 
     public function test_createAllPostFormats(): void
@@ -79,71 +79,59 @@ class _InitializeDatabaseTest extends TestCase
         array_map(fn($post) => (new Processor($this->bob))->createPost($post['content'], $post['formatId']), [
                 [
                     'content' => 'This content will not be seen by the template',
-                    'formatId' => '/iconet/formats/empty'
+                    'formatId' => '/iconet/formats/empty/manifest.json'
                 ],
                 [
                     'content' => 'This content will not be seen by the template',
-                    'formatId' => '/iconet/formats/no-template'
+                    'formatId' => '/iconet/formats/no-template/manifest.json'
                 ],
                 [
                     'content' => 'Content will not be seen by the template',
-                    'formatId' => '/iconet/formats/empty-skeleton'
+                    'formatId' => '/iconet/formats/empty-skeleton/manifest.json'
                 ],
                 [
                     'content' => 'This content will not be seen by the template',
-                    'formatId' => '/iconet/formats/empty-styled'
+                    'formatId' => '/iconet/formats/empty-styled/manifest.json'
                 ],
                 [
                     'content' => 'This format does not need content',
-                    'formatId' => '/iconet/formats/static-no-js'
+                    'formatId' => '/iconet/formats/static-no-js/manifest.json'
                 ],
                 [
                     'content' => 'This content is injected into the template',
-                    'formatId' => '/iconet/formats/static'
+                    'formatId' => '/iconet/formats/static/manifest.json'
                 ],
                 [
                     'content' => 'Different content for the same template',
-                    'formatId' => '/iconet/formats/static'
-                ],
-                [
-                    'content' => 'Send an interaction',
-                    'formatId' => '/iconet/formats/interaction'
-                ],
-                [
-                    'content' => 'Send an interaction',
-                    'formatId' => '/iconet/formats/interaction-button'
+                    'formatId' => '/iconet/formats/static/manifest.json'
                 ],
                 [
                     'content' => 'I am evil and try to break the parser',
-                    'formatId' => '/iconet/formats/evil-html'
+                    'formatId' => '/iconet/formats/evil-html/manifest.json'
                 ],
                 [
                     'content' => 'I am evil and try to redirect',
-                    'formatId' => '/iconet/formats/evil-redirect'
+                    'formatId' => '/iconet/formats/evil-redirect/manifest.json'
                 ],
                 [
                     'content' => 'I am evil and try to load images',
-                    'formatId' => '/iconet/formats/evil-image'
+                    'formatId' => '/iconet/formats/evil-image/manifest.json'
                 ],
                 [
                     'content' => 'I am evil and try to delete the csp',
-                    'formatId' => '/iconet/formats/evil-remove-csp'
-                ],
-                [
-                    'content' => 'I am requesting content w/o permit',
-                    'formatId' => '/iconet/formats/evil-request-content'
+                    'formatId' => '/iconet/formats/evil-remove-csp/manifest.json'
                 ],
                 [
                     'content' => 'This content is handed to the template',
-                    'formatId' => '/iconet/formats/evil-inbox'
+                    'formatId' => '/iconet/formats/evil-inbox/manifest.json'
                 ],
                 [
                     'content' => 'This format can make requests to an external resource',
-                    'formatId' => '/iconet/formats/allowed-source'
+                    'formatId' => '/iconet/formats/allowed-source/manifest.json'
                 ],
                 [
                     'content' => "\n## Title\n**bold** ~~deleted~~\n\n> Quote\n\n```js\nimport { marked } from 'marked';\nimport { parentPort } from 'worker_threads';\n\nparentPort.on('message', (markdownString) =\u003e {\n  parentPort.postMessage(marked.parse(markdownString));\n});\n```\n\n- Item 1\n   - Item 1.1\n   - Item 1.2\n- Item 2\n- Item 3\n\n| Item         | Price     | # In stock |\n|--------------|-----------|------------|\n| Juicy Apples | 1.99      | 7          |\n| Bananas      | 1.89      | 5234       |\n",
-                    'formatId' => '/iconet/formats/markdown'
+                    'formatId' => '/iconet/formats/markdown/manifest.json'
                 ]
             ]
         );
