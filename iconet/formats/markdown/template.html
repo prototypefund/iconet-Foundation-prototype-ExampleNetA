@@ -1,18 +1,17 @@
 <title>Markdown</title>
 <div id="markdown"></div>
 <script>
-    window.addEventListener('load', function () {
-
-        const markdown = document.getElementById("content").content;
-        marked.setOptions({
-            highlight: function (code) {
-                return hljs.highlightAuto(code).value;
-            }
-        });
-        const dirtyHtml = marked.parse(markdown);
-        const cleanHtml = DOMPurify.sanitize(dirtyHtml);
-        document.getElementById('markdown').innerHTML = cleanHtml
-    })
+  window.tunnel.addEventListener('initialized', function () {
+    const markdown = window.tunnel.initialContent;
+    marked.setOptions({
+      highlight: function (code) {
+        return hljs.highlightAuto(code).value;
+      }
+    });
+    const dirtyHtml = marked.parse(markdown);
+    const cleanHtml = DOMPurify.sanitize(dirtyHtml);
+    document.getElementById('markdown').innerHTML = cleanHtml
+  })
 </script>
 
 <style>

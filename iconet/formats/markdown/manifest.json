@@ -5,7 +5,22 @@
   "interpreters": [
     {
       "@id": "/iconet/formats/markdown/template.html",
-      "sourceType": "application/text/markdown",
+      "sourceType": "application/neta+json",
+      "targetType": "application/iconet+html",
+      "sha-512": "<sha-512 hash>",
+      "scripts": [
+        "/iconet/formats/marked.min.js",
+        "/iconet/formats/purify.min.js",
+        "/iconet/formats/highlight.min.js",
+        "/iconet/formats/tunnel.js"
+      ],
+      "permissions": {
+        "content": true
+      }
+    },
+    {
+      "@id": "/iconet/formats/markdown/template.html",
+      "sourceType": "text/markdown",
       "targetType": "application/iconet+html",
       "sha-512": "<sha-512 hash>",
       "scripts": [

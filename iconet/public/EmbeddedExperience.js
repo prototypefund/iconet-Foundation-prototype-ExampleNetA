@@ -2,7 +2,6 @@ import EEManifest from './EEManifest';
 
 // CSP that is injected as meta tag into the iframe's srcdoc. The 'default-src' is set dynamically.
 const INLINE_CSP = `style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:; `;
-const INTERACTION_ENDPOINT = '/iconet/public/interaction.php';
 const DEBUG = true;
 
 /**
@@ -19,9 +18,6 @@ export default class EmbeddedExperience extends HTMLElement {
   #interpreterManifests;
   #port;
 
-  #id;
-  #secret;
-  #actor;
   #content = new Map(); // packetType => content
 
 
@@ -34,10 +30,6 @@ export default class EmbeddedExperience extends HTMLElement {
 
       contentData.content.forEach(c => this.#content.set(c.packetType, c.payload));
       this.#interpreterManifests = contentData.interpreterManifests;
-
-      // this.#id = contentData.contentId;
-      // this.#secret = contentData.secret;
-      // this.#actor = contentData.actor;
     } catch (e) {
       console.error(e);
       this.#info.textContent = `Error while processing contentData: ${e.message}`;
@@ -181,65 +173,6 @@ export default class EmbeddedExperience extends HTMLElement {
   }
 
 
-  // The sandbox is waiting for a request with that id.
-  async #sendContent(id) {
-    if (!this.#iconetInterpreter.hasPermission('allowContentRequest')) {
-      console.error('Proxy got not permitted content request');
-      return;
-    }
-    const contentRequest = {
-      type: 'ContentRequest', contentId: this.#id, actor: this.#actor, secret: this.#secret,
-    };
-    await this.#sendResponseFromHomeServer(id, contentRequest);
-  }
-
-
-  async #sendInteractionToIframe(id, payload) {
-    if (!this.#iconetInterpreter.hasPermission('allowInteractions')) {
-      console.error('Proxy got not permitted interaction request');
-      return;
-    }
-    const interaction = {
-      contentId: this.#id,
-      payload,
-      secret: this.#secret,
-      to: this.#actor,
-    };
-    await this.#sendResponseFromHomeServer(id, interaction);
-  }
-
-
-  /**
-   * Make a request to INTERACTION_ENDPOINT and forward the result to the iframe.
-   * This is useful for posting interactions or pulling updated content.
-   *
-   * @param id The id of the iframes original request. Will be used in the response.
-   * @param request The request payload, that is posted to the INTERACTION_ENDPOINT
-   * @return {Promise<void>}
-   */
-  async #sendResponseFromHomeServer(id, request) {
-    console.log('Client -> Server', request);
-    let response = await fetch(INTERACTION_ENDPOINT, {
-      method: 'POST',
-      body: JSON.stringify(request),
-    });
-    const status = response.status;
-
-    if (response.status !== 200) {
-      this.#sendMessageToIframe({ id, status });
-      return;
-    }
-
-    let content;
-    try {
-      content = await response.json();
-    } catch (e) {
-      console.error('Received invalid json from server', e);
-    }
-
-    this.#sendMessageToIframe({ id, content });
-  }
-
   #sendMessageToIframe(message) {
     this.#port.postMessage(message);
     console.log(`EE sent message to frame ${this.#iconetInterpreter.id}, message: `, message);
@@ -257,8 +190,8 @@ export default class EmbeddedExperience extends HTMLElement {
     // TODO Remove this and only use absolute paths.
     if (url.startsWith('/')) {
       const baseURL = (this.#iconetInterpreter && !this.#iconetInterpreter.manifest.id.startsWith('/'))
-          ? this.#iconetInterpreter.manifest.id
-          : window.location;
+        ? this.#iconetInterpreter.manifest.id
+        : window.location;
       url = new URL(url, baseURL).toString();
     }
 
@@ -296,12 +229,6 @@ export default class EmbeddedExperience extends HTMLElement {
     console.log('EE received message', message);
     // TODO validate packet structure
     switch (message['@type']) {
-      case 'ContentRequest':
-        this.#sendContent(message.id);
-        break;
-      case 'InteractionMessage':
-        this.#sendInteractionToIframe(message.id, message.payload);
-        break;
       default:
         console.warn('Proxy got unknown message', message);
         break;
