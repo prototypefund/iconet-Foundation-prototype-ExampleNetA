@@ -1,4 +1,4 @@
-import {EEManifest} from "./EEManifest.js";
+import { EEManifest } from "./EEManifest.js";
 
 // The sandbox does not have an origin (it's a unique origin that equals only '*')
 const ALLOWED_POST_MSG_ORIGIN = "*";
@@ -50,7 +50,7 @@ export class EmbeddedExperience extends HTMLElement {
 
     #createShadowDom() {
         // Create a shadow root
-        this.#shadow = this.attachShadow({mode: 'open'})
+        this.#shadow = this.attachShadow({ mode: 'open' })
 
         this.#info = document.createElement('pre')
         this.#info.textContent = `Format: ${this.#format}`
@@ -183,7 +183,7 @@ export class EmbeddedExperience extends HTMLElement {
         let status = response.status;
 
         if (response.status !== 200) {
-            this.#sendMessage({id, status})
+            this.#sendMessage({ id, status })
             return
         }
 
@@ -195,7 +195,7 @@ export class EmbeddedExperience extends HTMLElement {
             console.error(e, json)
         }
 
-        this.#sendMessage({id, content})
+        this.#sendMessage({ id, content })
     }
 
 

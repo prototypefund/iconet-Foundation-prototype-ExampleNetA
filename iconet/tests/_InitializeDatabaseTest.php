@@ -68,7 +68,7 @@ class _InitializeDatabaseTest extends TestCase
         $bob = \Iconet\User::fromUsername('bob');
 
         $bob->addContact($alice);
-        (new IconetOutbox($bob))->createPost(array('content' => "Content by UnitTest", '$username' => "alice"),
+        (new IconetOutbox($bob))->createPost(array('content' => '{"content": "You may comment this post."}', '$username' => "alice"),
             "/iconet/formats/allowed-source");
     }
 
@@ -158,7 +158,7 @@ class _InitializeDatabaseTest extends TestCase
                     'formatId' => '/iconet/formats/evil-inbox'
                 ],
                 [
-                    'content' => 'You may comment this post',
+                    'content' => '{"content": "You may comment this post.", "username": "alice"}',
                     'formatId' => '/iconet/formats/post-like-comment'
                 ]
             ]
