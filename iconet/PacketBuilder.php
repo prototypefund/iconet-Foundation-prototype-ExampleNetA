@@ -56,7 +56,7 @@ class PacketBuilder
         $interpreterManifests['targetTypes'] = array($targetType);
         $interpreterManifests['sha-512'] = $manifestSha512Hash;
 
-        $packet['interpreterManifests'] = $interpreterManifests;
+        $packet['interpreterManifests'] = array($interpreterManifests);
 
         //fill in ContentData
         $content1["packetType"] = $inputType;

@@ -34,7 +34,7 @@ class IconetInbox
         }
         $manifestUri = json_decode(
             $payload
-        )->interpreterManifests->manifestUri; //Todo Expect multiple manifests and pick the right one;
+        )->interpreterManifests[0]->manifestUri; //Todo Expect multiple manifests and pick the right one;
 
         Database::singleton()->addNotification($id, $this->user->username, $actor, $secret, $payload, $manifestUri);
         //todo check for errors
