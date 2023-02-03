@@ -20,34 +20,33 @@ class IconetOutbox
         $this->crypto = new Crypto();
         $this->user = $user;
     }
-
-
-
     // newPost (Id, username)
     /*//create secret, fetch target addresses, create tokens & encrypt
      * add post and data to database
      * create and send packet
      */
-
     // $content = {username,id}
-    public function createPost(array $payload, string $formatId): void
+    public function createPost(array $content, string $manifestUri): void
     {
-        //encrypt notification & content
+        //generate secret
         $secret = $this->crypto->genSymKey();
-        $encryptedPayload = $this->crypto->encSym(json_encode($payload), $secret);
-        $encryptedFormatId = $this->crypto->encSym($formatId, $secret);
-
-        //save post in db
-        $id = $this->database->addPost(
+        //save postdata for later
+        $id = Database::singleton()->addPost(
             $this->user->username,
             $secret,
-            $encryptedFormatId,
-            $encryptedPayload
+            $manifestUri,
+            json_encode($content)
         );
+        //encrypt notification & content
+        $preparedPayload = PacketBuilder::preparePayload($manifestUri, $content);
+        $packet['interpreterManifests'] = $preparedPayload['interpreterManifests'];
+        $packet['content'] = $preparedPayload['content'];
+        $encryptedPacket = $this->crypto->encSym(json_encode($packet), $secret);
+        //save post in db
         //generate and send notifications
         $contacts = Database::singleton()->getContacts($this->user->username);
         if(!$contacts) {
-            echo "<br>You need contacts generate something for them! <br>";
+            echo "<br>You have no iconet contacts<br>";
         }
 
         foreach($contacts as $contact) {
@@ -57,11 +56,11 @@ class IconetOutbox
                 $this->user->address,
                 $contact->address,
                 $encryptedSecret,
-                $encryptedPayload,
-                $encryptedFormatId
+                $encryptedPacket
             );
             // TODO Check response
             $response = $this->transmitter->send($contact->address, $notifPacket);
         }
     }
+
 }

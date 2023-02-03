@@ -122,7 +122,6 @@ class Database
         $result = $stmt->fetchAll();
         $contacts = [];
         foreach($result as $row) {
-            var_dump($row);
             $contacts[] = new Contact(
                 new Address($row['friend_address']),
                 $row['friend_pubkey']
@@ -169,7 +168,7 @@ class Database
     {
         $stmt = $this->db->prepare("SELECT * FROM notifications WHERE username=:username");
         $stmt->execute(compact('username',));
-        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+        return $stmt->fetchAll();
     }
 
 

@@ -33,10 +33,10 @@
 
 <?php
 
-use Iconet\InboxController;
+use Iconet\IconetInbox;
 
 global $user;
-$inboxController = new InboxController($user);
+$inboxController = new IconetInbox($user);
 ?>
 
 <h3>Your Open Inbox</h3>

@@ -12,11 +12,13 @@ class S2SReceiver
         if(!$packet) {
             return PacketBuilder::error("Invalid json");
         }
-        var_dump($packet);
         $type = PacketHandler::checkPacket($packet);
+        if($type == "Packet") {
+            $response = self::processNotification($packet);
+        } else {
+            $response = PacketBuilder::error("Error - Receiving Server currently only handles type 'Packet'");
+        }
 
-        $response = self::processNotification($packet);
-       
         return $response;
     }
 

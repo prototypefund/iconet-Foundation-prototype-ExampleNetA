@@ -14,23 +14,25 @@ class PacketHandler
     public static function checkPacket(mixed $packet): bool
     {
         // Check if non-optional variables are set.
-        var_dump($packet);
         if(!isset($packet->{'@context'})) {
             echo "Error - no context set in Json-LD";
             return false;
         }
+        if(!isset($packet->{'@type'})) {
+            echo "Error - no type set in Json-LD";
+            return false;
+        }
         if(
-            isset($packet->{'id'}) &&
+            isset($packet->{'@id'}) &&
             isset($packet->{'actor'}) &&
             isset($packet->{'to'}) &&
             isset($packet->{'encryptedSecret'}) &&
-            isset($packet->{'encryptedPayload'}) &&
-            isset($packet->{'encryptedFormatId'})
+            isset($packet->{'encryptedPayload'})
         ) {
             // Check if non-optional variables are proper (can't check notification content, potentially encrypted)
             if(Address::validate($packet->actor) && Address::validate($packet->to)) {
                 // All conditions for type send notification are met.
-                return true;
+                return $packet->{'@type'};
             } else {
                 echo "Error - Faulty actor or recipient address <br>";
                 return false;
