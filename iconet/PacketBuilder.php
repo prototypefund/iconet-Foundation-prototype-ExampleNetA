@@ -47,7 +47,7 @@ class PacketBuilder
     public static function preparePayload(string $manifestUri, array $payload): array
     {
         $plainType = "text/plain";
-        $inputType = "application/netA+json";
+        $inputType = "application/neta+json";
         $targetType = "application/iconet+html";
         $manifestSha512Hash = "<sha-512 hash of the manifest document linked> (TODO)";
         //fill in ManifestData

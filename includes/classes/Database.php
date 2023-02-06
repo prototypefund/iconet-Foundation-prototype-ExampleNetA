@@ -195,9 +195,15 @@ class Database
         $stmt = $this->db->prepare(
             "DELETE FROM users WHERE username=:username"
         );
-        $stmt->execute(compact('username', ));
+        $stmt->execute(compact('username',));
     }
 
-    
+    public function getPost(string $id, string $username)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE username=:username and id=:id");
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
 
 }

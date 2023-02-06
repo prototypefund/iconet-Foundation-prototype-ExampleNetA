@@ -1,0 +1,25 @@
+{
+  "@context": "https://iconet-foundation.org/ns#",
+  "@type": "InterpreterManifest",
+  "@id": "/iconet/formats/post-like-comment-neta/manifest.json",
+  "interpreters": [
+    {
+      "@id": "/iconet/formats/post-like-comment-neta/template.html",
+      "sourceType": "application/neta+json",
+      "targetType": "application/iconet+html",
+      "sha-512": "<sha-512 hash>",
+      "scripts": [
+        "/iconet/formats/tunnel.js"
+      ],
+      "permissions": {
+        "allowInteractions": true,
+        "allowContentRequest": true,
+        "allowedSources": [
+          "http://localhost/API/outsideApi.php",
+          "http://localhost/external_comment_frame.php"
+        ],
+        "content": true
+      }
+    }
+  ]
+}

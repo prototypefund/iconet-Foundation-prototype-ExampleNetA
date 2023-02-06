@@ -4,11 +4,9 @@
 class Post
 {
     private User $user_obj;
-    private $con;
 
-    public function __construct($con, $user)
+    public function __construct($user)
     {
-        $this->con = $con;
         $this->user_obj = new User($user);
     }
 
@@ -22,18 +20,6 @@ class Post
     public function submitPost($body, string|null $user_to = null, string|null $imageName = null): ?int
     {
         $body = strip_tags($body); //removes html tags
-        $body = mysqli_real_escape_string($this->con, $body);
-        $body = str_replace('\r\n', "\n", $body);
-        $body = nl2br($body);
-
-        $pattern = "#(https?://)?((www|m)\.)?youtu(be\.com/watch\?v=|\.be/)(?'i'\w+)#";
-        $iframe = '<br><iframe src="https://www.youtube.com/embed/$5"\'></iframe><br>';
-
-        if(!preg_match("#\w#", $body)) {
-            return null;
-        }
-
-        $body = preg_replace($pattern, $iframe, $body);
 
         $date_added = date("Y-m-d H:i:s");
         $added_by = $this->user_obj->username;
