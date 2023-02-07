@@ -192,6 +192,7 @@ export default class EmbeddedExperience extends HTMLElement {
       const baseURL = (this.#iconetInterpreter && !this.#iconetInterpreter.manifest.id.startsWith('/'))
         ? this.#iconetInterpreter.manifest.id
         : window.location;
+      console.warn('Rebasing relative url', url, 'onto baseUrl', baseURL);
       url = new URL(url, baseURL).toString();
     }
 
@@ -203,7 +204,13 @@ export default class EmbeddedExperience extends HTMLElement {
     const text = await response.text();
     if (!(await this.#verifySha512(sha512, text)) && !DEBUG) throw 'Checksum does not match!';
 
-    return asJson ? JSON.parse(text) : text;
+    // TODO To support relative paths, we need to overwrite the @id field
+    let json;
+    if (asJson) {
+      json = JSON.parse(text);
+      json['@id'] = url;
+    }
+    return asJson ? json : text;
   }
 
   // From https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#converting_a_digest_to_a_hex_string
