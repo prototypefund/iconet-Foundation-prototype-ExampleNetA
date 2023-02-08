@@ -120,8 +120,13 @@
 
     (async () => {
         var response = await fetch('http://localhost/API/outsideApi.php',
-        )
-        console.log("Konsole: ", await response.json())
+            {
+                method: "post", body: JSON.stringify({
+                    id: "1",
+                    user: "bob"
+                })
+            })
+        console.log(await response.text())
     })()
 
 
