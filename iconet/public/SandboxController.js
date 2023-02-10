@@ -8,6 +8,9 @@ export default class SandboxController {
 
   #sandboxes = new Map(); // Maps postMessage sources onto EmbeddedExperiences that are waiting for a port
 
+  /**
+   * Use the SanboxController::initialize() method instead.
+   */
   constructor() {
     window.addEventListener('message', async (event) => {
       console.log(`SandboxController got message from ${event.origin}: ${JSON.stringify(event.data)}`, ' of ', event.source, event.lastEventId);
@@ -30,18 +33,12 @@ export default class SandboxController {
     });
   }
 
-  static async initialize() {
+  static initialize() {
     if (!window.sandboxController) {
       window.sandboxController = new SandboxController();
-      await window.sandboxController.#initialize();
+      // Define the embedded-experience html component
+      customElements.define('embedded-experience', EmbeddedExperience);
     }
-  }
-
-  async #initialize() {
-    // Define the embedded-experience html component
-    customElements.define('embedded-experience', EmbeddedExperience);
-    console.log('Proxy is initializing sandboxes');
-    await Promise.all(Array.from(this.#sandboxes.values(), embEx => embEx.initialize()));
   }
 
   register(source, embEx) {

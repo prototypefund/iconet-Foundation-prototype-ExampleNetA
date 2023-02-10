@@ -20,10 +20,11 @@ export default class EmbeddedExperience extends HTMLElement {
 
   #content = new Map(); // packetType => content
 
-
-  constructor() {
-    super();
+  async connectedCallback() {
     this.#createShadowDom();
+    // Make the SandboxController listen for the initialization message of this iframe
+    window.sandboxController.register(this.#iframe.contentWindow, this);
+
     try {
       const contentDataJson = this.getAttribute('contentData');
       const contentData = JSON.parse(contentDataJson);
@@ -36,11 +37,7 @@ export default class EmbeddedExperience extends HTMLElement {
       return;
     }
 
-    // Make the SandboxController listen for the initialization message of this iframe
-    window.sandboxController.register(this.#iframe.contentWindow, this);
-  }
 
-  async initialize() {
     const compatibleInterpreters = await this.#findInterpreters('application/iconet+html');
     // There might be multiple interpreters that provide an iconet iframe.
     this.#iconetInterpreter = compatibleInterpreters[0];
@@ -54,7 +51,7 @@ export default class EmbeddedExperience extends HTMLElement {
   }
 
   /**
-   * Returns an array of interpreter, that can convert one of the packetTypes in the content to the desired targetType.
+   * Returns an array of interpreters, that can convert one of the packetTypes in the content to the desired targetType.
    * @param targetType mime type as string
    */
   async #findInterpreters(targetType) {
