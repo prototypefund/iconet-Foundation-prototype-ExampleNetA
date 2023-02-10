@@ -24,17 +24,24 @@ export default class EEManifest {
 
   /**
    * @param targetType MIME type
-   * @return An interpreter that supports the target format or undefined.
+   * @return An array of interpreters that supports the target format.
    */
-  interpreter(targetType) {
-    return this.#interpreters.get(targetType);
+  interpreterDescription(targetType) {
+    return this.#interpreters.get(targetType) ?? [];
+  }
+
+  get id() {
+    return this.#manifest['@id'];
   }
 
   constructor(manifest) {
     this.#manifest = manifest;
-    manifest.interpreters.forEach(inter =>
-      this.#interpreters.set(inter.targetType, new Interpreter(inter))
-    )
+    manifest.interpreters.forEach(inter => {
+          const list = this.interpreterDescription(inter.targetType);
+          list.push(new InterpreterDescription(inter, this));
+          this.#interpreters.set(inter.targetType, list);
+        },
+    );
   }
 
   static fromJson(manifest) {
@@ -52,13 +59,18 @@ export default class EEManifest {
       this.REQUIRED_INTERPRETER_FIELDS.every(requiredKey => inter.hasOwnProperty(requiredKey)));
     return isValid;
   }
+
 }
 
 
-export class Interpreter {
+export class InterpreterDescription {
 
+  #manifest
   #interpreter
 
+  /**
+   * @return string Resolvable URI to the interpreter
+   */
   get id() {
     return this.#interpreter['@id'];
   }
@@ -72,15 +84,33 @@ export class Interpreter {
   }
 
   get allowedSources() {
-    return this.#interpreter.permissions.allowedSources ?? [];
+    return this.#interpreter.permissions?.allowedSources ?? [];
   }
 
-  constructor(interpreter) {
+  get manifest() {
+    return this.#manifest;
+  }
+
+  get sourceType() {
+    return this.#interpreter.sourceType;
+  }
+
+  get targetType() {
+    return this.#interpreter.targetType;
+  }
+
+  get sha512() {
+    return this.#interpreter['sha-512'];
+  }
+
+  constructor(interpreter, manifest) {
     this.#interpreter = interpreter;
+    this.#manifest = manifest;
   }
 
   // Checks if this interpreter is permitted to make this kind of request/action.
   hasPermission(action) {
     return this.permissions[action];
   }
+
 }

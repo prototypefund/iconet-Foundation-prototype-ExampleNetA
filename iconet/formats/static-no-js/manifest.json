@@ -7,7 +7,7 @@
       "@id": "/iconet/formats/static-no-js/template.html",
       "sourceType": "application/neta+json",
       "targetType": "application/iconet+html",
-      "sha-512": "<sha-512 hash>",
+      "sha-512": "8b2993b3b3d745e216286372f41aed9f02746f891b1ee93bbb84d57588b1b6673c09362a70a2f6efc06db0193fc14736cf275e2c863006c5636f465ec147b776",
       "permissions": {}
     }
   ]
