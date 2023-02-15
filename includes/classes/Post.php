@@ -4,10 +4,12 @@
 class Post
 {
     private User $user_obj;
+    private $con;
 
-    public function __construct($user)
+    public function __construct($con, $user)
     {
         $this->user_obj = new User($user);
+        $this->con = $con;
     }
 
     /**

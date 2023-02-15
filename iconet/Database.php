@@ -12,6 +12,7 @@ class Database
 
     private function __construct()
     {
+        
         $db_name = $_ENV['DB_ICONET_DATABASE'];
         $db_user = $_ENV['DB_ICONET_USER'];
         $db_pass = $_ENV['DB_ICONET_PASSWORD'];

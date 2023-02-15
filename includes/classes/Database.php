@@ -198,12 +198,26 @@ class Database
         $stmt->execute(compact('username',));
     }
 
-    public function getPost(string $id, string $username)
+    public function getComments(string $post_id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE username=:username and id=:id");
-        $stmt->execute();
-        return $stmt->fetch();
+        $stmt = $this->db->prepare("SELECT * FROM comments WHERE post_id=:post_id");
+        $stmt->execute(compact('post_id'));
+        return $stmt->fetchAll();
     }
+
+    public function getPost(string $id, string $added_by, bool $return_comments=False)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM posts WHERE added_by=:added_by and id=:id");
+        $stmt->execute(compact('added_by', 'id'));
+
+        if($return_comments) {
+            return array('post' => $stmt->fetch(), 'comments' => self::getComments($id));
+        } else {
+            return $stmt->fetch();
+        }
+    }
+
+    
 
 
 }

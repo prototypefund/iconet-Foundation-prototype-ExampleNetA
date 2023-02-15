@@ -19,6 +19,7 @@
     /*#like[data-voted="1"]::after {*/
     /*    content: attr(data-voted-text);*/
     /*}*/
+
     textarea {
         height: 1em;
         width: 20em;
@@ -50,10 +51,11 @@
         margin-bottom: 1em;
     }
 </style>
+
 <body>
 <article>
     <p>Test NetA</p>
-    <span id="post">Added by script</script></span>
+    <span id="post">Added by script</span>
     <span id="postAuthor" class="author">5</span>
 </article>
 <div class="interactions">
@@ -72,26 +74,10 @@
     // const likeBtn = document.getElementById("like")
     const commentBox = document.getElementById("commentBox")
 
-
-    async function update(contentPacket) {
-        console.log(contentPacket)
-        post.innerHTML = contentPacket.content
-        postAuthor.innerHTML = contentPacket.username
-        post.innerHTML = 23;
-        // likeBtn.dataset.voted = hasLiked(contentPacket.interactions)
-
-        /*
-        const commentData = contentPacket.interactions
-            ?.map(inter => {
-                return {
-                    actor: inter.actor,
-                    comment: JSON.parse(inter.payload).comment
-                }
-            })
-            .filter(inter => inter.comment)
-        updateComments(commentData)
-
-         */
+    async function update(packet) {
+        post.innerHTML = packet.post.body
+        postAuthor.innerHTML = packet.post.added_by
+        updateComments(packet.comments)
     }
 
     // function hasLiked(content) {
@@ -99,9 +85,8 @@
     // }
 
     function updateComments(commentData) {
-        console.log(commentData, 1)
         comments.innerHTML = commentData?.map(comment =>
-            `<div>${comment.comment}<span class="author">${comment.actor}</span></div>`
+            `<div>${comment.post_body}<span class="author">${comment.posted_by}</span></div>`
         ).join("")
     }
 
@@ -118,19 +103,17 @@
         commentBox.style.height = Math.min(100, commentBox.scrollHeight - 7) + "px";
     }
 
-    (async () => {
-        var response = await fetch('http://localhost/API/outsideApi.php',
-            {
-                method: "post", body: JSON.stringify({
-                    id: "1",
-                    user: "bob"
-                })
-            })
-        console.log(await response.text())
-    })()
-
-
-
+    (async () =>
+            update(await fetch('http://localhost:8001/API/outsideApi.php',
+                {
+                    method: "post",
+                    body: JSON.stringify({
+                        id: "1",
+                        user: "bob"
+                    })
+                }
+            ).then((response) => response.json()))
+    )()
 
 </script>
 </body>

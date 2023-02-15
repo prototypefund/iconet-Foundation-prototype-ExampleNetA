@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -32,11 +33,8 @@
 <body>
 
 <?php
-
-use Iconet\IconetInbox;
-
 global $user;
-$inboxController = new IconetInbox($user);
+$inboxController = new Iconet\IconetInbox($user);
 ?>
 
 <h3>Your Open Inbox</h3>
