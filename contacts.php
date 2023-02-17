@@ -81,8 +81,7 @@ require_once("includes/header.php");
     <h3>External Contacts</h3>
     <div>
         <?php
-            global $iconetDB;
-            $contacts = $iconetDB->getContacts($userLoggedIn);
+            $contacts = \Iconet\Database::singleton()->getContacts($userLoggedIn);
             if(!$contacts) {
                 echo "<p>You have no external contacts stored at this time!</p>";
             } else {
@@ -100,7 +99,7 @@ require_once("includes/header.php");
 
         if(isset($_POST['delete_address'])) {
             $address = strip_tags($_POST['delete_address']);
-            if($iconetDB->deleteContact($userLoggedIn, $address)) {
+            if(\Iconet\Database::singleton()->deleteContact($userLoggedIn, $address)) {
                 header("Location: contacts.php");
             } else {
                 echo "Error: Could not delete " . $address;

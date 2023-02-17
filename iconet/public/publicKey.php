@@ -7,8 +7,7 @@ require_once "../Database.php";
 
 if(isset($_GET['address'])) {
     $address = $_GET['address'];
-    $db = new Database();
-    $pk = $db->getPublickeyByAddress($address);
+    $pk = Database::singleton()->getPublickeyByAddress($address);
     $json = json_encode(array('address' => $address, 'publickey' => $pk));
     echo $json;
 } else {

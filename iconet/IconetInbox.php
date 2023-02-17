@@ -15,7 +15,6 @@ class IconetInbox
      */
     public function __construct(User $user)
     {
-        $this->database = new Database();
         $this->crypto = new Crypto();
         $this->user = $user;
     }

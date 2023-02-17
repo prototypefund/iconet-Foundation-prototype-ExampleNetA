@@ -17,7 +17,6 @@ class IconetInbox
      */
     public function __construct(User $user)
     {
-        $this->database = new Database();
         $this->crypto = new Crypto();
         $this->user = $user;
     }
@@ -35,7 +34,7 @@ class IconetInbox
         $payload = json_decode($this->crypto->decSym($encryptedPayload, $secret));
         $formatId = json_decode($this->crypto->decSym($encryptedFormatId, $secret));
 
-        $this->database->addNotification($id, $this->user->username, $actor, $secret, $payload, $formatId);
+        Database::singleton()->addNotification($id, $this->user->username, $actor, $secret, $payload, $formatId);
         //todo check for errors
         return true;
     }

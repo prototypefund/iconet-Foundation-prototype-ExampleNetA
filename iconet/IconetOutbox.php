@@ -16,7 +16,6 @@ class IconetOutbox
      */
     public function __construct(User $user)
     {
-        $this->database = new Database();
         $this->transmitter = new S2STransmitter();
         $this->crypto = new Crypto();
         $this->user = $user;
@@ -46,7 +45,7 @@ class IconetOutbox
             $encryptedPayload
         );
         //generate and send notifications
-        $contacts = $this->database->getContacts($this->user->username);
+        $contacts = Database::singleton()->getContacts($this->user->username);
         if(!$contacts) {
             echo "<br>You need contacts generate something for them! <br>";
         }

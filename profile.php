@@ -59,9 +59,8 @@ if(isset($_POST['post_message'])) {
     <img src="<?= $profileUser->profilePicture ?>">
     <div class="profile_info">
         <?php
-        global $iconetDB;
 
-        $address = $iconetDB->getGlobaladdress($username); ?>
+        $address = \Iconet\Database::singleton()->getGlobaladdress($username); ?>
         <p>Address: <?= $address ?></p>
         <p>Posts: <?= $profileUser->postsCount ?></p>
         <p>Likes: <?= $profileUser->likesCount ?></p>

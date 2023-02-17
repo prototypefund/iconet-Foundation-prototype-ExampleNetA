@@ -9,7 +9,6 @@ class ArchivedProcessor
     //logged in user
     private User $user;
 
-    private Database $database;
     private S2STransmitter $transmitter;
     private Crypto $crypto;
     private PacketHandler $packetHandler;
@@ -19,7 +18,6 @@ class ArchivedProcessor
      */
     public function __construct(User $user)
     {
-        $this->database = new Database();
         $this->transmitter = new S2STransmitter();
         $this->crypto = new Crypto();
         $this->packetHandler = new PacketHandler();
@@ -53,7 +51,7 @@ class ArchivedProcessor
         $encryptedFormatId = $this->crypto->encSym($formatId, $secret);
 
         //save post in db
-        $id = $this->database->addPost(
+        $id = Database::singleton()->addPost(
             $this->user->username,
             $secret,
             $encryptedFormatId,
@@ -66,7 +64,7 @@ class ArchivedProcessor
         $encryptedNotif = $this->crypto->encSym(json_encode($predata), $secret);
 
         //generate and send notifications
-        $contacts = $this->database->getContacts($this->user->username);
+        $contacts = Database::singleton()->getContacts($this->user->username);
         if(!$contacts) {
             echo "<br>You need contacts generate something for them! <br>";
         }
@@ -99,7 +97,7 @@ class ArchivedProcessor
      */
     public function getNotifications(): array
     {
-        return $this->database->getNotifications($this->user->username) ?? [];
+        return Database::singleton()->getNotifications($this->user->username) ?? [];
     }
 
 
@@ -166,7 +164,7 @@ class ArchivedProcessor
 
         $encryptedSecret = $packet->encryptedSecret;
         $encryptedPredata = $packet->predata;
-        $privateKey = $this->database->getPrivateKeyByAddress(
+        $privateKey = Database::singleton()->getPrivateKeyByAddress(
             $packet->to
         ); // todo check if user is logged in / privateKey may be accessed
         $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
@@ -176,7 +174,7 @@ class ArchivedProcessor
         $id = $predata->id;
         $subject = $predata->subject;
 
-        $this->database->addNotification($id, $username, $actor, $secret, $subject);
+        Database::singleton()->addNotification($id, $username, $actor, $secret, $subject);
         return true;
     }
 
@@ -186,7 +184,7 @@ class ArchivedProcessor
      */
     public function getEncryptedPostFromDB(string $id)
     {
-        $post = $this->database->getPostById($id);
+        $post = Database::singleton()->getPostById($id);
         if(!$post) {
             echo "<br>Error - Unknown ID <br>";
             return "Error - Unknown ID";

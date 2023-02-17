@@ -26,15 +26,13 @@ class User extends Contact
 
     public static function fromUsername(string $username): ?User
     {
-        global $iconetDB;
-        $userData = $iconetDB->getUserByName($username);
+        $userData = Database::singleton()->getUserByName($username);
         return $userData ? self::fromUserData($userData) : null;
     }
 
     public function addContact(Contact $contact): bool
     {
-        global $iconetDB;
-        return $iconetDB->addContact($this->username, $contact->address, $contact->publicKey);
+        return Database::singleton()->addContact($this->username, $contact->address, $contact->publicKey);
     }
 
     /**

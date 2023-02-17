@@ -2,138 +2,127 @@
 
 namespace Iconet;
 
-
-use mysqli;
-use mysqli_sql_exception;
+use PDO;
 
 class Database
 {
-    protected mysqli $database;
 
-    //TODO use PDO as in the other Database class
-    public function __construct()
+    private static ?Database $singleton = null;
+    private PDO $db;
+
+    private function __construct()
     {
-        $this->database = mysqli_connect(
-            $_ENV['DB_ICONET_HOST'],
-            $_ENV['DB_ICONET_USER'],
-            $_ENV['DB_ICONET_PASSWORD'],
-            $_ENV['DB_ICONET_DATABASE']
+        $db_name = $_ENV['DB_ICONET_DATABASE'];
+        $db_user = $_ENV['DB_ICONET_USER'];
+        $db_pass = $_ENV['DB_ICONET_PASSWORD'];
+        $db_host = $_ENV['DB_ICONET_HOST'];
+
+        $this->db = new PDO(
+            "mysql:dbname=$db_name;host=$db_host;charset=latin1",
+            $db_user, $db_pass
         );
 
-        if(mysqli_connect_errno()) {
-            error_log((string)mysqli_connect_errno());
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+
+    public static function singleton(): Database
+    {
+        if(self::$singleton) {
+            return self::$singleton;
         }
+
+        self::$singleton = new Database();
+        return self::$singleton;
+    }
+
+
+    public function clearTables(): void
+    {
+        $stmt = $this->db->prepare(
+            "SET FOREIGN_KEY_CHECKS=0;
+            TRUNCATE TABLE users;
+            TRUNCATE TABLE contacts;
+            TRUNCATE TABLE notifications;
+            TRUNCATE TABLE posts;
+            SET FOREIGN_KEY_CHECKS=1;"
+        );
+        $stmt->execute();
     }
 
     public function getPublickeyByAddress(string $address): string|bool
     {
-        $query = mysqli_query($this->database, "SELECT publickey FROM users WHERE address='$address'");
-        if(mysqli_num_rows($query) > 0) {
-            $row = (array)mysqli_fetch_array($query);
-            return $row['publickey'];
-        } else {
-            return false;
-        }
+        $stmt = $this->db->prepare("SELECT publickey FROM users WHERE address=:address");
+        $stmt->execute(compact('address',));
+        return $stmt->fetchColumn();
     }
 
     public function getPrivateKeyByAddress(string $address): string|bool
     {
-        $query = mysqli_query($this->database, "SELECT privatekey FROM users WHERE address='$address'");
-        if(mysqli_num_rows($query) > 0) {
-            $row = (array)mysqli_fetch_array($query);
-            return $row['privatekey'];
-        } else {
-            return false;
-        }
+        $stmt = $this->db->prepare("SELECT privatekey FROM users WHERE address=:address");
+        $stmt->execute(compact('address',));
+        return $stmt->fetch();
     }
 
     public function addPost(string $username, string $secret, string $formatId, string $content): ?int
     {
-        $stmt = $this->database->prepare(
-            "INSERT INTO posts (username, secret, formatId, content) VALUES (?, ?, ?, ?)"
+        $stmt = $this->db->prepare(
+            "INSERT INTO posts (username, secret, formatId, content) VALUES (:username, :secret, :formatId, :content)"
         );
-        $stmt->bind_param("ssss", $username, $secret, $formatId, $content);
-        $stmt->execute();
+        $stmt->execute(compact('username', 'secret', 'formatId', 'content',));
 
-        if(mysqli_connect_errno()) {
-            echo "Failed to add post: " . mysqli_connect_errno();
-            return null;
-        }
-        return $this->database->insert_id;
+        return $this->db->lastInsertId();
     }
 
-    public function getUserByName(string $name): array|bool
+    public function getUserByName(string $username): array|bool
     {
-        $query = mysqli_query($this->database, "SELECT * FROM users WHERE username='$name'");
-        if(mysqli_num_rows($query) > 0) {
-            $user = mysqli_fetch_array($query);
-            return $user;
-        } else {
-            return false;
-        }
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE username=:username");
+        $stmt->execute(compact('username',));
+        return $stmt->fetch();
     }
 
     public function getUserByAddress(string $address): array|bool
     {
-        $query = mysqli_query($this->database, "SELECT * FROM users WHERE address='$address'");
-        if(mysqli_num_rows($query) > 0) {
-            $user = (array)mysqli_fetch_array($query);
-            return $user;
-        } else {
-            return false;
-        }
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE address=:address");
+        $stmt->execute(compact('address',));
+        return $stmt->fetch();
     }
 
     public function getPostById(string $id): array|null
     {
-        $query = mysqli_query($this->database, "SELECT * FROM posts WHERE id='$id'");
-        if(mysqli_num_rows($query) > 0) {
-            return mysqli_fetch_array($query);
-        } else {
-            return null;
-        }
+        $stmt = $this->db->prepare("SELECT * FROM posts WHERE id=:id");
+        $stmt->execute(compact('id',));
+        return $stmt->fetch();
     }
 
 
-    public function addUser(string $username, string $address, string $pubkey, string $privkey): bool
+    public function addUser(string $username, string $address, string $pubkey, string $privkey): string
     {
-        try {
-            $query = mysqli_query(
-                $this->database,
-                "INSERT INTO users VALUES ('$username', '$address', '$pubkey', '$privkey')"
-            );
-        } catch(mysqli_sql_exception $ex) {
-            return false;
-        }
-        if(mysqli_connect_errno()) {
-            echo "Failed to add user: " . mysqli_connect_errno();
-            return false;
-        }
-        return true;
+        $stmt = $this->db->prepare(
+            "INSERT INTO users (username, address, publickey, privatekey) VALUES(:username, :address, :pubkey, :privkey)"
+        );
+        $stmt->execute(compact('username', 'address', 'pubkey', 'privkey',));
+        return $this->db->lastInsertId();
     }
 
     public function getGlobaladdress(string $username): string|bool
     {
-        $query = mysqli_query($this->database, "SELECT address FROM users WHERE username='$username'");
-        if(mysqli_num_rows($query) > 0) {
-            $row = mysqli_fetch_array($query);
-            return (string)$row['address'];
-        } else {
-            return false;
-        }
+        $stmt = $this->db->prepare("SELECT address FROM users WHERE username=:username");
+        $stmt->execute(compact('username'));
+        return $stmt->fetchColumn();
     }
 
     /**
      * @param string $user
      * @return array<Contact>
      */
-    public function getContacts(string $user): array
+    public function getContacts(string $username): array
     {
-        $result = mysqli_query($this->database, "SELECT * FROM contacts WHERE username='$user'") or trigger_error(
-            mysqli_error()
-        );
+        $stmt = $this->db->prepare("SELECT * FROM contacts WHERE username=:username");
+        $stmt->execute(compact('username'));
+        $result = $stmt->fetchAll();
         $contacts = [];
-        while($row = mysqli_fetch_array($result)) {
+        foreach($result as $row) {
+            var_dump($row);
             $contacts[] = new Contact(
                 new Address($row['friend_address']),
                 $row['friend_pubkey']
@@ -142,28 +131,22 @@ class Database
         return $contacts;
     }
 
-    public function deleteContact(string $user, string $address): bool
+    public function deleteContact(string $username, string $address): bool
     {
-        $delete_query = mysqli_query(
-            $this->database,
-            "DELETE FROM contacts WHERE username='$user' AND friend_address='$address'"
+        $stmt = $this->db->prepare(
+            "DELETE FROM contacts WHERE username=:username AND friend_address=:address"
         );
-        if(mysqli_connect_errno()) {
-            echo "Failed to delete contact: " . mysqli_connect_errno();
-            return false;
-        } else {
-            return true;
-        }
+        $stmt->execute(compact('username', 'address',));
+        return $this->db->lastInsertId();
     }
 
-    public function addContact(string $user, string $address, string $pubkey): bool
+    public function addContact(string $username, string $address, string $publickey): bool
     {
-        $query = mysqli_query($this->database, "INSERT INTO contacts VALUES ('$user', '$address', '$pubkey')");
-        if(mysqli_connect_errno()) {
-            echo "Failed to add contact: " . mysqli_connect_errno();
-            return false;
-        }
-        return true;
+        $stmt = $this->db->prepare(
+            "INSERT INTO contacts (username, friend_address, friend_pubkey) VALUES (:username, :address, :publickey)"
+        );
+        $stmt->execute(compact('username', 'address', 'publickey',));
+        return $this->db->lastInsertId();
     }
 
     public function addNotification(
@@ -174,39 +157,19 @@ class Database
         string $payload,
         string $formatId
     ): bool {
-        $query = mysqli_query(
-            $this->database,
-            "INSERT INTO notifications VALUES (null,'$content_id', '$username', '$sender', '$secret', '$payload', '$formatId')"
+        $stmt = $this->db->prepare(
+            "INSERT INTO notifications (content_id, username, sender, secret, payload, formatId) VALUES (:content_id, :username, :sender, :secret, :payload, :formatId)"
         );
-        if(mysqli_connect_errno()) {
-            echo "Failed to add notification: " . mysqli_connect_errno();
-            return false;
-        }
-        return true;
+        $stmt->execute(compact('content_id', 'username', 'sender', 'secret', 'payload', 'formatId'));
+        return $this->db->lastInsertId();
     }
 
-
-    public function clearTables(): void
-    {
-        mysqli_query($this->database, "DELETE FROM users");
-        mysqli_query($this->database, "DELETE FROM contacts");
-        mysqli_query($this->database, "DELETE FROM notifications");
-        mysqli_query($this->database, "DELETE FROM posts");
-    }
 
     public function getNotifications(string $username): ?array
     {
-        $query = mysqli_query($this->database, "SELECT * FROM notifications WHERE username='$username'");
-        if(mysqli_num_rows($query) == 0) {
-            return null;
-        } else {
-            $i = 0;
-            while($row = mysqli_fetch_array($query)) {
-                $rows[$i] = $row;
-                $i++;
-            }
-            return $rows;
-        }
+        $stmt = $this->db->prepare("SELECT * FROM notifications WHERE username=:username");
+        $stmt->execute(compact('username',));
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
 

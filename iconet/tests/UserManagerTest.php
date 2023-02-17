@@ -54,11 +54,10 @@ class UserManagerTest extends TestCase
 
     public function testAddContact(): void
     {
-        global $iconetDB;
         $user = UserManager::addNewUser("tester");
         $friend = UserManager::addNewUser("friend");
         $success = UserManager::addContact($user, $friend->address);
         self::assertTrue($success);
-        self::assertEquals($friend->address, $iconetDB->getContacts($user->username)[0]->address);
+        self::assertEquals($friend->address, Database::singleton()->getContacts($user->username)[0]->address);
     }
 }

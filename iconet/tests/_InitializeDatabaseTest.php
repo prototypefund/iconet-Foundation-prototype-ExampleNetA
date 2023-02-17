@@ -12,18 +12,31 @@ use PHPUnit\Framework\TestCase;
  */
 class _InitializeDatabaseTest extends TestCase
 {
+
+    private \Iconet\User $alice;
+    private \Iconet\User $bob;
+    private User $aliceNative;
+    private User $bobNative;
+
+
     protected function setUp(): void
     {
         parent::setUp();
+        \Iconet\Database::singleton()->clearTables();
         Database::singleton()->clearTables();
-        (new \Iconet\Database)->clearTables();
+    }
+
+    public function test_clearTables(): void
+    {
+        \Iconet\Database::singleton()->clearTables();
+        self::assertTrue(true);
     }
 
 
     public function test_initialize(): void
     {
         if(!UserManager::addNewUser("alice")) {
-            self::fail("Could not create user alice");
+            self::fail("Could not create neta user alice");
         } else {
             Database::singleton()->registerUser(
                 "Alice",
@@ -36,7 +49,7 @@ class _InitializeDatabaseTest extends TestCase
             );
         }
         if(!UserManager::addNewUser("bob")) {
-            self::fail("Could not create user bob");
+            self::fail("Could not create neta user bob");
         } else {
             Database::singleton()->registerUser(
                 "Bob",
@@ -50,22 +63,23 @@ class _InitializeDatabaseTest extends TestCase
         }
         self::assertTrue(Database::singleton()->existsUser('bob'));
 
-        $alice = \Iconet\User::fromUsername('alice');
-        $bob = \Iconet\User::fromUsername('bob');
-        $bob->addContact($alice);
-        $alice->addContact($bob);
+        $this->alice = \Iconet\User::fromUsername('alice');
+        $this->bob = \Iconet\User::fromUsername('bob');
+        $this->bob->addContact($this->alice);
+        $this->alice->addContact($this->bob);
 
-        $aliceNative = new User('alice');
-        $bobNative = new User('bob');
-        $aliceNative->sendFriendRequest('bob');
-        $bobNative->acceptFriendRequest($aliceNative);
+        $this->aliceNative = new User('alice');
+        $this->bobNative = new User('bob');
+        $this->aliceNative->sendFriendRequest('bob');
+        $this->bobNative->acceptFriendRequest($this->aliceNative);
     }
 
     public function test_createPost(): void
     {
         $this->test_initialize();
-        (new IconetOutbox($bob))->createPost(['content' => "Content by UnitTest", '$username' => "alice"],
-            "/iconet/formats/markdown/manifest.json");
+
+        (new IconetOutbox($this->bob))->createPost(['content' => "Content by UnitTest", '$username' => "alice"],
+            "/iconet/formats/post-like-comment-netA/manifest.json");
     }
 
     public function test_createAllPostFormats(): void
@@ -73,7 +87,7 @@ class _InitializeDatabaseTest extends TestCase
         $this->test_initialize();
 
         array_map(
-            fn($post) => (new IconetOutbox($bob))->createPost(
+            fn($post) => (new IconetOutbox($this->bob))->createPost(
                 ['content' => $post['content'], 'username' => 'alice'],
                 $post['formatId']
             ),

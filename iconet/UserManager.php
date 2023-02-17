@@ -18,15 +18,14 @@ class UserManager
      */
     public static function addNewUser(string $username): ?User
     {
-        global $iconetDB;
         $address = Address::fromUsername($username);
         if(!$address) {
             return null;
         }
 
         [$publicKey, $privateKey] = (new Crypto())->genkeyPair();
-        $success = $iconetDB->addUser($username, $address, $publicKey, $privateKey);
-        if(!$success) {
+        $success = Database::singleton()->addUser($username, $address, $publicKey, $privateKey);
+        if($success === false) {
             return null;
         }
         return new User($username, $address, $publicKey, $privateKey);

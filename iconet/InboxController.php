@@ -7,13 +7,11 @@ class InboxController
 
     private User $user;
     private IconetInbox $inbox;
-    private Database $database;
 
     public function __construct(User $user)
     {
         $this->user = $user;
         $this->inbox = new IconetInbox($user);
-        $this->database = new Database();
     }
 
     public function renderInbox(): void
