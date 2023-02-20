@@ -15,7 +15,7 @@ class PacketBuilder
         string $encryptedPayload
     ): string {
         $packet['@context'] = "https://iconet-foundation.org/ns#"; //FIX should not be hardcoded, should be proper json ld
-        $packet['@type'] = "Packet";
+        $packet['@type'] = "EncryptedPacket";
         $packet['@id'] = $packetID;
         $packet['actor'] = $actorAddress;
         $packet['to'] = $toAddress;

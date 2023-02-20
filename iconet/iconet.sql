@@ -39,13 +39,13 @@ CREATE TABLE `contacts`
 
 CREATE TABLE `notifications`
 (
-    `id`         int          NOT NULL primary key auto_increment,
-    `content_id` varchar(60)  NOT NULL,
-    `username`   varchar(100) NOT NULL,
-    `sender`     varchar(60)  NOT NULL,
-    `secret`     varchar(200) NOT NULL,
-    `payload`    text         NOT NULL,
-    `formatId`   varchar(150) NOT NULL
+    `id`         int           NOT NULL primary key auto_increment,
+    `content_id` varchar(1024) NOT NULL,
+    `username`   varchar(100)  NOT NULL,
+    `sender`     varchar(60)   NOT NULL,
+    `secret`     varchar(200),
+    `payload`    text          NOT NULL,
+    `formatId`   varchar(150)  NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -61,7 +61,7 @@ CREATE TABLE `posts`
     `username` varchar(100) NOT NULL,
     `secret`   varchar(200) NOT NULL,
     `formatId` varchar(100) NOT NULL,
-    `content`  text NOT NULL
+    `content` text NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

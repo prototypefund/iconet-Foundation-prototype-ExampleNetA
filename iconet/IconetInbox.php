@@ -1,4 +1,5 @@
 <?php
+
 namespace Iconet;
 
 
@@ -17,28 +18,49 @@ class IconetInbox
         $this->user = $user;
     }
 
-    public function saveNotification(object $packet): bool
+    /**
+     * Mutates the packet to include the decrypted content and interpreterManifests,
+     * as well as the decrypted secret.
+     * @param object $packet
+     * @return string Returns the secret used for decryption.
+     */
+    public function decryptNotification(object $packet): bool
     {
-        $id = $packet->{'@id'};
-        $actor = $packet->actor;
-        $encryptedSecret = $packet->encryptedSecret;
-        $encryptedPayload = $packet->encryptedPayload;
-        $privateKey = $this->user->privateKey;
-        $secret = $this->crypto->decAsym($encryptedSecret, $privateKey);
+        $secret = $this->crypto->decAsym($packet->encryptedSecret, $this->user->privateKey);
+        $decrypted = $this->crypto->decSym($packet->encryptedPayload, $secret);
+        $decrypted = json_decode($decrypted);
 
-        $payload = $this->crypto->decSym($encryptedPayload, $secret);
-
-        if(!$payload) {
+        if(!$decrypted) {
             echo "Decryption Error.";
             return false;
         }
-        $manifestUri = json_decode(
-            $payload
-        )->interpreterManifests[0]->manifestUri; //Todo Expect multiple manifests and pick the right one;
 
-        Database::singleton()->addNotification($id, $this->user->username, $actor, $secret, $payload, $manifestUri);
-        //todo check for errors
+        $packet->content = $decrypted->content;
+        $packet->interpreterManifests = $decrypted->interpreterManifests;
+
+        $packet->secret = $secret;
         return true;
+    }
+
+    public function saveNotification(object $packet): bool
+    {
+        $manifestUri = $packet->interpreterManifests[0]->manifestUri; //Todo Expect multiple manifests and pick application/iconet+html
+
+        // TODO Why is the secret even needed? Then the unsets could be done in decryptNotification()
+        $secret = $packet->secret ?? null;
+
+        unset($packet->encryptedSecret);
+        unset($packet->encryptedPayload);
+        unset($packet->secret);
+
+        return Database::singleton()->addNotification(
+            $packet->{'@id'},
+            $this->user->username,
+            $packet->actor,
+            $secret,
+            json_encode($packet), // Save everything?
+            $manifestUri
+        );
     }
 
 

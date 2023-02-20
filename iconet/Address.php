@@ -20,7 +20,7 @@ class Address
     {
         $parts = self::parse($address);
         if(!$parts) {
-            throw new InvalidArgumentException("Wrong address format");
+            throw new InvalidArgumentException("Wrong address format: '$address'");
         }
         $this->local = $parts['local'];
         $this->domain = $parts['domain'];

@@ -153,7 +153,7 @@ class Database
         string $content_id,
         string $username,
         string $sender,
-        string $secret,
+        ?string $secret,
         string $payload,
         string $formatId
     ): bool {
