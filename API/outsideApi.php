@@ -25,8 +25,10 @@ if(!isset($packet['id'], $packet['user'])) {
 }
 
 $post = Database::singleton()->getPost($packet['id'], $packet['user'], true);
+
 if($post == null) {
     exit(404);
 }
 
 echo json_encode($post);
+?>

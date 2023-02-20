@@ -75,12 +75,14 @@ class _InitializeDatabaseTest extends TestCase
     }
 
     public function test_createPost(): void
-    {
+    {   
+        global $con;
+
         $this->test_initialize();
 
         $postBody = "Content by Unittest";
 
-        (new Post($this->bob->username))->submitPost($postBody);
+        (new Post($con, $this->bob->username))->submitPost($postBody);
 
         (new IconetOutbox($this->bob))->createPost(['content' => $postBody, 'username' => $this->bob->username],
             "/iconet/formats/post-like-comment-neta/manifest.json");

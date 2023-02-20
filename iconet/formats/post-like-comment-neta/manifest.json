@@ -16,7 +16,7 @@
         "allowContentRequest": true,
         "allowedSources": [
           "http://localhost:8001/API/outsideApi.php",
-          "http://localhost:8001/API/external_comment_frame.php"
+          "http://localhost:8001/API/extComment.php"
         ],
         "content": true
       }

@@ -53,57 +53,79 @@
 </style>
 
 <body>
-<article>
-    <p>Test NetA</p>
-    <span id="post">Added by script</span>
-    <span id="postAuthor" class="author">5</span>
-</article>
-<div class="interactions">
-    <h5>Comments:</h5>
-    <textarea id="commentBox" oninput="updateHeight()"></textarea>
-    <button id="comment" onclick="comment()">Send</button>
+    <article>
+        <p>Test NetA</p>
+        <span id="post">Added by script</span>
+        <span id="postAuthor" class="author">5</span>
+    </article>
+    <div class="interactions">
+        <h5>Comments:</h5>
+        <textarea id="commentBox" oninput="updateHeight()"></textarea>
+        <button id="comment" onclick="comment()">Send</button>
 
-    <!--    <span id="likes">?</span>-->
-    <!--    <button id="like" onclick="like()" data-voted-text="Unlike" data-unvoted-text="Like"></button>-->
-</div>
-<div id="comments"></div>
-<script>
-    const post = document.getElementById("post")
-    const postAuthor = document.getElementById("postAuthor")
-    const comments = document.getElementById("comments")
-    // const likeBtn = document.getElementById("like")
-    const commentBox = document.getElementById("commentBox")
+        <!--    <span id="likes">?</span>-->
+        <!--    <button id="like" onclick="like()" data-voted-text="Unlike" data-unvoted-text="Like"></button>-->
+    </div>
+    <div id="comments"></div>
+    <script>
+        const post = document.getElementById("post")
+        const postAuthor = document.getElementById("postAuthor")
+        const comments = document.getElementById("comments")
+        // const likeBtn = document.getElementById("like")
+        const commentBox = document.getElementById("commentBox")
+        const postID = -1
 
-    async function update(packet) {
-        post.innerHTML = packet.post.body
-        postAuthor.innerHTML = packet.post.added_by
-        updateComments(packet.comments)
-    }
 
-    // function hasLiked(content) {
-    //     return content.interactions?.filter(inter => inter.actor === content.to)
-    // }
+        window.tunnel.addEventListener('initialized', function () {
+            const payload = window.tunnel.initialContent
+            postAuthor.innerHTML = payload.username
+            post.innerHTML = payload.content
+            console.log(payload)
+        });
 
-    function updateComments(commentData) {
-        comments.innerHTML = commentData?.map(comment =>
-            `<div>${comment.post_body}<span class="author">${comment.posted_by}</span></div>`
-        ).join("")
-    }
+        async function update(packet) {
 
-    async function like() {
-        update(await window.tunnel.sendInteraction(JSON.stringify({like: true})))
-    }
+            // postAuthor.innerHTML = packet.post.added_by
+            updateComments(packet.comments)
+        }
 
-    async function comment() {
-        update(await window.tunnel.sendInteraction(JSON.stringify({comment: commentBox.value})))
-        commentBox.value = ""
-    }
+        // function hasLiked(content) {
+        //     return content.interactions?.filter(inter => inter.actor === content.to)
+        // }
 
-    function updateHeight() {
-        commentBox.style.height = Math.min(100, commentBox.scrollHeight - 7) + "px";
-    }
+        function updateComments(commentData) {
+            comments.innerHTML = commentData?.map(comment =>
+                `<div>${comment.post_body}<span class="author">${comment.posted_by}</span></div>`
+            ).join("")
+        }
 
-    (async () =>
+        async function like() {
+            update(await window.tunnel.sendInteraction(JSON.stringify({ like: true })))
+        }
+
+        async function comment() {
+            fetch('http://localhost:8001/API/extComment.php',
+                {
+                    method: "post",
+                    body: JSON.stringify({
+                        post_id: "1",
+                        commentator: "bob",
+                        profile_url: "www.bob",
+                        comment: commentBox.value
+                    })
+                }
+            )
+
+            commentBox.value = ""
+            location.reload()
+
+        }
+
+        function updateHeight() {
+            commentBox.style.height = Math.min(100, commentBox.scrollHeight - 7) + "px";
+        }
+
+        (async () =>
             update(await fetch('http://localhost:8001/API/outsideApi.php',
                 {
                     method: "post",
@@ -113,7 +135,8 @@
                     })
                 }
             ).then((response) => response.json()))
-    )()
+        )()
 
-</script>
+
+    </script>
 </body>

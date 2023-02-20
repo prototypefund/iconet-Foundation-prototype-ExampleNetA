@@ -23,11 +23,11 @@ class Tunnel extends EventTarget {
 
         // Send initial message to parent, transferring the message port.
         parent.postMessage({
-              '@context': 'https://iconet-foundation.org/ns#',
-              '@type': 'IframeReady',
-          },
-          INITIAL_TARGET_ORIGIN,
-          [messageChannel.port2],
+            '@context': 'https://iconet-foundation.org/ns#',
+            '@type': 'IframeReady',
+        },
+            INITIAL_TARGET_ORIGIN,
+            [messageChannel.port2],
         );
 
         console.log('Frame is listening');
