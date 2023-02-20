@@ -10,7 +10,7 @@ class Address
     public const ENDPOINT = "iconet"; //Path for the iconet API that is appended to the domain part
     private const SEPARATOR = '@';
     private const PATTERN =
-        "/^(?<local>[a-zA-Z][\w\.-]*)" . self::SEPARATOR . "(?<domain>[a-zA-Z0-9-\.]+)$/";
+        "/^(?<local>[a-zA-Z][\w\.:-]*)" . self::SEPARATOR . "(?<domain>[a-zA-Z0-9-\.:]+)$/";
 
     public readonly string $local;
     public readonly string $domain;
