@@ -95,10 +95,10 @@
         const commentBox = document.getElementById("commentBox")
         let postId;
 
-	    initialize(window.tunnel.initialContent);
+	    initialize(window.tunnel.getInitialContent("application/neta+json"));
 
         window.tunnel.addEventListener('initialized', function () {
-            initialize(window.tunnel.initialContent);
+            initialize(window.tunnel.getInitialContent("application/neta+json"));
         });
         
         

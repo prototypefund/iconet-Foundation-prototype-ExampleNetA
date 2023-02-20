@@ -8,10 +8,27 @@ const INITIAL_TARGET_ORIGIN = '*';
 class Tunnel extends EventTarget {
 
     #port;
-    #initialContent;
+    #notificationPacket;
 
-    get initialContent() {
-        return this.#initialContent;
+
+    get actor() {
+        return this.#notificationPacket?.actor;
+    }
+
+    get to() {
+        return this.#notificationPacket?.to;
+    }
+
+    get id() {
+        return this.#notificationPacket?.['@id'];
+    }
+
+    /**
+     * @param packetType MIME type of the desired payload format.
+     * @return {*} The corresponding payload of the notification packet, or undefined.
+     */
+    getInitialContent(packetType) {
+        return this.#notificationPacket?.content?.filter(content => content.packetType === packetType)[0]?.payload;
     }
 
     constructor() {
@@ -35,8 +52,8 @@ class Tunnel extends EventTarget {
 
 
     #handleMessage(message) {
-        if (!this.#initialContent) {
-            this.#initialContent = message;
+        if (!this.#notificationPacket) {
+            this.#notificationPacket = message;
             this.dispatchEvent(new Event('initialized'));
             console.log('Frame received initial content');
         }

@@ -16,10 +16,10 @@ export default class EmbeddedExperience extends HTMLElement {
   #info;
 
   #iconetInterpreter;
-  #interpreterManifests;
   #port;
 
   #content = new Map(); // packetType => content
+  #notificationPacket;
 
   async connectedCallback() {
     this.#createShadowDom();
@@ -27,11 +27,10 @@ export default class EmbeddedExperience extends HTMLElement {
     window.sandboxController.register(this.#iframe.contentWindow, this);
 
     try {
-      const contentDataJson = this.getAttribute('contentData');
-      const contentData = JSON.parse(contentDataJson);
+      const notificationPacketJson = this.getAttribute('contentData');
+      this.#notificationPacket = JSON.parse(notificationPacketJson);
 
-      contentData.content.forEach(c => this.#content.set(c.packetType, c.payload));
-      this.#interpreterManifests = contentData.interpreterManifests;
+      this.#notificationPacket.content.forEach(c => this.#content.set(c.packetType, c.payload));
     } catch (e) {
       console.error(e);
       this.#info.textContent = `Error while processing contentData: ${e.message}`;
@@ -56,18 +55,18 @@ export default class EmbeddedExperience extends HTMLElement {
    * @param targetType mime type as string
    */
   async #findInterpreters(targetType) {
-    return (await Promise.all(this.#interpreterManifests
-      .filter(manifestDescription => manifestDescription.targetTypes.includes(targetType))
-      .map(async manifestDescription => {
-        let interpreters;
-        try {
-          const eeManifest = await this.#fetchManifest(manifestDescription);
-          interpreters = eeManifest.interpreterDescription(targetType).filter(i => this.#content.has(i.sourceType));
-        } catch (e) {
-          console.warn('Could not load manifest from', manifestDescription.manifestUri, e);
-        }
-        return interpreters;
-      }),
+    return (await Promise.all(this.#notificationPacket.interpreterManifests
+        .filter(manifestDescription => manifestDescription.targetTypes.includes(targetType))
+        .map(async manifestDescription => {
+          let interpreters;
+          try {
+            const eeManifest = await this.#fetchManifest(manifestDescription);
+            interpreters = eeManifest.interpreterDescription(targetType).filter(i => this.#content.has(i.sourceType));
+          } catch (e) {
+            console.warn('Could not load manifest from', manifestDescription.manifestUri, e);
+          }
+          return interpreters;
+        }),
     )).flat();
   }
 
@@ -223,7 +222,7 @@ export default class EmbeddedExperience extends HTMLElement {
     this.#port = port;
     port.onmessage = event => this.#handleMessageFromIframe(event.data);
     console.log('EE is now listening via port');
-    this.#sendMessageToIframe(this.#content.get(this.#iconetInterpreter.sourceType));
+    this.#sendMessageToIframe(this.#notificationPacket);
   }
 
   #handleMessageFromIframe(message) {
