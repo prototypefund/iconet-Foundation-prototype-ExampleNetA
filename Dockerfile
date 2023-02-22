@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND="noninteractive" TZ="Etc/UTC"
 RUN \
     apt update && \
     apt upgrade -y && \
-    apt install -y apache2 mysql-server composer php php-mysql php-dom
+    apt install -y apache2 mysql-server composer php php-mysql php-dom php-curl curl
 
 WORKDIR /var/www/prototype-ExampleNetA
 
@@ -34,7 +34,7 @@ ENTRYPOINT \
     service apache2 start && \
     service mysql start && \
     composer install && \
-    echo "SUCCESS! The site is reachable from the host under http://localhost:8001" && \
+    echo "SUCCESS! The site is reachable from the host under https://neta.localhost (Without traefik http://localhost:8001)" && \
     /bin/bash
 
 EXPOSE 80 8001

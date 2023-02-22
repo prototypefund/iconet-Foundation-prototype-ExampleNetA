@@ -1,35 +1,41 @@
 services:
-  netA:
+  neta:
     build: .
-    image: neta
-    container_name: netA
+    container_name: neta
     tty: true
     stdin_open: true
-    ports:
-      - "8001:80"
+    # Uncomment to run neta only
+    #    ports:
+    #      - "8001:80"
     volumes:
       - .:/var/www/prototype-ExampleNetA
-    networks:
-      iconet:
-        aliases:
-          - neta.localhost
+    #    networks:
+    #      iconet:
+    #        aliases:
+    #          - neta.localhost
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.neta.tls=true"
+      - "traefik.http.routers.neta.rule=Host(`neta.localhost`)"
+      - "traefik.http.routers.neta.entrypoints=websecure"
 
-#  netB:
-#    build: .
-#    image: neta
-#    container_name: netB
-#    tty: true
-#    stdin_open: true
-#    ports:
-#      - "8002:80"
-#    volumes:
-#      - .:/var/www/prototype-ExampleNetA
-#    networks:
-#      iconet:
-#        aliases:
-#          - netb.localhost
-
-networks:
-  iconet:
-    attachable: true
-    name: iconet
+  # Optional reverse proxy
+  traefik:
+    image: "traefik:v2.9.8"
+    network_mode: "host"
+    command:
+      #      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.directory=/etc/traefik/dynamic_conf"
+      - "--entrypoints.websecure.address=:443"
+    # network_mode host overwrites ports
+    #    ports:
+    #      - "80:80"
+    #      - "443:443"
+    #      - "8080:8080"
+    volumes:
+      - ./certs:/tools/certs
+      - ./traefik.config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"

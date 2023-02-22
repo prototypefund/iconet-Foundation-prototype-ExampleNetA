@@ -112,21 +112,31 @@ Download the repository with:
 ## Using Docker
 
 Alternatively, you can create a docker instance which will host a mysql and apache server.
-The docker container will serve the local development directory, so external changes are immediately made available.
+The docker container will serve the local development directory, so external changes are immediately made available. (
+This also means the container can rewrite local files. So take care to avoid data loss, when switching between the two
+setups.)
 
 ```bash
 docker-compose up
 ```
 
-The container is reachable from the host port 8001 ([http://localhost:8001](http://localhost:8001)). You can attach to
-it with `docker attach netA` (`Ctrl+P` `Ctlr+Q` to detach). Apache logs are located at `/var/log/apache2/`.
+This will also start a reverse proxy (traefik) which redirects https://neta.localhost to the container. For a trusted
+TLS connection you will have to create your own certificates (e.g. mkcert) and place them under `certs/cert.crt`
+and `certs/cert.key` in the project folder.
 
+You can attach to it with `docker attach neta` (`Ctrl+P` `Ctlr+Q` to detach). Apache logs are located
+at `/var/log/apache2/`.
+
+If you plan to only run this project, you can toggle the comments in the docker-compose.yml and access the container
+from port 8001 ([http://localhost:8001](http://localhost:8001)).
 
 ## XDebug
 
 XDebug is needed for debugging and code coverage analysis of the tests.
+
 1. Install it with `sudo apt install php-xdebug`
-2. If php 8.1 is the version you use, `/etc/php/8.1/mods-available/xdebug.ini` should contain at least the first two lines:
+2. If php 8.1 is the version you use, `/etc/php/8.1/mods-available/xdebug.ini` should contain at least the first two
+   lines:
 
     ```apache
     zend_extension=xdebug.so
