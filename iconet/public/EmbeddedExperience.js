@@ -56,17 +56,17 @@ export default class EmbeddedExperience extends HTMLElement {
    */
   async #findInterpreters(targetType) {
     return (await Promise.all(this.#interpreterManifests
-        .filter(manifestDescription => manifestDescription.targetTypes.includes(targetType))
-        .map(async manifestDescription => {
-          let interpreters;
-          try {
-            const eeManifest = await this.#fetchManifest(manifestDescription);
-            interpreters = eeManifest.interpreterDescription(targetType).filter(i => this.#content.has(i.sourceType));
-          } catch (e) {
-            console.warn('Could not load manifest from', manifestDescription.manifestUri, e);
-          }
-          return interpreters;
-        }),
+      .filter(manifestDescription => manifestDescription.targetTypes.includes(targetType))
+      .map(async manifestDescription => {
+        let interpreters;
+        try {
+          const eeManifest = await this.#fetchManifest(manifestDescription);
+          interpreters = eeManifest.interpreterDescription(targetType).filter(i => this.#content.has(i.sourceType));
+        } catch (e) {
+          console.warn('Could not load manifest from', manifestDescription.manifestUri, e);
+        }
+        return interpreters;
+      }),
     )).flat();
   }
 

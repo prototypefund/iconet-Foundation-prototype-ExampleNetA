@@ -39,7 +39,6 @@ class Tunnel extends EventTarget {
             this.#initialContent = message;
             this.dispatchEvent(new Event('initialized'));
             console.log('Frame received initial content');
-
         }
     }
 

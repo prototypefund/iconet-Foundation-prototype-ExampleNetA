@@ -1,7 +1,7 @@
 <?php
 
-require_once 'config/config.php';
-require_once 'iconet/User.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/iconet/User.php';
 
 if(isset($_SESSION['username'])) {
     $userLoggedIn = $_SESSION['username'];
@@ -87,6 +87,11 @@ if(isset($_SESSION['username'])) {
         <a href='./profile.php?profile_username=<?= $userLoggedIn ?>'>
             <?= $user->firstname ?>
         </a>
+
+        <a href='./iconet/public/index.php'>
+            <i class="fa fa-envelope fa-lg"></i>
+        </a>
+
         <a href="index.php">
             <i class="fa fa-home fa-lg"></i>
         </a>

@@ -8,7 +8,6 @@ class IconetInbox
     private User $user;
     private Crypto $crypto;
 
-
     /**
      * @param User $user
      */

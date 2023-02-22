@@ -15,18 +15,43 @@
     <!--    FIXME does the parent need to have a laxer csp than its children? unsafe inline-->
     <title>Inbox</title>
     <script defer src='/iconet/public/inbox.js' type="module"></script>
+
+
+    <!-- <link rel="stylesheet" href="../../assets/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" type="../../text/css" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" type="../../text/css" href="assets/css/style.css">
+    <!-- <link rel="stylesheet" href="../../assets/css/jquery.Jcrop.css" type="text/css"/> -->
+
     <style>
+        @font-face {
+            font-family: 'Bellota-LightItalic';
+            src: url('../fonts/Bellota-LightItalic.otf');
+        }
+
+        @font-face {
+            font-family: 'Bellota-BoldItalic';
+            src: url('../fonts/Bellota-BoldItalic.otf');
+        }
+
         embedded-experience {
             width: calc(100% - 4em);
-            height: 15em;
+            /* height: 15em; */
 
-            margin: 2em;
+            /* margin: 2em;
             padding: 0.5em;
             border: solid 1px;
             flex-direction: column;
             background: whitesmoke;
             overflow: auto;
-            resize: both;
+            resize: both; */
+
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #D3D3D3;
+            border-radius: 5px;
+            box-shadow: 2px 2px 1px #D3D3D3;
+            z-index: -1;
+            color: #555;
         }
     </style>
 </head>

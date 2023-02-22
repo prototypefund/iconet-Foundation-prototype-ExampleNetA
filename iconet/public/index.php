@@ -2,7 +2,7 @@
 
 namespace Iconet;
 
-require_once "../../config/config.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
 // User interface for open inbox and endpoint for incoming requests
 
@@ -24,5 +24,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: /register.php");
         exit();
     }
+
     include "inbox.php";
 }
+
+?>
