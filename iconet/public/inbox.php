@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,12 +5,11 @@
     <meta
             http-equiv="Content-Security-Policy"
             content=
-            "default-src 'self';
+            "default-src 'self' data: blob:;
             child-src 'none';
             connect-src *;
             style-src 'unsafe-inline';
-            script-src 'self' 'unsafe-inline';
-            img-src 'self' data: blob:;"/>
+            script-src 'self' 'unsafe-inline';"/>
     <!--    FIXME does the parent need to have a laxer csp than its children? unsafe inline-->
     <title>Inbox</title>
     <script defer src='/iconet/public/inbox.js' type="module"></script>

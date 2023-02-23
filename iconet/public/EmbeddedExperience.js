@@ -1,7 +1,8 @@
 import EEManifest from './EEManifest';
 
 // CSP that is injected as meta tag into the iframe's srcdoc. The 'default-src' is set dynamically.
-const INLINE_CSP = `style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data: blob:; `;
+const INLINE_CSP = `style-src 'unsafe-inline'; script-src 'unsafe-inline'; `;
+const DEFAULT_SRC_CSP = 'default-src data: blob: ';
 const DEBUG = true;
 
 /**
@@ -43,7 +44,7 @@ export default class EmbeddedExperience extends HTMLElement {
     this.#iconetInterpreter = compatibleInterpreters[0];
     if (!this.#iconetInterpreter) {
       console.warn('Falling back to text/plain');
-      this.#info.textContent = this.#content.get('text/plain') ?? 'Ony targetType \'application/iconet+html\' and \'text/plain\' supported.';
+      this.#info.textContent = this.#content.get('text/plain') ?? 'Only targetType \'application/iconet+html\' and \'text/plain\' supported.';
       return;
     }
     this.#info.textContent = `Interpreter: ${this.#iconetInterpreter.id}`;
@@ -116,15 +117,11 @@ export default class EmbeddedExperience extends HTMLElement {
   #injectCSP(document) {
     // Delete all existing CSP meta tags
     document.documentElement.querySelectorAll('meta[http-equiv="Content-Security-Policy"]')
-      .forEach(tag => tag.parentNode.removeChild(tag));
+        .forEach(tag => tag.parentNode.removeChild(tag));
 
-    let defaultSrcCsp;
-    if (this.#iconetInterpreter.allowedSources.length) {
-      const allowedSources = this.#iconetInterpreter.allowedSources.join(' ');
-      defaultSrcCsp = `default-src ${allowedSources};`;
-    } else {
-      defaultSrcCsp = 'default-src \'none\';';
-    }
+    const allowedSources = this.#iconetInterpreter.allowedSources.join(' ');
+    const defaultSrcCsp = `${DEFAULT_SRC_CSP} ${allowedSources};`;
+
     const csp = INLINE_CSP + defaultSrcCsp;
 
 
