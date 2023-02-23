@@ -9,7 +9,8 @@ services:
     #      - "8001:80"
     volumes:
       - .:/var/www/prototype-ExampleNetA
-    #    networks:
+    networks:
+      - traefik-proxy
     #      iconet:
     #        aliases:
     #          - neta.localhost
@@ -18,24 +19,31 @@ services:
       - "traefik.http.routers.neta.tls=true"
       - "traefik.http.routers.neta.rule=Host(`neta.localhost`)"
       - "traefik.http.routers.neta.entrypoints=websecure"
+      - "traefik.docker.network=traefik-proxy"
 
   # Optional reverse proxy
   traefik:
     image: "traefik:v2.9.8"
-    network_mode: "host"
+    #    network_mode: "host"
     command:
-      #      - "--log.level=DEBUG"
+      - "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/etc/traefik/dynamic_conf"
       - "--entrypoints.websecure.address=:443"
     # network_mode host overwrites ports
-    #    ports:
-    #      - "80:80"
-    #      - "443:443"
-    #      - "8080:8080"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
     volumes:
       - ./certs:/tools/certs
       - ./traefik.config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - traefik-proxy
+
+
+networks:
+  traefik-proxy:
