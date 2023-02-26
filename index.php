@@ -47,7 +47,10 @@ if(isset($_POST['post'])) {
         $payload = array('content' => $_POST['post_text'], 'username' => $userLoggedIn);
 
         $iconetOutbox = new iconet\IconetOutbox($iconetUser);
-        $iconetOutbox->createPost($payload, "test");
+        $iconetOutbox->createPost(
+            $payload,
+            "http://neta.localhost/iconet/formats/post-like-comment-neta/manifest.json"
+        );
     } else {
         echo "<div style='text-align:center;' class='alert alert-danger'>
 				$errorMessage
