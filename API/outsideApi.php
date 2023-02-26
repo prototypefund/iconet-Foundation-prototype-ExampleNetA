@@ -19,12 +19,12 @@ if(!$packet) {
     exit('Invalid json');
 }
 
-if(!isset($packet['id'], $packet['user'])) {
+if(!isset($packet['id'])) {
     http_response_code(400);
-    exit('"id" and "user" fields are required');
+    exit('"id" required');
 }
 
-$post = Database::singleton()->getPost($packet['id'], $packet['user'], true);
+$post = Database::singleton()->getPost($packet['id'], true);
 
 if($post == null) {
     exit(404);

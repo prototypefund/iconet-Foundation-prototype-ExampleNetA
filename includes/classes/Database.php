@@ -205,15 +205,15 @@ class Database
         return $stmt->fetchAll();
     }
 
-    public function getPost(string $id, string $added_by, bool $return_comments=False)
+    public function getPost(string $id, bool $return_comments = false)
     {
-        $stmt = $this->db->prepare("SELECT * FROM posts WHERE added_by=:added_by and id=:id");
-        $stmt->execute(compact('added_by', 'id'));
-
+        $stmt = $this->db->prepare("SELECT * FROM posts WHERE id=:id");
+        $stmt->execute(compact('id'));
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
         if($return_comments) {
-            return array('post' => $stmt->fetch(), 'comments' => self::getComments($id));
+            return ['post' => $post, 'comments' => self::getComments($id)];
         } else {
-            return $stmt->fetch();
+            return $post;
         }
     }
 
