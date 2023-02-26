@@ -7,7 +7,7 @@ class Contact
     public readonly Address $address;
     public readonly string $publicKey;
 
-    public function __construct(Address $address, string $publicKey = "No_Key")
+    public function __construct(Address $address, string $publicKey = "")
     {
         $this->address = $address;
         $this->publicKey = $publicKey;

@@ -39,7 +39,7 @@ class PacketBuilderTest extends TestCase
 
     public function testNotification(): void
     {
-        $packet = PacketBuilder::notification(
+        $packet = PacketBuilder::EncryptedNotification(
             $this->id,
             $this->actor,
             $this->to,

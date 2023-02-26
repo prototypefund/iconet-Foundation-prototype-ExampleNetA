@@ -7,7 +7,7 @@ class PacketBuilder
 {
 
 
-    public static function notification(
+    public static function EncryptedNotification(
         string $packetID,
         string $actorAddress,
         string $toAddress,
@@ -21,6 +21,23 @@ class PacketBuilder
         $packet['to'] = $toAddress;
         $packet['encryptedSecret'] = $encryptedSecret;
         $packet['encryptedPayload'] = $encryptedPayload;
+
+        return json_encode($packet);
+    }
+
+    public static function Notification(
+        string $packetID,
+        string $actorAddress,
+        string $toAddress,
+        array $payload
+    ): string {
+        $packet['@context'] = "https://iconet-foundation.org/ns#"; //FIX should not be hardcoded, should be proper json ld
+        $packet['@type'] = "Packet";
+        $packet['@id'] = $packetID;
+        $packet['actor'] = $actorAddress;
+        $packet['to'] = $toAddress;
+        $packet['interpreterManifests'] = $payload['interpreterManifests'];
+        $packet['content'] = $payload['content'];
 
         return json_encode($packet);
     }

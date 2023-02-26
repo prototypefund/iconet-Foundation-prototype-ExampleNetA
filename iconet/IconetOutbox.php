@@ -53,14 +53,24 @@ class IconetOutbox
         }
 
         foreach($contacts as $contact) {
-            $encryptedSecret = $this->crypto->encAsym($secret, $contact->publicKey);
-            $notifPacket = PacketBuilder::notification(
-                $id,
-                $this->user->address,
-                $contact->address,
-                $encryptedSecret,
-                $encryptedPacket
-            );
+            $notifPacket = "";
+            if($contact->publicKey == "") {
+                $notifPacket = PacketBuilder::Notification(
+                    $id,
+                    $this->user->address,
+                    $contact->address,
+                    $preparedPayload
+                );
+            } else {
+                $encryptedSecret = $this->crypto->encAsym($secret, $contact->publicKey);
+                $notifPacket = PacketBuilder::EncryptedNotification(
+                    $id,
+                    $this->user->address,
+                    $contact->address,
+                    $encryptedSecret,
+                    $encryptedPacket
+                );
+            }
             // TODO Check response
             $response = $this->transmitter->send($contact->address, $notifPacket);
         }
