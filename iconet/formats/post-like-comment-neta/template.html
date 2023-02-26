@@ -73,7 +73,7 @@
     </div>
     <div id="comments"></div>
     <script>
-        const apiUrl = new URL("http://neta.localhost:8000/API/");
+        const apiUrl = new URL("http://neta.localhost/api/");
     
     
         const post = document.getElementById("post")
@@ -104,7 +104,6 @@
 
             postAuthor.innerHTML = payload.username
             post.innerHTML = payload.content
-            // postAuthor.innerHTML = payload.post.added_by
             updateComments(payload.comments)
         }
 
@@ -126,7 +125,7 @@
 
         async function comment() {
 
-            const url = new URL('extComment.php', apiUrl);
+            const url = new URL('comment.php', apiUrl);
             response = await fetch(url,
                 {
                     method: "post",
@@ -151,7 +150,7 @@
 
         async function fetchUpdatesFromApi() {
             console.log("fetching with id", postId);
-            const url = new URL('outsideApi.php', apiUrl);
+            const url = new URL('post.php', apiUrl);
             url.searchParams.append('id', postId);
             const response = await fetch(url);
             const data = await response.json();

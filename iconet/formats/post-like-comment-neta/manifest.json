@@ -15,7 +15,7 @@
         "allowInteractions": true,
         "allowContentRequest": true,
         "allowedSources": [
-          "http://neta.localhost/API/"
+          "http://neta.localhost/api/"
         ],
         "content": true
       }
