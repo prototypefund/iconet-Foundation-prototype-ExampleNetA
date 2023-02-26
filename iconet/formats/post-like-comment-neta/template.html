@@ -60,7 +60,6 @@
 
 <body>
     <article>
-        <p>Test NetA</p>
         <span id="post">Added by script</span>
         <span id="postAuthor" class="author">5</span>
     </article>
@@ -74,30 +73,42 @@
     </div>
     <div id="comments"></div>
     <script>
+        const apiUrl = new URL("http://neta.localhost:8000/API/");
+    
+    
         const post = document.getElementById("post")
         const postAuthor = document.getElementById("postAuthor")
         const comments = document.getElementById("comments")
         // const likeBtn = document.getElementById("like")
         const commentBox = document.getElementById("commentBox")
-        const postID = -1
+        let postId = null;
 
+	    initialize(window.tunnel.initialContent);
 
         window.tunnel.addEventListener('initialized', function () {
-            const payload = window.tunnel.initialContent
-            postAuthor.innerHTML = payload.username
-            post.innerHTML = payload.content
-            console.log(payload)
+            initialize(window.tunnel.initialContent);
         });
-
-        async function update(packet) {
-
-            // postAuthor.innerHTML = packet.post.added_by
-            updateComments(packet.comments)
+        
+        
+        
+        function initialize(payload) {
+            if(!payload || postId !== null) return;
+            postId = payload.id;
+            update(payload);
+            fetchUpdatesFromApi();
         }
 
-        // function hasLiked(content) {
-        //     return content.interactions?.filter(inter => inter.actor === content.to)
-        // }
+
+        async function update(payload) {
+		    console.log("===== payload", payload);
+
+            postAuthor.innerHTML = payload.username
+            post.innerHTML = payload.content
+            // postAuthor.innerHTML = payload.post.added_by
+            updateComments(payload.comments)
+        }
+
+
 
         function updateComments(commentData) {
             comments.innerHTML = commentData?.map(comment =>
@@ -108,40 +119,45 @@
         async function like() {
             update(await window.tunnel.sendInteraction(JSON.stringify({ like: true })))
         }
+        
+        // function hasLiked(content) {
+        //     return content.interactions?.filter(inter => inter.actor === content.to)
+        // }
 
         async function comment() {
-            fetch('http://localhost:8001/API/extComment.php',
+
+            const url = new URL('extComment.php', apiUrl);
+            response = await fetch(url,
                 {
                     method: "post",
                     body: JSON.stringify({
-                        post_id: "1",
-                        commentator: "bob",
-                        profile_url: "www.bob",
+                        post_id: postId,
+                        commentator: "bob", // TODO
+                        profile_url: "not implemented", //TODO
                         comment: commentBox.value
                     })
                 }
             )
-
+	        console.log("Comment response", await response.text())
             commentBox.value = ""
-            location.reload()
 
+            fetchUpdatesFromApi();
         }
 
         function updateHeight() {
             commentBox.style.height = Math.min(100, commentBox.scrollHeight - 7) + "px";
         }
 
-        (async () =>
-            update(await fetch('http://localhost:8001/API/outsideApi.php',
-                {
-                    method: "post",
-                    body: JSON.stringify({
-                        id: "1",
-                        user: "bob"
-                    })
-                }
-            ).then((response) => response.json()))
-        )()
+
+        async function fetchUpdatesFromApi() {
+            console.log("fetching with id", postId);
+            const url = new URL('outsideApi.php', apiUrl);
+            url.searchParams.append('id', postId);
+            const response = await fetch(url);
+            const data = await response.json();
+            console.log("fetched", data);
+            update({content: data.post.body, username: data.post.added_by, comments: data.comments});
+        }
 
 
     </script>
