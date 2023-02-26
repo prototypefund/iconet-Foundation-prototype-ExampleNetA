@@ -76,7 +76,7 @@ class Address
     public function getEndpoint(): string
     {
         $schema = $_ENV['DEBUG_DISABLE_HTTPS'] ? "http://" : "https://";
-        return $schema . $this->domain . '/' . self::ENDPOINT . '/';
+        return $schema . $this->domain . '/' . self::ENDPOINT;
     }
 
     public function __toString(): string
