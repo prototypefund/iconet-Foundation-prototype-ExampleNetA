@@ -20,12 +20,12 @@ class IconetOutbox
         $this->crypto = new Crypto();
         $this->user = $user;
     }
-    // newPost (Id, username)
-    /*//create secret, fetch target addresses, create tokens & encrypt
+
+
+    /* create secret, fetch target addresses, create tokens & encrypt
      * add post and data to database
      * create and send packet
      */
-    // $content = {username,id}
     public function createPost(array $content, string $manifestUri): void
     {
         //generate secret
@@ -37,7 +37,6 @@ class IconetOutbox
             $manifestUri,
             json_encode($content)
         );
-        $content['id'] = $id;
 
         
         //encrypt notification & content
