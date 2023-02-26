@@ -6,6 +6,7 @@ namespace Iconet;
 class PacketBuilder
 {
 
+    const CONTEXT = "https://ns.iconet-foundation.org#";
 
     public static function EncryptedNotification(
         string $packetID,
@@ -14,7 +15,7 @@ class PacketBuilder
         string $encryptedSecret,
         string $encryptedPayload
     ): string {
-        $packet['@context'] = "https://iconet-foundation.org/ns#"; //FIX should not be hardcoded, should be proper json ld
+        $packet['@context'] = self::CONTEXT;
         $packet['@type'] = "EncryptedPacket";
         $packet['@id'] = $packetID;
         $packet['actor'] = $actorAddress;
@@ -31,7 +32,7 @@ class PacketBuilder
         string $toAddress,
         array $payload
     ): string {
-        $packet['@context'] = "https://iconet-foundation.org/ns#"; //FIX should not be hardcoded, should be proper json ld
+        $packet['@context'] = self::CONTEXT;
         $packet['@type'] = "Packet";
         $packet['@id'] = $packetID;
         $packet['actor'] = $actorAddress;
