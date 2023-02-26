@@ -17,7 +17,7 @@ class PacketBuilder
     ): string {
         $packet['@context'] = self::CONTEXT;
         $packet['@type'] = "EncryptedPacket";
-        $packet['@id'] = $packetID;
+        $packet['@id'] = "https://$_ENV[DOMAIN]/single_post.php?id=$packetID";
         $packet['actor'] = $actorAddress;
         $packet['to'] = $toAddress;
         $packet['encryptedSecret'] = $encryptedSecret;
@@ -34,7 +34,7 @@ class PacketBuilder
     ): string {
         $packet['@context'] = self::CONTEXT;
         $packet['@type'] = "Packet";
-        $packet['@id'] = $packetID;
+        $packet['@id'] = "https://$_ENV[DOMAIN]/single_post.php?id=$packetID";
         $packet['actor'] = $actorAddress;
         $packet['to'] = $toAddress;
         $packet['interpreterManifests'] = $payload['interpreterManifests'];
@@ -70,7 +70,7 @@ class PacketBuilder
         $manifestSha512Hash = "<sha-512 hash of the manifest document linked> (TODO)";
         //fill in ManifestData
         $interpreterManifests['manifestUri'] = $manifestUri;
-        $interpreterManifests['inputTypes'] = array($inputType, $plainType);
+        $interpreterManifests['sourceTypes'] = array($inputType, $plainType);
         $interpreterManifests['targetTypes'] = array($targetType);
         $interpreterManifests['sha-512'] = $manifestSha512Hash;
 
