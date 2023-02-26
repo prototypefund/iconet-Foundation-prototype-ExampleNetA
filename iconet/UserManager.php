@@ -2,8 +2,6 @@
 
 namespace Iconet;
 
-use RuntimeException;
-
 /**
  * Interface for the native plattform to manage iconet objects
  */
@@ -43,14 +41,8 @@ class UserManager
      */
     public static function addContact(User $to, Address $address): bool
     {
-        try {
-            $publicKey = (new ArchivedProcessor($to))->getExternalPublicKey($address);
-        } catch(RuntimeException $e) {
-            echo $e->getMessage() . "\n" . $e->getPrevious()?->getMessage();
-            return false;
-        }
 
-        $success = $to->addContact(new Contact($address, $publicKey));
+        $success = $to->addContact(new Contact($address));
         if(!$success) {
             echo "Failed to add " . $address;
             return false;

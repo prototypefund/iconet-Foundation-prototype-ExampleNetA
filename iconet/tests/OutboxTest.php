@@ -2,6 +2,7 @@
 
 
 use Iconet\Database;
+use Iconet\IconetInbox;
 use Iconet\IconetOutbox;
 use Iconet\User;
 use Iconet\UserManager;
@@ -10,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class OutboxTest extends TestCase
 {
     private IconetOutbox $outboxA;
-    private \Iconet\IconetInbox $inboxB;
+    private IconetInbox $inboxB;
     private object $contentPacket;
     private object $contentPacketWithInter;
     private array $expectedContent;
@@ -42,7 +43,7 @@ class OutboxTest extends TestCase
         $this->outboxA->createPost($this->expectedContent, $this->expectedFormatId);
 
         // Get Bob's notification
-        $this->notification = Database::singleton()->getNotifications($this->bob->username);
+        $this->notification = Database::singleton()->getNotifications($this->bob->username)[0];
     }
 
     protected function tearDown(): void
@@ -53,7 +54,10 @@ class OutboxTest extends TestCase
 
     public function testOutbox()
     {
-        self::assertEquals($this->expectedContent, $this->notification['payload']);
-        self::assertEquals($this->expectedFormatId, $this->notification['FormatId']);
+        $payload = json_decode($this->notification['payload'], true);
+        $content = $payload["content"][0]["payload"]["content"]; #the notifications payload, has a content array, on which firsts payload you'll find the content field.
+
+        self::assertEquals($this->expectedContent["content"], $content);
+        self::assertEquals($this->expectedFormatId, $this->notification['formatId']);
     }
 }

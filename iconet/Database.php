@@ -145,8 +145,7 @@ class Database
         $stmt = $this->db->prepare(
             "INSERT INTO contacts (username, friend_address, friend_pubkey) VALUES (:username, :address, :publickey)"
         );
-        $stmt->execute(compact('username', 'address', 'publickey',));
-        return $this->db->lastInsertId();
+        return $stmt->execute(compact('username', 'address', 'publickey'));
     }
 
     public function addNotification(

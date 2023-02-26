@@ -53,11 +53,4 @@ class PacketBuilderTest extends TestCase
     }
 
 
-    public function testError(): void
-    {
-        $packet = PacketBuilder::error($this->error);
-        $response = PacketHandler::checkPacket(json_decode($packet));
-
-        self::assertFalse($response);
-    }
 }

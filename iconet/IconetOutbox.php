@@ -31,13 +31,13 @@ class IconetOutbox
         //generate secret
         $secret = $this->crypto->genSymKey();
         //save postdata for later
-        $content['id'] = 123;
         $id = Database::singleton()->addPost(
             $this->user->username,
             $secret,
             $manifestUri,
             json_encode($content)
         );
+        $content['id'] = $id;
 
         
         //encrypt notification & content

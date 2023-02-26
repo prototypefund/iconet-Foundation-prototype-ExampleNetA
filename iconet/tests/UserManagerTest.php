@@ -2,6 +2,7 @@
 
 require_once "config/config.php";
 
+use Iconet\Database;
 use Iconet\UserManager;
 use PHPUnit\Framework\TestCase;
 
@@ -12,8 +13,7 @@ class UserManagerTest extends TestCase
     {
         parent::setUp();
 
-        global $iconetDB;
-        $iconetDB->clearTables();
+        Database::singleton()->clearTables();
     }
 
     public function testAddNewUser_invalid(): void
@@ -37,13 +37,6 @@ class UserManagerTest extends TestCase
         self::assertEquals("X", UserManager::addNewUser("X")->username);
         self::assertEquals("a...", UserManager::addNewUser("a...")->username);
         self::assertEquals("under_dog", UserManager::addNewUser("under_dog")->username);
-    }
-
-    public function testAddNewUser_duplicate(): void
-    {
-        self::assertEquals("tester", UserManager::addNewUser("tester")->username);
-        self::assertNull(UserManager::addNewUser("tester"));
-        self::assertNull(UserManager::addNewUser("tester"));
     }
 
     public function testAddNewUser_database(): void

@@ -15,7 +15,8 @@ class PacketHandlerTest extends TestCase
     {
         $packet = (object)[
             "@context" => "iconet Notification",
-            "id" => "2",
+            "@id" => "2",
+            "@type" => "EncryptedPacket",
             "actor" => "alice@net.org",
             "to" => "bob@bobnet.org",
             "encryptedSecret" => "jtqgp5D2Z4...",
