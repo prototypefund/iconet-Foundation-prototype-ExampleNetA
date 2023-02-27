@@ -35,23 +35,21 @@
 
         embedded-experience {
             width: calc(100% - 4em);
-            /* height: 15em; */
+            height: 35em;
 
-            /* margin: 2em;
+            margin: 2em;
             padding: 0.5em;
-            border: solid 1px;
             flex-direction: column;
-            background: whitesmoke;
             overflow: auto;
-            resize: both; */
+            resize: both;
 
             background-color: #fff;
-            padding: 10px;
             border: 1px solid #D3D3D3;
             border-radius: 5px;
             box-shadow: 2px 2px 1px #D3D3D3;
-            z-index: -1;
-            color: #555;
+
+            color: #777;
+            font-size: 80%;
         }
     </style>
 </head>

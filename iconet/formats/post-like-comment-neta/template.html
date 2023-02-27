@@ -6,6 +6,7 @@
     } */
 
     body {
+        font-family: sans-serif;
         line-height: 17px;
         background-color: white;
     }
@@ -29,6 +30,14 @@
     textarea {
         height: 1em;
         width: 20em;
+        border-radius: 0.5em;
+        padding: 0.5em;
+        margin-bottom: -0.5em;
+    }
+
+    button {
+        padding: 0.3em;
+
     }
 
     .author {
@@ -50,6 +59,7 @@
     #comments div::before {
         content: '↳';
         font-weight: bold;
+        font-size: 1.7em;
     }
 
     #post {
@@ -60,13 +70,15 @@
 
 <body>
     <article>
-        <span id="post">Added by script</span>
-        <span id="postAuthor" class="author">5</span>
+        <span id="post">Loading...</span>
+        <span id="postAuthor" class="author">Loading...</span>
     </article>
     <div class="interactions">
         <h5>Comments:</h5>
-        <textarea id="commentBox" oninput="updateHeight()"></textarea>
-        <button id="comment" onclick="comment()">Send</button>
+        <div class="commentFlex">
+            <textarea id="commentBox" oninput="updateHeight()"></textarea>
+            <button id="comment" onclick="comment()">Send</button>
+        </div>
 
         <!--    <span id="likes">?</span>-->
         <!--    <button id="like" onclick="like()" data-voted-text="Unlike" data-unvoted-text="Like"></button>-->
