@@ -93,7 +93,7 @@
         const comments = document.getElementById("comments")
         // const likeBtn = document.getElementById("like")
         const commentBox = document.getElementById("commentBox")
-        let postId = null;
+        let postId;
 
 	    initialize(window.tunnel.initialContent);
 
@@ -104,7 +104,7 @@
         
         
         function initialize(payload) {
-            if(!payload || postId !== null) return;
+            if(!payload || postId !== undefined) return;
             postId = payload.id;
             update(payload);
             fetchUpdatesFromApi();

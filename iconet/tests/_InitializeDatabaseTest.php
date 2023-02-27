@@ -82,9 +82,9 @@ class _InitializeDatabaseTest extends TestCase
 
         $postBody = "Content by Unittest";
 
-        (new Post($con, $this->bob->username))->submitPost($postBody);
+        $netaPostId = (new Post($con, $this->bob->username))->submitPost($postBody, 'alice');
 
-        (new IconetOutbox($this->bob))->createPost(['content' => $postBody, 'username' => $this->bob->username],
+        (new IconetOutbox($this->bob))->createPost(['content' => $postBody, 'username' => $this->bob->username, 'id' => $netaPostId],
             "/iconet/formats/post-like-comment-neta/manifest.json");
     }
 
