@@ -32,7 +32,14 @@ class S2STransmitter
             $client = new Client(['timeout' => 2.0,]);
 
             try {
-                $response = $client->post($url, ['body' => $message, 'query' => $query]);
+                $response = $client->post(
+                    $url,
+                    [
+                        'body' => $message,
+                        'query' => $query,
+                        'headers' => ['Content-Type' => 'application/json']
+                    ]
+                );
             } catch(GuzzleException $ex) {
                 throw new RuntimeException(
                     "Got no valid http response from url '$url'",
