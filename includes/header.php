@@ -89,7 +89,7 @@ if(isset($_SESSION['username'])) {
         </a>
 
         <a href='./iconet_inbox.php'>
-            <i class="fa fa-envelope fa-lg"></i>
+            <i class="fa fa-inbox fa-lg"></i>
         </a>
 
         <a href="index.php">
